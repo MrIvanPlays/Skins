@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>skins-plugin-parent</artifactId>
+        <groupId>com.mrivanplays</groupId>
+        <version>dev</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>skins-plugin-bukkit</artifactId>
+    <version>dev</version>
+    <packaging>pom</packaging>
+
+    <name>Skins-Plugin-Bukkit</name>
+    <description>Bukkit plugin parent POM for all modules for bukkit side of Skins</description>
+
+    <modules>
+        <module>core</module>
+        <module>abstraction</module>
+    </modules>
+
+    <repositories>
+        <repository>
+            <id>nms-repo</id>
+            <url>https://repo.codemc.org/repository/nms/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.mrivanplays</groupId>
+            <artifactId>skins-api</artifactId>
+            <version>1.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>${spigot.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+</project>

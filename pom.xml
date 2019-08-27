@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.mrivanplays</groupId>
+    <artifactId>skins-parent</artifactId>
+    <version>dev</version>
+    <packaging>pom</packaging>
+
+    <name>Skins-Parent</name>
+    <description>Parent POM of all UltraSkins modules</description>
+
+    <licenses>
+        <license>
+            <name>MIT</name>
+            <url>https://opensource.org/licenses/MIT</url>
+        </license>
+    </licenses>
+
+    <inceptionYear>2019</inceptionYear>
+
+    <developers>
+        <developer>
+            <id>MrIvanPlays</id>
+        </developer>
+    </developers>
+
+    <modules>
+        <module>api</module>
+        <module>plugin</module>
+    </modules>
+
+    <build>
+        <defaultGoal>clean package</defaultGoal>
+    </build>
+
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spigot.version>1.14.4-R0.1-SNAPSHOT</spigot.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>15.0</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+</project>

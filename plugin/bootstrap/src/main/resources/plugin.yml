@@ -1,0 +1,13 @@
+name: Skins
+description: Skins plugin
+main: com.mrivanplays.skins.SkinsBukkitPlugin
+version: 1.0.0
+api-version: 1.13
+authors:
+  - MrIvanPlays
+
+commands:
+  skinset:
+    description: Set your skin to another skin!
+  skinreload:
+    description: Reloads the plugin
