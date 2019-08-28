@@ -54,10 +54,6 @@ public class CommandSkinSet implements TabExecutor {
             return true;
         }
         Player player = (Player) sender;
-        if (plugin.getApi().isRunningProtocolSupport()) {
-            player.sendMessage(plugin.color(plugin.getConfig().getString("messages.not-supported")));
-            return true;
-        }
         if (args.length == 0) {
             player.sendMessage(plugin.color(plugin.getConfig().getString("messages.command-usage")));
             return true;

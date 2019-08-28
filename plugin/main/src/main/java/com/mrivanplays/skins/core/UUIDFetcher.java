@@ -70,6 +70,9 @@ class UUIDFetcher {
                 connection.addRequestProperty("User-Agent", "MrIvanPlays-UUID-Fetcher");
 
                 JsonElement element = new JsonParser().parse(new InputStreamReader(connection.getInputStream()));
+                if (!element.isJsonObject()) {
+                    return new Callback(null);
+                }
                 JsonObject object = element.getAsJsonObject();
                 return new Callback(get(object.get("id").getAsString()));
             } catch (IOException e) {

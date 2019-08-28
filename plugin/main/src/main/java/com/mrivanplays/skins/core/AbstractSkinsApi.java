@@ -40,7 +40,7 @@ public abstract class AbstractSkinsApi implements SkinsApi {
 
     @Override
     public Optional<Skin> getSetSkin(@NotNull Player player) {
-        return skinStorage.getStoredSkin(player).map(StoredSkin::getSkin);
+        return skinStorage.getPlayerSetSkin(player.getUniqueId()).map(StoredSkin::getSkin);
     }
 
     @Override

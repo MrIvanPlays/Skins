@@ -61,4 +61,8 @@ public class StoredSkin {
             acquirers.remove(uuid.toString());
         }
     }
+
+    public StoredSkin duplicate() {
+        return new StoredSkin(skin, acquirers);
+    }
 }

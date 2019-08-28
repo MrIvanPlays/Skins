@@ -30,9 +30,7 @@ import org.jetbrains.annotations.NotNull;
 public interface SkinsApi {
 
     /**
-     * Gets the player's server set skin. When ProtocolSupport is
-     * being installed on the server, this will always be empty
-     * optional.
+     * Gets the player's server set skin.
      *
      * @param player the player you want to get the set skin of
      * @return optional of skin if the player have changed their skin, empty optional otherwise
@@ -65,9 +63,7 @@ public interface SkinsApi {
     MojangResponse getSkin(@NotNull String username);
 
     /**
-     * Sets the skin of the specified player. <p>
-     * NOTE: This method will do nothing if the server's running
-     * ProtocolSupport.
+     * Sets the skin of the specified player.
      *
      * @param player the player you want to set the skin of
      * @param skin the skin you want to set on the player
@@ -77,11 +73,4 @@ public interface SkinsApi {
             @NotNull Player player,
             @NotNull Skin skin
     );
-
-    /**
-     * Returns whenever this server is running ProtocolSupport
-     *
-     * @return <code>true</code> if running, otherwise <code>false</code>
-     */
-    boolean isRunningProtocolSupport();
 }

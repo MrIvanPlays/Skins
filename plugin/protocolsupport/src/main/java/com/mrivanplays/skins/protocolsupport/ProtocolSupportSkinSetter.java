@@ -23,6 +23,9 @@ package com.mrivanplays.skins.protocolsupport;
 import com.mrivanplays.skins.api.MojangResponse;
 import com.mrivanplays.skins.api.Skin;
 import com.mrivanplays.skins.core.SkinFetcher;
+import com.mrivanplays.skins.core.SkinStorage;
+import com.mrivanplays.skins.core.StoredSkin;
+import java.util.Optional;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import protocolsupport.api.events.PlayerProfileCompleteEvent;
@@ -30,18 +33,32 @@ import protocolsupport.api.utils.ProfileProperty;
 
 public class ProtocolSupportSkinSetter implements Listener {
 
+    private final SkinStorage skinStorage;
     private final SkinFetcher skinFetcher;
 
-    public ProtocolSupportSkinSetter(SkinFetcher skinFetcher) {
+    public ProtocolSupportSkinSetter(
+            SkinStorage skinStorage,
+            SkinFetcher skinFetcher
+    ) {
+        this.skinStorage = skinStorage;
         this.skinFetcher = skinFetcher;
     }
 
     @EventHandler
     public void on(PlayerProfileCompleteEvent event) {
-        MojangResponse response = skinFetcher.getSkin(event.getConnection().getProfile().getName());
-        if (response.getSkin().isPresent()) {
-            Skin skin = response.getSkin().get();
+        Optional<StoredSkin> storedSkinOptional = skinStorage.getPlayerSetSkin(
+                event.getConnection().getProfile().getUUID()
+        );
+        if (storedSkinOptional.isPresent()) {
+            StoredSkin storedSkin = storedSkinOptional.get();
+            Skin skin = storedSkin.getSkin();
             event.addProperty(new ProfileProperty("textures", skin.getTexture(), skin.getSignature()));
+        } else {
+            MojangResponse response = skinFetcher.getSkin(event.getConnection().getProfile().getName());
+            if (response.getSkin().isPresent()) {
+                Skin skin = response.getSkin().get();
+                event.addProperty(new ProfileProperty("textures", skin.getTexture(), skin.getSignature()));
+            }
         }
     }
 }

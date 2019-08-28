@@ -41,30 +41,17 @@ public class PaperSkinsApi extends AbstractSkinsApi {
             @NotNull Player player,
             @NotNull Skin skin
     ) {
-        Optional<StoredSkin> storedSkinOptional = getSkinStorage().getStoredSkin(player);
-        if (storedSkinOptional.isPresent()) {
-            StoredSkin storedSkin = storedSkinOptional.get();
-            storedSkin.removeAcquirer(player.getUniqueId());
-            getSkinStorage().modifyStoredSkin(storedSkin);
-        }
         Optional<StoredSkin> newStoredSkin = getSkinStorage().getStoredSkin(skin.getOwner());
         if (newStoredSkin.isPresent()) {
-            StoredSkin sskin = newStoredSkin.get();
-            sskin.addAcquirer(player.getUniqueId());
-            getSkinStorage().modifyStoredSkin(sskin);
+            StoredSkin skinStored = newStoredSkin.get();
+            getSkinStorage().modifyStoredSkin(player, skinStored);
         } else {
-            StoredSkin storedSkin = new StoredSkin(skin);
-            storedSkin.addAcquirer(player.getUniqueId());
-            getSkinStorage().modifyStoredSkin(storedSkin);
+            StoredSkin skinStored = new StoredSkin(skin);
+            getSkinStorage().modifyStoredSkin(player, skinStored);
         }
         PlayerProfile profile = player.getPlayerProfile();
         profile.setProperty(new ProfileProperty("textures", skin.getTexture(), skin.getSignature()));
         player.setPlayerProfile(profile);
         return true;
-    }
-
-    @Override
-    public boolean isRunningProtocolSupport() {
-        return false;
     }
 }

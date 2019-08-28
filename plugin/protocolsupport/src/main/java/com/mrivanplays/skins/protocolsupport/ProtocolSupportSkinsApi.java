@@ -22,7 +22,9 @@ package com.mrivanplays.skins.protocolsupport;
 
 import com.mrivanplays.skins.api.Skin;
 import com.mrivanplays.skins.core.AbstractSkinsApi;
+import com.mrivanplays.skins.core.StoredSkin;
 import java.io.File;
+import java.util.Optional;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,11 +39,14 @@ public class ProtocolSupportSkinsApi extends AbstractSkinsApi {
             @NotNull Player player,
             @NotNull Skin skin
     ) {
-        return false;
-    }
-
-    @Override
-    public boolean isRunningProtocolSupport() {
+        Optional<StoredSkin> newStoredSkin = getSkinStorage().getStoredSkin(skin.getOwner());
+        if (newStoredSkin.isPresent()) {
+            StoredSkin skinStored = newStoredSkin.get();
+            getSkinStorage().modifyStoredSkin(player, skinStored);
+        } else {
+            StoredSkin skinStored = new StoredSkin(skin);
+            getSkinStorage().modifyStoredSkin(player, skinStored);
+        }
         return true;
     }
 }

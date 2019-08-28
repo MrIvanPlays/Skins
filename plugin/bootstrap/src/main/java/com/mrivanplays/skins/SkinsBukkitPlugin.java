@@ -41,13 +41,17 @@ public class SkinsBukkitPlugin extends JavaPlugin {
     public void onLoad() {
         new MetricsLite(this);
         PaperLib.suggestPaper(this);
-        if (getServer().getPluginManager().getPlugin("ProtocolSupport") != null) {
-            getLogger().warning("You are running ProtocolSupport! Disabling /skinset ...");
+        if (isProtocolSupport()) {
+            getLogger().warning("You are running ProtocolSupport! Applying modifications to skin sets");
             SkinsProtocolSupport plugin = new SkinsProtocolSupport();
             plugin.enable(getDataFolder());
             api = plugin.getApi();
+            AbstractSkinsApi abstractSkinsApi = (AbstractSkinsApi) api;
             getServer().getPluginManager()
-                    .registerEvents(new ProtocolSupportSkinSetter(((AbstractSkinsApi) api).getSkinFetcher()), this);
+                    .registerEvents(new ProtocolSupportSkinSetter(
+                            abstractSkinsApi.getSkinStorage(),
+                            abstractSkinsApi.getSkinFetcher()
+                    ), this);
         } else {
             if (!PaperLib.isPaper()) {
                 SkinsBukkit skinsBukkit = new SkinsBukkit();
@@ -87,7 +91,7 @@ public class SkinsBukkitPlugin extends JavaPlugin {
         CommandSkinReload commandSkinReload = new CommandSkinReload(this);
         getCommand("skinreload").setExecutor(commandSkinReload);
         getCommand("skinreload").setTabCompleter(commandSkinReload);
-        if (!api.isRunningProtocolSupport()) {
+        if (!isProtocolSupport()) {
             getServer().getPluginManager().registerEvents(new DefaultSkinSetListener(this), this);
             getLogger().info("Running on " + PaperLib.getEnvironment().getName());
         } else {
@@ -101,5 +105,9 @@ public class SkinsBukkitPlugin extends JavaPlugin {
 
     public String color(String text) {
         return ChatColor.translateAlternateColorCodes('&', text);
+    }
+
+    private boolean isProtocolSupport() {
+        return getServer().getPluginManager().getPlugin("ProtocolSupport") != null;
     }
 }

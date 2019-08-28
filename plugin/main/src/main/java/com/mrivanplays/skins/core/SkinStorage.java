@@ -31,9 +31,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import org.bukkit.entity.Player;
 
@@ -54,20 +54,33 @@ public class SkinStorage {
                 .findFirst();
     }
 
-    public Optional<StoredSkin> getStoredSkin(Player player) {
+    public Optional<StoredSkin> getPlayerSetSkin(UUID player) {
         return deserialize().stream()
-                .filter(skin -> skin.getAcquirers().contains(player.getUniqueId().toString()))
+                .filter(skin -> skin.getAcquirers().contains(player.toString()))
                 .findFirst();
     }
 
-    public void modifyStoredSkin(StoredSkin storedSkin) {
-        List<StoredSkin> list = new ArrayList<>(deserialize());
-        getStoredSkin(storedSkin.getSkin().getOwner()).ifPresent(list::remove);
-        list.add(storedSkin);
-        serialize(list);
+    public void modifyStoredSkin(
+            Player player,
+            StoredSkin newStoredSkin
+    ) {
+        Optional<StoredSkin> currentStoredSkin = getPlayerSetSkin(player.getUniqueId());
+        Set<StoredSkin> storedSkins = new HashSet<>(deserialize());
+        if (currentStoredSkin.isPresent()) {
+            StoredSkin skin = currentStoredSkin.get();
+            StoredSkin duplicate = skin.duplicate();
+            storedSkins.remove(skin);
+            duplicate.removeAcquirer(player.getUniqueId());
+            storedSkins.add(duplicate);
+        }
+        StoredSkin newDuplicate = newStoredSkin.duplicate();
+        storedSkins.remove(newStoredSkin);
+        newDuplicate.addAcquirer(player.getUniqueId());
+        storedSkins.add(newDuplicate);
+        serialize(storedSkins);
     }
 
-    private void serialize(List<StoredSkin> storedSkin) {
+    private void serialize(Set<StoredSkin> storedSkin) {
         file.delete();
         createFile();
         try (Writer writer = new OutputStreamWriter(new FileOutputStream(file))) {
@@ -76,8 +89,8 @@ public class SkinStorage {
         }
     }
 
-    private List<StoredSkin> deserialize() {
-        List<StoredSkin> list = new ArrayList<>();
+    private Set<StoredSkin> deserialize() {
+        Set<StoredSkin> list = new HashSet<>();
         try (Reader reader = new InputStreamReader(new FileInputStream(file))) {
             JsonArray array = gson.fromJson(reader, JsonArray.class);
             if (array == null || array.size() == 0) {
