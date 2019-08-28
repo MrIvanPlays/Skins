@@ -46,17 +46,16 @@ public class PaperSkinsApi extends AbstractSkinsApi {
             StoredSkin storedSkin = storedSkinOptional.get();
             storedSkin.removeAcquirer(player.getUniqueId());
             getSkinStorage().modifyStoredSkin(storedSkin);
+        }
+        Optional<StoredSkin> newStoredSkin = getSkinStorage().getStoredSkin(skin.getOwner());
+        if (newStoredSkin.isPresent()) {
+            StoredSkin sskin = newStoredSkin.get();
+            sskin.addAcquirer(player.getUniqueId());
+            getSkinStorage().modifyStoredSkin(sskin);
         } else {
-            Optional<StoredSkin> newStoredSkin = getSkinStorage().getStoredSkin(skin.getOwner());
-            if (newStoredSkin.isPresent()) {
-                StoredSkin sskin = newStoredSkin.get();
-                sskin.addAcquirer(player.getUniqueId());
-                getSkinStorage().modifyStoredSkin(sskin);
-            } else {
-                StoredSkin storedSkin = new StoredSkin(skin);
-                storedSkin.addAcquirer(player.getUniqueId());
-                getSkinStorage().modifyStoredSkin(storedSkin);
-            }
+            StoredSkin storedSkin = new StoredSkin(skin);
+            storedSkin.addAcquirer(player.getUniqueId());
+            getSkinStorage().modifyStoredSkin(storedSkin);
         }
         PlayerProfile profile = player.getPlayerProfile();
         profile.setProperty(new ProfileProperty("textures", skin.getTexture(), skin.getSignature()));
