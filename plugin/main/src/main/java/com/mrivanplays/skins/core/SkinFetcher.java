@@ -24,6 +24,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mrivanplays.skins.api.MojangResponse;
 import com.mrivanplays.skins.api.Skin;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -32,18 +33,54 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class SkinFetcher {
 
-    private final Set<Skin> knownSkins = new HashSet<>();
+    private final Set<MojangResponse> knownResponces = new HashSet<>();
+    private final SkinStorage skinStorage;
 
-    private Skin getSkin(UUID uuid) {
-        Optional<Skin> search = knownSkins.stream()
-                .filter(skin -> skin.getOwner().equals(uuid))
+    public SkinFetcher(SkinStorage skinStorage) {
+        this.skinStorage = skinStorage;
+    }
+
+    private MojangResponse getSkin(
+            String name,
+            UUID uuid
+    ) {
+        Optional<MojangResponse> search = knownResponces.stream()
+                .filter(response -> response.getNickname().equalsIgnoreCase(name))
                 .findFirst();
         if (search.isPresent()) {
-            return search.get();
+            MojangResponse response = search.get();
+            if (response.getSkin().isPresent()) {
+                return response;
+            } else {
+                Optional<StoredSkin> storedSkin = skinStorage.getStoredSkin(uuid);
+                if (storedSkin.isPresent()) {
+                    StoredSkin sskin = storedSkin.get();
+                    MojangResponse mojangResponse = new MojangResponse(name, uuid, sskin.getSkin());
+                    knownResponces.add(mojangResponse);
+                    return mojangResponse;
+                } else {
+                    knownResponces.remove(response);
+                    MojangResponse apiFetch = apiFetch(name, uuid).join();
+                    knownResponces.add(apiFetch);
+                    return apiFetch;
+                }
+            }
         } else {
+            MojangResponse response = apiFetch(name, uuid).join();
+            knownResponces.add(response);
+            return response;
+        }
+    }
+
+    private CompletableFuture<MojangResponse> apiFetch(
+            String name,
+            UUID uuid
+    ) {
+        return CompletableFuture.supplyAsync(() -> {
             try {
                 URL checkUrl = new URL(String.format(
                         "https://sessionserver.mojang.com/session/minecraft/profile/%s?unsigned=false",
@@ -53,6 +90,11 @@ public class SkinFetcher {
                 JsonObject object = new JsonParser()
                         .parse(new InputStreamReader(connection.getInputStream()))
                         .getAsJsonObject();
+                if (object.has("error")) {
+                    System.err.println("[Skins] The server's being rate limited by mojang api. " +
+                            "You may expect some players not having skins.");
+                    return new MojangResponse(name, uuid, null);
+                }
                 JsonArray properties = object.get("properties").getAsJsonArray();
                 for (JsonElement property : properties) {
                     if (!property.isJsonObject()) {
@@ -65,23 +107,22 @@ public class SkinFetcher {
                     String texture = propertyObject.get("value").getAsString();
                     String signature = propertyObject.get("signature").getAsString();
                     Skin skin = new Skin(uuid, texture, signature);
-                    knownSkins.add(skin);
-                    return skin;
+                    return new MojangResponse(name, uuid, skin);
                 }
             } catch (Exception e) {
-                return new Skin(uuid, "exception", e.fillInStackTrace().toString());
+                return new MojangResponse(name, uuid, null);
             }
-        }
-        return null;
+            return new MojangResponse(name, uuid, null);
+        });
     }
 
-    public Skin getSkin(String name) {
+    public MojangResponse getSkin(String name) {
         UUIDFetcher uuidFetcher = UUIDFetcher.createOrGet(name);
         UUIDFetcher.Callback callback = uuidFetcher.retrieveUUID().join();
         if (callback.getUUID().isPresent()) {
-            return getSkin(callback.getUUID().get());
+            return getSkin(name, callback.getUUID().get());
         } else {
-            return new Skin(UUID.randomUUID(), "exception", "could not get uuid");
+            return new MojangResponse(name, null, null);
         }
     }
 }

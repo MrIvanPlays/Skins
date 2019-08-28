@@ -20,6 +20,7 @@
  **/
 package com.mrivanplays.skins.protocolsupport;
 
+import com.mrivanplays.skins.api.MojangResponse;
 import com.mrivanplays.skins.api.Skin;
 import com.mrivanplays.skins.core.SkinFetcher;
 import org.bukkit.event.EventHandler;
@@ -37,10 +38,10 @@ public class ProtocolSupportSkinSetter implements Listener {
 
     @EventHandler
     public void on(PlayerProfileCompleteEvent event) {
-        Skin skin = skinFetcher.getSkin(event.getConnection().getProfile().getName());
-        if (skin.getTexture().contains("exception")) {
-            return;
+        MojangResponse response = skinFetcher.getSkin(event.getConnection().getProfile().getName());
+        if (response.getSkin().isPresent()) {
+            Skin skin = response.getSkin().get();
+            event.addProperty(new ProfileProperty("textures", skin.getTexture(), skin.getSignature()));
         }
-        event.addProperty(new ProfileProperty("textures", skin.getTexture(), skin.getSignature()));
     }
 }

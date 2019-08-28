@@ -34,6 +34,10 @@
                                     <pattern>io.papermc.lib</pattern>
                                     <shadedPattern>com.mrivanplays.skins.lib.paperlib</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>org.bstats.bukkit</pattern>
+                                    <shadedPattern>com.mrivanplays.skins.lib.bstats</shadedPattern>
+                                </relocation>
                             </relocations>
                         </configuration>
                     </execution>
@@ -46,6 +50,10 @@
         <repository>
             <id>papermc</id>
             <url>https://papermc.io/repo/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>CodeMC</id>
+            <url>https://repo.codemc.org/repository/maven-public</url>
         </repository>
     </repositories>
 
@@ -90,6 +98,12 @@
             <groupId>io.papermc</groupId>
             <artifactId>paperlib</artifactId>
             <version>1.0.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bukkit-lite</artifactId>
+            <version>1.5</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

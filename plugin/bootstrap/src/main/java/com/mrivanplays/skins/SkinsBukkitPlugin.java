@@ -22,11 +22,12 @@ package com.mrivanplays.skins;
 
 import com.mrivanplays.skins.api.SkinsApi;
 import com.mrivanplays.skins.bukkit.SkinsBukkit;
-import com.mrivanplays.skins.core.SkinFetcher;
+import com.mrivanplays.skins.core.AbstractSkinsApi;
 import com.mrivanplays.skins.paper.SkinsPaper;
 import com.mrivanplays.skins.protocolsupport.ProtocolSupportSkinSetter;
 import com.mrivanplays.skins.protocolsupport.SkinsProtocolSupport;
 import io.papermc.lib.PaperLib;
+import org.bstats.bukkit.MetricsLite;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -34,25 +35,26 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class SkinsBukkitPlugin extends JavaPlugin {
 
     private SkinsApi api;
-    private SkinFetcher skinFetcher;
+    private boolean disabled = false;
 
     @Override
     public void onLoad() {
+        new MetricsLite(this);
         PaperLib.suggestPaper(this);
-        skinFetcher = new SkinFetcher();
         if (getServer().getPluginManager().getPlugin("ProtocolSupport") != null) {
             getLogger().warning("You are running ProtocolSupport! Disabling /skinset ...");
             SkinsProtocolSupport plugin = new SkinsProtocolSupport();
-            getServer().getPluginManager().registerEvents(new ProtocolSupportSkinSetter(skinFetcher), this);
             plugin.enable(getDataFolder());
             api = plugin.getApi();
+            getServer().getPluginManager()
+                    .registerEvents(new ProtocolSupportSkinSetter(((AbstractSkinsApi) api).getSkinFetcher()), this);
         } else {
             if (!PaperLib.isPaper()) {
                 SkinsBukkit skinsBukkit = new SkinsBukkit();
                 skinsBukkit.enable(getDataFolder());
                 if (skinsBukkit.getSkinSetter() == null) {
                     getLogger().severe("You are running unsupported minecraft version, disabling...");
-                    getServer().getPluginManager().disablePlugin(this);
+                    disabled = true;
                     return;
                 }
                 api = skinsBukkit.getApi();
@@ -60,7 +62,7 @@ public class SkinsBukkitPlugin extends JavaPlugin {
                 String version = getServer().getVersion();
                 if (!version.contains("1.13.2") && !version.contains("1.14")) {
                     getLogger().severe("You are running unsupported minecraft version, disabling...");
-                    getServer().getPluginManager().disablePlugin(this);
+                    disabled = true;
                     return;
                 }
                 SkinsPaper paper = new SkinsPaper();
@@ -73,6 +75,11 @@ public class SkinsBukkitPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        if (disabled) {
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+        PaperLib.suggestPaper(this);
         saveDefaultConfig();
         CommandSkinSet commandSkinSet = new CommandSkinSet(this);
         getCommand("skinset").setExecutor(commandSkinSet);
@@ -90,10 +97,6 @@ public class SkinsBukkitPlugin extends JavaPlugin {
 
     public SkinsApi getApi() {
         return api;
-    }
-
-    public SkinFetcher getSkinFetcher() {
-        return skinFetcher;
     }
 
     public String color(String text) {

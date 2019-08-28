@@ -20,6 +20,7 @@
  **/
 package com.mrivanplays.skins.core;
 
+import com.mrivanplays.skins.api.MojangResponse;
 import com.mrivanplays.skins.api.Skin;
 import com.mrivanplays.skins.api.SkinsApi;
 import java.io.File;
@@ -33,8 +34,8 @@ public abstract class AbstractSkinsApi implements SkinsApi {
     private final SkinStorage skinStorage;
 
     public AbstractSkinsApi(File dataFolder) {
-        skinFetcher = new SkinFetcher();
         skinStorage = new SkinStorage(dataFolder);
+        skinFetcher = new SkinFetcher(skinStorage);
     }
 
     @Override
@@ -43,9 +44,9 @@ public abstract class AbstractSkinsApi implements SkinsApi {
     }
 
     @Override
-    public Optional<Skin> getOriginalSkin(@NotNull Player player) {
-        Skin skin = skinFetcher.getSkin(player.getName());
-        return Optional.ofNullable(skin.getTexture().contains("exception") ? null : skin);
+    @NotNull
+    public MojangResponse getSkin(@NotNull String username) {
+        return skinFetcher.getSkin(username);
     }
 
     public SkinFetcher getSkinFetcher() {

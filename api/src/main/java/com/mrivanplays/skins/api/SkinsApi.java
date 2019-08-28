@@ -41,12 +41,28 @@ public interface SkinsApi {
 
     /**
      * Gets the player's skin, which is set on the premium account of this
-     * player, took from the mojang api.
+     * player. This might be null if the specified player's nickname has no
+     * premium account.
      *
      * @param player the player you want to get the original skin of
      * @return optional of skin if this player is in mojang's database, empty optional otherwise
      */
-    Optional<Skin> getOriginalSkin(@NotNull Player player);
+    default Optional<Skin> getOriginalSkin(@NotNull Player player) {
+        MojangResponse response = getSkin(player.getName());
+        return Optional.ofNullable(response.getSkin().isPresent() ? response.getSkin().get() : null);
+    }
+
+    /**
+     * Gets the skin of the specified username by fetching {@link java.util.UUID}
+     * and skin from the mojang api. The response is never null, however, the
+     * parts into the response may be null if the mojang api is down or the
+     * server's being rate limited by the mojang api.
+     *
+     * @param username the username of the premium account you want to get skin
+     * @return response with all data, or response with none data if mojang api is down or the server's being rate limited.
+     */
+    @NotNull
+    MojangResponse getSkin(@NotNull String username);
 
     /**
      * Sets the skin of the specified player. <p>

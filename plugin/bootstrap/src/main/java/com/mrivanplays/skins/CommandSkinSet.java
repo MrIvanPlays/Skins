@@ -20,7 +20,7 @@
  **/
 package com.mrivanplays.skins;
 
-import com.mrivanplays.skins.api.Skin;
+import com.mrivanplays.skins.api.MojangResponse;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -72,12 +72,12 @@ public class CommandSkinSet implements TabExecutor {
                 return true;
             }
         }
-        Skin skin = plugin.getSkinFetcher().getSkin(args[0]);
-        if (skin.getTexture().contains("exception")) {
+        MojangResponse response = plugin.getApi().getSkin(args[0]);
+        if (!response.getSkin().isPresent()) {
             player.sendMessage(plugin.color(plugin.getConfig().getString("messages.not-premium")));
             return true;
         }
-        plugin.getApi().setSkin(player, skin);
+        plugin.getApi().setSkin(player, response.getSkin().get());
         player.sendMessage(plugin.color(plugin.getConfig().getString("messages.skin-set-successfully")));
         long cooldown = 1000 * 30;
         cooldownMap.put(player.getUniqueId(), System.currentTimeMillis() + cooldown);
