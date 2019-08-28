@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>skins-plugin-bukkit-abstraction-handle</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
     <packaging>jar</packaging>
 
     <name>Skins-Plugin-Bukkit-Abstraction-Handle</name>

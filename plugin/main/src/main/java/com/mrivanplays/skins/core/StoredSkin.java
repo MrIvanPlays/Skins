@@ -27,7 +27,7 @@ import java.util.UUID;
 
 public class StoredSkin {
 
-    private final Skin skin;
+    private Skin skin;
     private final List<String> acquirers;
     private final String configurationKey;
 
@@ -50,6 +50,10 @@ public class StoredSkin {
 
     public Skin getSkin() {
         return skin;
+    }
+
+    public void setSkin(Skin skin) {
+        this.skin = skin;
     }
 
     public List<String> getAcquirers() {

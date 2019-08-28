@@ -20,6 +20,7 @@
  **/
 package com.mrivanplays.skins;
 
+import com.mrivanplays.skins.api.MojangResponse;
 import com.mrivanplays.skins.api.Skin;
 import java.util.Optional;
 import org.bukkit.entity.Player;
@@ -40,13 +41,34 @@ public class DefaultSkinSetListener implements Listener {
         Player player = event.getPlayer();
         Optional<Skin> setSkin = plugin.getApi().getSetSkin(player);
         if (setSkin.isPresent()) {
-            plugin.getApi().setSkin(player, setSkin.get());
+            Skin skin = setSkin.get();
+            plugin.getApi().setSkin(
+                    player,
+                    checkForSkinUpdate(plugin.getSkinFetcher().fetchName(skin.getOwner()).join(), skin)
+            );
         } else {
             Optional<Skin> skinOptional = plugin.getApi().getOriginalSkin(player);
             if (!skinOptional.isPresent()) {
                 return;
             }
-            plugin.getApi().setSkin(player, skinOptional.get());
+            plugin.getApi().setSkin(player, checkForSkinUpdate(player.getName(), skinOptional.get()));
+        }
+    }
+
+    private Skin checkForSkinUpdate(
+            String name,
+            Skin skin
+    ) {
+        MojangResponse response = plugin.getSkinFetcher().apiFetch(name, skin.getOwner()).join();
+        if (response.getSkin().isPresent()) {
+            Skin fetched = response.getSkin().get();
+            if (skin.getTexture().equalsIgnoreCase(fetched.getTexture())) {
+                return skin;
+            } else {
+                return fetched;
+            }
+        } else {
+            return skin;
         }
     }
 }

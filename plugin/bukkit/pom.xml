@@ -33,7 +33,7 @@
         <dependency>
             <groupId>com.mrivanplays</groupId>
             <artifactId>skins-api</artifactId>
-            <version>1.1.0</version>
+            <version>1.1.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

@@ -30,7 +30,9 @@ import org.jetbrains.annotations.NotNull;
 public interface SkinsApi {
 
     /**
-     * Gets the player's server set skin.
+     * Gets the player's server set skin. This could also return
+     * {@link #getOriginalSkin(Player)} due to how the plugin
+     * handles storing skins.
      *
      * @param player the player you want to get the set skin of
      * @return optional of skin if the player have changed their skin, empty optional otherwise

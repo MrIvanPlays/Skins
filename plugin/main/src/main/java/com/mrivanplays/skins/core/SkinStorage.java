@@ -31,7 +31,6 @@ import java.util.Set;
 import java.util.UUID;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 
 public class SkinStorage {
 
@@ -58,48 +57,56 @@ public class SkinStorage {
                 .findFirst();
     }
 
+    public void modifySkin(StoredSkin newStoredSkin) {
+        configuration.set(
+                section + "." + newStoredSkin.getConfigurationKey() + ".texture",
+                newStoredSkin.getSkin().getTexture()
+        );
+        configuration.set(
+                section + "." + newStoredSkin.getConfigurationKey() + ".signature",
+                newStoredSkin.getSkin().getSignature()
+        );
+        save();
+    }
+
     public void modifyStoredSkin(
-            Player player,
+            UUID player,
             StoredSkin newStoredSkin
     ) {
-        Optional<StoredSkin> currentStoredSkin = getPlayerSetSkin(player.getUniqueId());
+        Optional<StoredSkin> currentStoredSkin = getPlayerSetSkin(player);
         if (currentStoredSkin.isPresent()) {
             StoredSkin skin = currentStoredSkin.get();
             StoredSkin duplicate = skin.duplicate();
-            duplicate.removeAcquirer(player.getUniqueId());
-            if (configuration.getString(section + "." + duplicate.getConfigurationKey() + ".texture") == null) {
-                configuration.set(
-                        section + "." + duplicate.getConfigurationKey() + ".texture",
-                        duplicate.getSkin().getTexture()
-                );
-                configuration.set(
-                        section + "." + duplicate.getConfigurationKey() + ".signature",
-                        duplicate.getSkin().getSignature()
-                );
-                configuration.set(
-                        section + "." + duplicate.getConfigurationKey() + ".owner",
-                        duplicate.getSkin().getOwner().toString()
-                );
-            }
+            duplicate.removeAcquirer(player);
+            configuration.set(
+                    section + "." + duplicate.getConfigurationKey() + ".texture",
+                    duplicate.getSkin().getTexture()
+            );
+            configuration.set(
+                    section + "." + duplicate.getConfigurationKey() + ".signature",
+                    duplicate.getSkin().getSignature()
+            );
+            configuration.set(
+                    section + "." + duplicate.getConfigurationKey() + ".owner",
+                    duplicate.getSkin().getOwner().toString()
+            );
             configuration.set(section + "." + duplicate.getConfigurationKey() + ".acquirers", duplicate.getAcquirers());
             save();
         }
         StoredSkin newDuplicate = newStoredSkin.duplicate();
-        newDuplicate.addAcquirer(player.getUniqueId());
-        if (configuration.getString(section + "." + newDuplicate.getConfigurationKey() + ".texture") == null) {
-            configuration.set(
-                    section + "." + newDuplicate.getConfigurationKey() + ".texture",
-                    newDuplicate.getSkin().getTexture()
-            );
-            configuration.set(
-                    section + "." + newDuplicate.getConfigurationKey() + ".signature",
-                    newDuplicate.getSkin().getSignature()
-            );
-            configuration.set(
-                    section + "." + newDuplicate.getConfigurationKey() + ".owner",
-                    newDuplicate.getSkin().getOwner().toString()
-            );
-        }
+        newDuplicate.addAcquirer(player);
+        configuration.set(
+                section + "." + newDuplicate.getConfigurationKey() + ".texture",
+                newDuplicate.getSkin().getTexture()
+        );
+        configuration.set(
+                section + "." + newDuplicate.getConfigurationKey() + ".signature",
+                newDuplicate.getSkin().getSignature()
+        );
+        configuration.set(
+                section + "." + newDuplicate.getConfigurationKey() + ".owner",
+                newDuplicate.getSkin().getOwner().toString()
+        );
         configuration.set(
                 section + "." + newDuplicate.getConfigurationKey() + ".acquirers",
                 newDuplicate.getAcquirers()

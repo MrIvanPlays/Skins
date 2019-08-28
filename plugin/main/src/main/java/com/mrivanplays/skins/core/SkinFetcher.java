@@ -82,7 +82,7 @@ public class SkinFetcher {
         }
     }
 
-    private CompletableFuture<MojangResponse> apiFetch(
+    public CompletableFuture<MojangResponse> apiFetch(
             String name,
             UUID uuid
     ) {
@@ -123,13 +123,39 @@ public class SkinFetcher {
     }
 
     public MojangResponse getSkin(String name) {
-        UUIDFetcher uuidFetcher = UUIDFetcher.createOrGet(name);
-        UUIDFetcher.Callback callback = uuidFetcher.retrieveUUID().join();
-        if (callback.getUUID().isPresent()) {
-            return getSkin(name, callback.getUUID().get());
+        UUID fetchedUUID = fetchUUID(name);
+        if (fetchedUUID != null) {
+            return getSkin(name, fetchedUUID);
         } else {
             return new MojangResponse(name, null, null);
         }
+    }
+
+    public UUID fetchUUID(String name) {
+        UUIDFetcher uuidFetcher = UUIDFetcher.createOrGet(name);
+        UUIDFetcher.Callback callback = uuidFetcher.retrieveUUID().join();
+        if (callback.getUUID().isPresent()) {
+            return callback.getUUID().get();
+        }
+        return null;
+    }
+
+    public CompletableFuture<String> fetchName(UUID uuid) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                URL url = new URL(
+                        "https://api.mojang.com/user/profiles/" + uuid.toString().replace("-", "") + "/names"
+                );
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                JsonArray names = new JsonParser()
+                        .parse(new InputStreamReader(connection.getInputStream()))
+                        .getAsJsonArray();
+                JsonObject lastName = names.get(names.size() - 1).getAsJsonObject();
+                return lastName.get("name").getAsString();
+            } catch (Exception e) {
+                return "";
+            }
+        });
     }
 
     private boolean contains(MojangResponse response) {

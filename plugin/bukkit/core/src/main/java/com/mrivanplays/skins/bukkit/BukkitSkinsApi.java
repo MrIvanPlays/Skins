@@ -52,7 +52,7 @@ public class BukkitSkinsApi extends AbstractSkinsApi {
         Optional<StoredSkin> newStoredSkin = getSkinStorage().getStoredSkin(skin.getOwner());
         if (newStoredSkin.isPresent()) {
             StoredSkin skinStored = newStoredSkin.get();
-            getSkinStorage().modifyStoredSkin(player, skinStored);
+            getSkinStorage().modifyStoredSkin(player.getUniqueId(), skinStored);
         } else {
             Set<String> keys = getSkinStorage().getKeys();
             List<Integer> keysAsInts = keys.stream().map(Integer::parseInt).collect(Collectors.toList());
@@ -74,7 +74,7 @@ public class BukkitSkinsApi extends AbstractSkinsApi {
             keysAsInts.clear();
             keys.clear();
             StoredSkin skinStored = new StoredSkin(skin, Integer.toString(biggestNumber + 1));
-            getSkinStorage().modifyStoredSkin(player, skinStored);
+            getSkinStorage().modifyStoredSkin(player.getUniqueId(), skinStored);
         }
         plugin.getSkinSetter().setSkin(player, skin);
         return true;

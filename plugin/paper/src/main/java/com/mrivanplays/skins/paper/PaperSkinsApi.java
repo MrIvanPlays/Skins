@@ -48,7 +48,7 @@ public class PaperSkinsApi extends AbstractSkinsApi {
         Optional<StoredSkin> newStoredSkin = getSkinStorage().getStoredSkin(skin.getOwner());
         if (newStoredSkin.isPresent()) {
             StoredSkin skinStored = newStoredSkin.get();
-            getSkinStorage().modifyStoredSkin(player, skinStored);
+            getSkinStorage().modifyStoredSkin(player.getUniqueId(), skinStored);
         } else {
             Set<String> keys = getSkinStorage().getKeys();
             List<Integer> keysAsInts = keys.stream().map(Integer::parseInt).collect(Collectors.toList());
@@ -70,7 +70,7 @@ public class PaperSkinsApi extends AbstractSkinsApi {
             keysAsInts.clear();
             keys.clear();
             StoredSkin skinStored = new StoredSkin(skin, Integer.toString(biggestNumber + 1));
-            getSkinStorage().modifyStoredSkin(player, skinStored);
+            getSkinStorage().modifyStoredSkin(player.getUniqueId(), skinStored);
         }
         PlayerProfile profile = player.getPlayerProfile();
         profile.setProperty(new ProfileProperty("textures", skin.getTexture(), skin.getSignature()));

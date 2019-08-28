@@ -23,6 +23,8 @@ package com.mrivanplays.skins;
 import com.mrivanplays.skins.api.SkinsApi;
 import com.mrivanplays.skins.bukkit.SkinsBukkit;
 import com.mrivanplays.skins.core.AbstractSkinsApi;
+import com.mrivanplays.skins.core.SkinFetcher;
+import com.mrivanplays.skins.core.SkinStorage;
 import com.mrivanplays.skins.paper.SkinsPaper;
 import com.mrivanplays.skins.protocolsupport.ProtocolSupportSkinSetter;
 import com.mrivanplays.skins.protocolsupport.SkinsProtocolSupport;
@@ -36,6 +38,8 @@ public class SkinsBukkitPlugin extends JavaPlugin {
 
     private SkinsApi api;
     private boolean disabled = false;
+    private SkinStorage skinStorage;
+    private SkinFetcher skinFetcher;
 
     @Override
     public void onLoad() {
@@ -85,16 +89,15 @@ public class SkinsBukkitPlugin extends JavaPlugin {
         CommandSkinReload commandSkinReload = new CommandSkinReload(this);
         getCommand("skinreload").setExecutor(commandSkinReload);
         getCommand("skinreload").setTabCompleter(commandSkinReload);
+        AbstractSkinsApi abstractSkinsApi = (AbstractSkinsApi) api;
+        skinFetcher = abstractSkinsApi.getSkinFetcher();
+        skinStorage = abstractSkinsApi.getSkinStorage();
         if (!isProtocolSupport()) {
             getServer().getPluginManager().registerEvents(new DefaultSkinSetListener(this), this);
             getLogger().info("Running on " + PaperLib.getEnvironment().getName());
         } else {
-            AbstractSkinsApi abstractSkinsApi = (AbstractSkinsApi) api;
             getServer().getPluginManager()
-                    .registerEvents(new ProtocolSupportSkinSetter(
-                            abstractSkinsApi.getSkinStorage(),
-                            abstractSkinsApi.getSkinFetcher()
-                    ), this);
+                    .registerEvents(new ProtocolSupportSkinSetter(skinStorage, skinFetcher), this);
             getLogger().info("Running on " + PaperLib.getEnvironment().getName() + " & ProtocolSupport");
         }
         new UpdateCheckerSetup(this, "skins.updatenotify").setup();
@@ -106,6 +109,14 @@ public class SkinsBukkitPlugin extends JavaPlugin {
 
     public String color(String text) {
         return ChatColor.translateAlternateColorCodes('&', text);
+    }
+
+    public SkinStorage getSkinStorage() {
+        return skinStorage;
+    }
+
+    public SkinFetcher getSkinFetcher() {
+        return skinFetcher;
     }
 
     private boolean isProtocolSupport() {
