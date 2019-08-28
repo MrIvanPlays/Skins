@@ -1,10 +1,12 @@
 name: Skins
 description: Skins plugin
 main: com.mrivanplays.skins.SkinsBukkitPlugin
-version: 1.0.0
+version: 1.1.0
 api-version: 1.13
 authors:
   - MrIvanPlays
+softdepend:
+  - ProtocolSupport
 
 commands:
   skinset:

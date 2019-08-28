@@ -97,6 +97,7 @@ public class SkinsBukkitPlugin extends JavaPlugin {
         } else {
             getLogger().info("Running on " + PaperLib.getEnvironment().getName() + " & ProtocolSupport");
         }
+        new UpdateCheckerSetup(this, "skins.updatenotify").setup();
     }
 
     public SkinsApi getApi() {
