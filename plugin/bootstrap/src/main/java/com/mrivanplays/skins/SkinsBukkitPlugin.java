@@ -40,6 +40,7 @@ public class SkinsBukkitPlugin extends JavaPlugin {
     private boolean disabled = false;
     private SkinStorage skinStorage;
     private SkinFetcher skinFetcher;
+    private AbstractSkinsApi abstractSkinsApi;
 
     @Override
     public void onLoad() {
@@ -83,15 +84,15 @@ public class SkinsBukkitPlugin extends JavaPlugin {
         }
         PaperLib.suggestPaper(this);
         saveDefaultConfig();
+        abstractSkinsApi = (AbstractSkinsApi) api;
+        skinFetcher = abstractSkinsApi.getSkinFetcher();
+        skinStorage = abstractSkinsApi.getSkinStorage();
         CommandSkinSet commandSkinSet = new CommandSkinSet(this);
         getCommand("skinset").setExecutor(commandSkinSet);
         getCommand("skinset").setTabCompleter(commandSkinSet);
         CommandSkinReload commandSkinReload = new CommandSkinReload(this);
         getCommand("skinreload").setExecutor(commandSkinReload);
         getCommand("skinreload").setTabCompleter(commandSkinReload);
-        AbstractSkinsApi abstractSkinsApi = (AbstractSkinsApi) api;
-        skinFetcher = abstractSkinsApi.getSkinFetcher();
-        skinStorage = abstractSkinsApi.getSkinStorage();
         if (!isProtocolSupport()) {
             getServer().getPluginManager().registerEvents(new DefaultSkinSetListener(this), this);
             getLogger().info("Running on " + PaperLib.getEnvironment().getName());
@@ -103,8 +104,8 @@ public class SkinsBukkitPlugin extends JavaPlugin {
         new UpdateCheckerSetup(this, "skins.updatenotify").setup();
     }
 
-    public SkinsApi getApi() {
-        return api;
+    public AbstractSkinsApi getApi() {
+        return abstractSkinsApi;
     }
 
     public String color(String text) {

@@ -49,6 +49,12 @@ public abstract class AbstractSkinsApi implements SkinsApi {
         return skinFetcher.getSkin(username);
     }
 
+    public abstract void setSkin(
+            Player player,
+            Skin skin,
+            String name
+    );
+
     public SkinFetcher getSkinFetcher() {
         return skinFetcher;
     }

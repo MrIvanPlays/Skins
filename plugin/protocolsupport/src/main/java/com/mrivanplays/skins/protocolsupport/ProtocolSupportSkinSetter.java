@@ -56,7 +56,7 @@ public class ProtocolSupportSkinSetter implements Listener {
         if (storedSkinOptional.isPresent()) {
             StoredSkin storedSkin = storedSkinOptional.get();
             Skin skin = storedSkin.getSkin();
-            Skin setSkin = checkForSkinUpdate(skinFetcher.fetchName(skin.getOwner()).join(), skin);
+            Skin setSkin = checkForSkinUpdate(storedSkin.getName(), skin);
             StoredSkin newStoredSkin = storedSkin.duplicate();
             newStoredSkin.setSkin(setSkin);
             skinStorage.modifyStoredSkin(profile.getUUID(), newStoredSkin);
@@ -92,7 +92,11 @@ public class ProtocolSupportSkinSetter implements Listener {
                     }
                     keysAsInts.clear();
                     keys.clear();
-                    StoredSkin storedSkin = new StoredSkin(setSkin, Integer.toString(biggestNumber + 1));
+                    StoredSkin storedSkin = new StoredSkin(
+                            setSkin,
+                            Integer.toString(biggestNumber + 1),
+                            profile.getName()
+                    );
                     storedSkin.addAcquirer(profile.getUUID());
                     skinStorage.modifyStoredSkin(profile.getUUID(), storedSkin);
                 }

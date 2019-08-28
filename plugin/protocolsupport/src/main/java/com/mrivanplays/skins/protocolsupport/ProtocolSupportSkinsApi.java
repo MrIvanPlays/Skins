@@ -39,9 +39,18 @@ public class ProtocolSupportSkinsApi extends AbstractSkinsApi {
     }
 
     @Override
-    public boolean setSkin(
+    public void setSkin(
             @NotNull Player player,
             @NotNull Skin skin
+    ) {
+        setSkin(player, skin, getSkinFetcher().fetchName(skin.getOwner()).join());
+    }
+
+    @Override
+    public void setSkin(
+            Player player,
+            Skin skin,
+            String name
     ) {
         Optional<StoredSkin> newStoredSkin = getSkinStorage().getStoredSkin(skin.getOwner());
         if (newStoredSkin.isPresent()) {
@@ -67,9 +76,12 @@ public class ProtocolSupportSkinsApi extends AbstractSkinsApi {
             }
             keysAsInts.clear();
             keys.clear();
-            StoredSkin skinStored = new StoredSkin(skin, Integer.toString(biggestNumber + 1));
+            StoredSkin skinStored = new StoredSkin(
+                    skin,
+                    Integer.toString(biggestNumber + 1),
+                    name
+            );
             getSkinStorage().modifyStoredSkin(player.getUniqueId(), skinStored);
         }
-        return true;
     }
 }

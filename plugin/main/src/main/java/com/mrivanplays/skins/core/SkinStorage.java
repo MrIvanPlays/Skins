@@ -90,6 +90,10 @@ public class SkinStorage {
                     section + "." + duplicate.getConfigurationKey() + ".owner",
                     duplicate.getSkin().getOwner().toString()
             );
+            configuration.set(
+                    section + "." + duplicate.getConfigurationKey() + ".ownerName",
+                    duplicate.getName()
+            );
             configuration.set(section + "." + duplicate.getConfigurationKey() + ".acquirers", duplicate.getAcquirers());
             save();
         }
@@ -106,6 +110,10 @@ public class SkinStorage {
         configuration.set(
                 section + "." + newDuplicate.getConfigurationKey() + ".owner",
                 newDuplicate.getSkin().getOwner().toString()
+        );
+        configuration.set(
+                section + "." + newDuplicate.getConfigurationKey() + ".ownerName",
+                newDuplicate.getName()
         );
         configuration.set(
                 section + "." + newDuplicate.getConfigurationKey() + ".acquirers",
@@ -129,10 +137,11 @@ public class SkinStorage {
         Set<String> keys = getKeys();
         for (String key : keys) {
             UUID skinOwner = UUID.fromString(configuration.getString(section + "." + key + ".owner"));
+            String ownerName = configuration.getString(section + "." + key + ".ownerName");
             String texture = configuration.getString(section + "." + key + ".texture");
             String signature = configuration.getString(section + "." + key + ".signature");
             List<String> acquirers = configuration.getStringList(section + "." + key + ".acquirers");
-            StoredSkin storedSkin = new StoredSkin(new Skin(skinOwner, texture, signature), acquirers, key);
+            StoredSkin storedSkin = new StoredSkin(new Skin(skinOwner, texture, signature), acquirers, key, ownerName);
             storedSkins.add(storedSkin);
         }
         return storedSkins;

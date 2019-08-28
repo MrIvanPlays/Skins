@@ -69,9 +69,8 @@ public interface SkinsApi {
      *
      * @param player the player you want to set the skin of
      * @param skin the skin you want to set on the player
-     * @return success state
      */
-    boolean setSkin(
+    void setSkin(
             @NotNull Player player,
             @NotNull Skin skin
     );

@@ -22,6 +22,7 @@ package com.mrivanplays.skins;
 
 import com.mrivanplays.skins.api.MojangResponse;
 import com.mrivanplays.skins.api.Skin;
+import com.mrivanplays.skins.core.StoredSkin;
 import java.util.Optional;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -39,13 +40,11 @@ public class DefaultSkinSetListener implements Listener {
     @EventHandler
     public void on(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        Optional<Skin> setSkin = plugin.getApi().getSetSkin(player);
-        if (setSkin.isPresent()) {
-            Skin skin = setSkin.get();
-            plugin.getApi().setSkin(
-                    player,
-                    checkForSkinUpdate(plugin.getSkinFetcher().fetchName(skin.getOwner()).join(), skin)
-            );
+        Optional<StoredSkin> storedSkinOptional = plugin.getSkinStorage().getPlayerSetSkin(player.getUniqueId());
+        if (storedSkinOptional.isPresent()) {
+            StoredSkin storedSkin = storedSkinOptional.get();
+            Skin skin = storedSkin.getSkin();
+            plugin.getApi().setSkin(player, checkForSkinUpdate(storedSkin.getName(), skin));
         } else {
             Optional<Skin> skinOptional = plugin.getApi().getOriginalSkin(player);
             if (!skinOptional.isPresent()) {
