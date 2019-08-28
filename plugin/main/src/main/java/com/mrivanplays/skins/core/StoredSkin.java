@@ -29,17 +29,23 @@ public class StoredSkin {
 
     private final Skin skin;
     private final List<String> acquirers;
+    private final String configurationKey;
 
-    public StoredSkin(Skin skin) {
-        this(skin, new ArrayList<>());
+    public StoredSkin(
+            Skin skin,
+            String configurationKey
+    ) {
+        this(skin, new ArrayList<>(), configurationKey);
     }
 
     public StoredSkin(
             Skin skin,
-            List<String> acquirers
+            List<String> acquirers,
+            String configurationKey
     ) {
         this.skin = skin;
         this.acquirers = acquirers;
+        this.configurationKey = configurationKey;
     }
 
     public Skin getSkin() {
@@ -62,7 +68,11 @@ public class StoredSkin {
         }
     }
 
+    public String getConfigurationKey() {
+        return configurationKey;
+    }
+
     public StoredSkin duplicate() {
-        return new StoredSkin(skin, acquirers);
+        return new StoredSkin(skin, acquirers, configurationKey);
     }
 }

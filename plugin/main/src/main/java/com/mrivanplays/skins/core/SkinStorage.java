@@ -20,32 +20,30 @@
  **/
 package com.mrivanplays.skins.core;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
+import com.mrivanplays.skins.api.Skin;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 public class SkinStorage {
 
     private final File file;
-    private final Gson gson;
+    private final FileConfiguration configuration;
+    private final String section;
 
     public SkinStorage(File dataFolder) {
-        file = new File(dataFolder, "skinstorage.json");
+        file = new File(dataFolder, "skinstorage.yml");
         createFile();
-        gson = new Gson();
+        configuration = YamlConfiguration.loadConfiguration(file);
+        section = "skins";
     }
 
     public Optional<StoredSkin> getStoredSkin(UUID owner) {
@@ -65,47 +63,72 @@ public class SkinStorage {
             StoredSkin newStoredSkin
     ) {
         Optional<StoredSkin> currentStoredSkin = getPlayerSetSkin(player.getUniqueId());
-        Set<StoredSkin> storedSkins = new HashSet<>(deserialize());
         if (currentStoredSkin.isPresent()) {
             StoredSkin skin = currentStoredSkin.get();
             StoredSkin duplicate = skin.duplicate();
-            storedSkins.remove(skin);
             duplicate.removeAcquirer(player.getUniqueId());
-            storedSkins.add(duplicate);
+            if (configuration.getString(section + "." + duplicate.getConfigurationKey() + ".texture") == null) {
+                configuration.set(
+                        section + "." + duplicate.getConfigurationKey() + ".texture",
+                        duplicate.getSkin().getTexture()
+                );
+                configuration.set(
+                        section + "." + duplicate.getConfigurationKey() + ".signature",
+                        duplicate.getSkin().getSignature()
+                );
+                configuration.set(
+                        section + "." + duplicate.getConfigurationKey() + ".owner",
+                        duplicate.getSkin().getOwner().toString()
+                );
+            }
+            configuration.set(section + "." + duplicate.getConfigurationKey() + ".acquirers", duplicate.getAcquirers());
+            save();
         }
         StoredSkin newDuplicate = newStoredSkin.duplicate();
-        storedSkins.remove(newStoredSkin);
         newDuplicate.addAcquirer(player.getUniqueId());
-        storedSkins.add(newDuplicate);
-        serialize(storedSkins);
+        if (configuration.getString(section + "." + newDuplicate.getConfigurationKey() + ".texture") == null) {
+            configuration.set(
+                    section + "." + newDuplicate.getConfigurationKey() + ".texture",
+                    newDuplicate.getSkin().getTexture()
+            );
+            configuration.set(
+                    section + "." + newDuplicate.getConfigurationKey() + ".signature",
+                    newDuplicate.getSkin().getSignature()
+            );
+            configuration.set(
+                    section + "." + newDuplicate.getConfigurationKey() + ".owner",
+                    newDuplicate.getSkin().getOwner().toString()
+            );
+        }
+        configuration.set(
+                section + "." + newDuplicate.getConfigurationKey() + ".acquirers",
+                newDuplicate.getAcquirers()
+        );
+        save();
     }
 
-    private void serialize(Set<StoredSkin> storedSkin) {
-        file.delete();
-        createFile();
-        try (Writer writer = new OutputStreamWriter(new FileOutputStream(file))) {
-            gson.toJson(storedSkin, writer);
-        } catch (IOException ignored) {
+    public Set<String> getKeys() {
+        if (!configuration.isSet(section)) {
+            return Collections.emptySet();
         }
+        return configuration.getConfigurationSection(section).getKeys(false);
     }
 
-    private Set<StoredSkin> deserialize() {
-        Set<StoredSkin> list = new HashSet<>();
-        try (Reader reader = new InputStreamReader(new FileInputStream(file))) {
-            JsonArray array = gson.fromJson(reader, JsonArray.class);
-            if (array == null || array.size() == 0) {
-                return list;
-            }
-            for (JsonElement element : array) {
-                if (!element.isJsonObject()) {
-                    return list;
-                }
-                list.add(gson.fromJson(element.getAsJsonObject(), StoredSkin.class));
-            }
-        } catch (IOException e) {
-            return list;
+    private List<StoredSkin> deserialize() {
+        List<StoredSkin> storedSkins = new ArrayList<>();
+        if (!configuration.isSet(section)) {
+            return storedSkins;
         }
-        return list;
+        Set<String> keys = getKeys();
+        for (String key : keys) {
+            UUID skinOwner = UUID.fromString(configuration.getString(section + "." + key + ".owner"));
+            String texture = configuration.getString(section + "." + key + ".texture");
+            String signature = configuration.getString(section + "." + key + ".signature");
+            List<String> acquirers = configuration.getStringList(section + "." + key + ".acquirers");
+            StoredSkin storedSkin = new StoredSkin(new Skin(skinOwner, texture, signature), acquirers, key);
+            storedSkins.add(storedSkin);
+        }
+        return storedSkins;
     }
 
     private void createFile() {
@@ -117,6 +140,13 @@ public class SkinStorage {
                 file.createNewFile();
             } catch (IOException ignored) {
             }
+        }
+    }
+
+    private void save() {
+        try {
+            configuration.save(file);
+        } catch (IOException ignored) {
         }
     }
 }

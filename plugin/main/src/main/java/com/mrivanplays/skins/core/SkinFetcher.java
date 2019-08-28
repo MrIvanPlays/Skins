@@ -29,15 +29,15 @@ import com.mrivanplays.skins.api.Skin;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class SkinFetcher {
 
-    private final Set<MojangResponse> knownResponces = new HashSet<>();
+    private final List<MojangResponse> knownResponses = new ArrayList<>();
     private final SkinStorage skinStorage;
 
     public SkinFetcher(SkinStorage skinStorage) {
@@ -48,8 +48,8 @@ public class SkinFetcher {
             String name,
             UUID uuid
     ) {
-        Optional<MojangResponse> search = knownResponces.stream()
-                .filter(response -> response.getNickname().equalsIgnoreCase(name))
+        Optional<MojangResponse> search = knownResponses.stream()
+                .filter(response -> response.getNickname().toLowerCase().equalsIgnoreCase(name.toLowerCase()))
                 .findFirst();
         if (search.isPresent()) {
             MojangResponse response = search.get();
@@ -60,18 +60,24 @@ public class SkinFetcher {
                 if (storedSkin.isPresent()) {
                     StoredSkin sskin = storedSkin.get();
                     MojangResponse mojangResponse = new MojangResponse(name, uuid, sskin.getSkin());
-                    knownResponces.add(mojangResponse);
+                    if (!contains(mojangResponse)) {
+                        knownResponses.add(mojangResponse);
+                    }
                     return mojangResponse;
                 } else {
-                    knownResponces.remove(response);
+                    knownResponses.remove(response);
                     MojangResponse apiFetch = apiFetch(name, uuid).join();
-                    knownResponces.add(apiFetch);
+                    if (!contains(apiFetch)) {
+                        knownResponses.add(apiFetch);
+                    }
                     return apiFetch;
                 }
             }
         } else {
             MojangResponse response = apiFetch(name, uuid).join();
-            knownResponces.add(response);
+            if (!contains(response)) {
+                knownResponses.add(response);
+            }
             return response;
         }
     }
@@ -124,5 +130,14 @@ public class SkinFetcher {
         } else {
             return new MojangResponse(name, null, null);
         }
+    }
+
+    private boolean contains(MojangResponse response) {
+        return knownResponses.stream()
+                .anyMatch(storage ->
+                        storage.getNickname().toLowerCase().equalsIgnoreCase(
+                                response.getNickname().toLowerCase()
+                        )
+                );
     }
 }

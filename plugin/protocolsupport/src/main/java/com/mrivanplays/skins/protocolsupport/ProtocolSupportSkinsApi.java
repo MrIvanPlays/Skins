@@ -24,7 +24,11 @@ import com.mrivanplays.skins.api.Skin;
 import com.mrivanplays.skins.core.AbstractSkinsApi;
 import com.mrivanplays.skins.core.StoredSkin;
 import java.io.File;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,7 +48,26 @@ public class ProtocolSupportSkinsApi extends AbstractSkinsApi {
             StoredSkin skinStored = newStoredSkin.get();
             getSkinStorage().modifyStoredSkin(player, skinStored);
         } else {
-            StoredSkin skinStored = new StoredSkin(skin);
+            Set<String> keys = getSkinStorage().getKeys();
+            List<Integer> keysAsInts = keys.stream().map(Integer::parseInt).collect(Collectors.toList());
+            keysAsInts.sort(new Comparator<Integer>() {
+                @Override
+                public int compare(
+                        Integer o1,
+                        Integer o2
+                ) {
+                    return Integer.compare(o1, o2);
+                }
+            }.reversed());
+            int biggestNumber;
+            if (keysAsInts.isEmpty()) {
+                biggestNumber = 0;
+            } else {
+                biggestNumber = keysAsInts.get(0);
+            }
+            keysAsInts.clear();
+            keys.clear();
+            StoredSkin skinStored = new StoredSkin(skin, Integer.toString(biggestNumber + 1));
             getSkinStorage().modifyStoredSkin(player, skinStored);
         }
         return true;
