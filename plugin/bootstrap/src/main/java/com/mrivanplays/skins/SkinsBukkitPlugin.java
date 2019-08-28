@@ -46,12 +46,6 @@ public class SkinsBukkitPlugin extends JavaPlugin {
             SkinsProtocolSupport plugin = new SkinsProtocolSupport();
             plugin.enable(getDataFolder());
             api = plugin.getApi();
-            AbstractSkinsApi abstractSkinsApi = (AbstractSkinsApi) api;
-            getServer().getPluginManager()
-                    .registerEvents(new ProtocolSupportSkinSetter(
-                            abstractSkinsApi.getSkinStorage(),
-                            abstractSkinsApi.getSkinFetcher()
-                    ), this);
         } else {
             if (!PaperLib.isPaper()) {
                 SkinsBukkit skinsBukkit = new SkinsBukkit();
@@ -95,6 +89,12 @@ public class SkinsBukkitPlugin extends JavaPlugin {
             getServer().getPluginManager().registerEvents(new DefaultSkinSetListener(this), this);
             getLogger().info("Running on " + PaperLib.getEnvironment().getName());
         } else {
+            AbstractSkinsApi abstractSkinsApi = (AbstractSkinsApi) api;
+            getServer().getPluginManager()
+                    .registerEvents(new ProtocolSupportSkinSetter(
+                            abstractSkinsApi.getSkinStorage(),
+                            abstractSkinsApi.getSkinFetcher()
+                    ), this);
             getLogger().info("Running on " + PaperLib.getEnvironment().getName() + " & ProtocolSupport");
         }
         new UpdateCheckerSetup(this, "skins.updatenotify").setup();
