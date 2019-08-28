@@ -3,6 +3,17 @@ Plugin created by MrIvanPlays
 
 Supports 1.13.2 & 1.14.x
 
+Spigot page: https://www.spigotmc.org/resources/skins-1-13-2-1-14-x.70829/
+
+## Development builds
+Usually development builds are not recommended for a big server as they may contain
+a bunch of bugs. It is better to use a stable build which you can find at
+[spigot](https://www.spigotmc.org/resources/skins-1-13-2-1-14-x.70829/)
+
+Retrieving a development build can be easily done by cloning the repository, then
+cd into the base directory, then run `mvn package`, retrieving jar from 
+`plugin/bootstrap/target`
+
 ## Developer API
 
 #### Installation with maven:
@@ -53,9 +64,3 @@ public class MyMainClass extends JavaPlugin {
     }
 }
 ```
-
-## Getting a jar
-(27.08.2019)
-The plugin's gonna be soon published at spigot, we need only to add one more thing, but
-if you want jar right now, you can clone the repo, cd into the basedir, run `mvn package`, then
-get a jar from `plugin/bootstrap/target`
