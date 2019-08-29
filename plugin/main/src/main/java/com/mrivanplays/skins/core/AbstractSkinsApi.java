@@ -49,6 +49,14 @@ public abstract class AbstractSkinsApi implements SkinsApi {
         return skinFetcher.getSkin(username);
     }
 
+    @Override
+    public void setSkin(
+            @NotNull Player player,
+            @NotNull Skin skin
+    ) {
+        setSkin(player, skin, skinFetcher.fetchName(skin.getOwner()).join());
+    }
+
     public abstract void setSkin(
             Player player,
             Skin skin,

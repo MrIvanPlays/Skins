@@ -30,7 +30,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 public class BukkitSkinsApi extends AbstractSkinsApi {
 
@@ -42,14 +41,6 @@ public class BukkitSkinsApi extends AbstractSkinsApi {
     ) {
         super(dataFolder);
         this.plugin = plugin;
-    }
-
-    @Override
-    public void setSkin(
-            @NotNull Player player,
-            @NotNull Skin skin
-    ) {
-        setSkin(player, skin, getSkinFetcher().fetchName(skin.getOwner()).join());
     }
 
     @Override

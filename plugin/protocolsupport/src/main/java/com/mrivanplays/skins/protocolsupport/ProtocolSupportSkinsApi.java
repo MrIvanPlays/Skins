@@ -30,20 +30,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 public class ProtocolSupportSkinsApi extends AbstractSkinsApi {
 
     public ProtocolSupportSkinsApi(File dataFolder) {
         super(dataFolder);
-    }
-
-    @Override
-    public void setSkin(
-            @NotNull Player player,
-            @NotNull Skin skin
-    ) {
-        setSkin(player, skin, getSkinFetcher().fetchName(skin.getOwner()).join());
     }
 
     @Override
