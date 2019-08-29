@@ -22,13 +22,7 @@ package com.mrivanplays.skins.bukkit;
 
 import com.mrivanplays.skins.api.Skin;
 import com.mrivanplays.skins.core.AbstractSkinsApi;
-import com.mrivanplays.skins.core.StoredSkin;
 import java.io.File;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.bukkit.entity.Player;
 
 public class BukkitSkinsApi extends AbstractSkinsApi {
@@ -44,42 +38,10 @@ public class BukkitSkinsApi extends AbstractSkinsApi {
     }
 
     @Override
-    public void setSkin(
+    protected void setNPCSkin(
             Player player,
-            Skin skin,
-            String name
+            Skin skin
     ) {
-        Optional<StoredSkin> newStoredSkin = getSkinStorage().getStoredSkin(skin.getOwner());
-        if (newStoredSkin.isPresent()) {
-            StoredSkin skinStored = newStoredSkin.get();
-            getSkinStorage().modifyStoredSkin(player.getUniqueId(), skinStored);
-        } else {
-            Set<String> keys = getSkinStorage().getKeys();
-            List<Integer> keysAsInts = keys.stream().map(Integer::parseInt).collect(Collectors.toList());
-            keysAsInts.sort(new Comparator<Integer>() {
-                @Override
-                public int compare(
-                        Integer o1,
-                        Integer o2
-                ) {
-                    return Integer.compare(o1, o2);
-                }
-            }.reversed());
-            int biggestNumber;
-            if (keysAsInts.isEmpty()) {
-                biggestNumber = 0;
-            } else {
-                biggestNumber = keysAsInts.get(0);
-            }
-            keysAsInts.clear();
-            keys.clear();
-            StoredSkin skinStored = new StoredSkin(
-                    skin,
-                    Integer.toString(biggestNumber + 1),
-                    name
-            );
-            getSkinStorage().modifyStoredSkin(player.getUniqueId(), skinStored);
-        }
         plugin.getSkinSetter().setSkin(player, skin);
     }
 }
