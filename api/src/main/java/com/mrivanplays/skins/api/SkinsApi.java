@@ -28,7 +28,8 @@ public interface SkinsApi {
     /**
      * Gets the player's server set skin. This could also return
      * {@link #getOriginalSkin(Player)} due to how the plugin
-     * handles storing skins.
+     * handles storing skins (to check that you can call
+     * {@link #isSetSkinOriginal(Player)})
      *
      * @param player the player you want to get the set skin of
      * @return optional of skin if the player have changed their skin, empty optional otherwise
@@ -48,6 +49,27 @@ public interface SkinsApi {
     default Optional<Skin> getOriginalSkin(@NotNull Player player) {
         MojangResponse response = getSkin(player.getName());
         return Optional.ofNullable(response.getSkin().isPresent() ? response.getSkin().get() : null);
+    }
+
+    /**
+     * Returns whenever the set skin of the specified {@link Player}
+     * equals his original skin.
+     *
+     * @param player the player you want to check's skin
+     * @return <code>true</code> if equal, <code>false</code> otherwise
+     */
+    default boolean isSetSkinOriginal(@NotNull Player player) {
+        Optional<Skin> setSkinOpt = getSetSkin(player);
+        Optional<Skin> originalSkinOpt = getOriginalSkin(player);
+        if (!setSkinOpt.isPresent()) {
+            return false;
+        }
+        if (!originalSkinOpt.isPresent()) {
+            return false;
+        }
+        Skin setSkin = setSkinOpt.get();
+        Skin originalSkin = originalSkinOpt.get();
+        return setSkin.equals(originalSkin);
     }
 
     /**

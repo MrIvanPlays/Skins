@@ -70,4 +70,16 @@ public final class Skin {
     public String getSignature() {
         return signature;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Skin)) {
+            return false;
+        }
+        Skin other = (Skin) o;
+        // signature not included as this may differ
+        // because the mojang api is returning different signature
+        // after 2-3 requests
+        return other.getOwner().equals(owner) && other.getTexture().equalsIgnoreCase(texture);
+    }
 }
