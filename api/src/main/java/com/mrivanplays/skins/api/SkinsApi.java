@@ -38,7 +38,9 @@ public interface SkinsApi {
     /**
      * Gets the player's skin, which is set on the premium account of this
      * player. This might be null if the specified player's nickname has no
-     * premium account.
+     * premium account. Also keep in mind that the skin given could not be
+     * updated as the already fetched skins get cached and get updated when
+     * ./skinset or a join from the specified skin name occurs.
      *
      * @param player the player you want to get the original skin of
      * @return optional of skin if this player is in mojang's database, empty optional otherwise
