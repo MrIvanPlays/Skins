@@ -53,6 +53,10 @@ public class ProtocolSupportSkinSetter implements Listener {
             StoredSkin storedSkin = storedSkinOptional.get();
             Skin skin = storedSkin.getSkin();
             Skin setSkin = checkForSkinUpdate(storedSkin.getName(), skin);
+            if (skin.equals(setSkin)) {
+                event.addProperty(new ProfileProperty("textures", skin.getTexture(), skin.getSignature()));
+                return;
+            }
             StoredSkin newStoredSkin = storedSkin.duplicate();
             newStoredSkin.setSkin(setSkin);
             skinStorage.modifyStoredSkin(profile.getUUID(), newStoredSkin);
@@ -65,6 +69,14 @@ public class ProtocolSupportSkinSetter implements Listener {
                 Optional<StoredSkin> playerOriginal = skinStorage.getStoredSkin(setSkin.getOwner());
                 if (playerOriginal.isPresent()) {
                     StoredSkin storedSkin = playerOriginal.get();
+                    if (storedSkin.getSkin().equals(setSkin)) {
+                        event.addProperty(new ProfileProperty(
+                                "textures",
+                                setSkin.getTexture(),
+                                setSkin.getSignature()
+                        ));
+                        return;
+                    }
                     StoredSkin duplicate = storedSkin.duplicate();
                     duplicate.setSkin(setSkin);
                     skinStorage.modifySkin(storedSkin);
