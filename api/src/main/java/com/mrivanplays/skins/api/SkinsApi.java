@@ -84,6 +84,18 @@ public interface SkinsApi {
    *
    * @param player the player you want to set the skin of
    * @param skin the skin you want to set on the player
+   * @deprecated always fetches name from mojang api. The alternative is {@link #setSkin(Player,
+   *     MojangResponse)}
    */
+  @Deprecated
   void setSkin(@NotNull Player player, @NotNull Skin skin);
+
+  /**
+   * Sets the skin of the specified player.
+   *
+   * @param player the player you want to set the skin of
+   * @param skin the skin in mojang responce form that you want to set on the player
+   * @return whether or not the skin change was successful
+   */
+  boolean setSkin(@NotNull Player player, @NotNull MojangResponse skin);
 }

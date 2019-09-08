@@ -54,6 +54,16 @@ public abstract class AbstractSkinsApi implements SkinsApi {
     setSkin(player, skin, skinFetcher.fetchName(skin.getOwner()).join());
   }
 
+  @Override
+  public boolean setSkin(@NotNull Player player, @NotNull MojangResponse skin) {
+    if (skin.getSkin().isPresent()) {
+      setSkin(player, skin.getSkin().get(), skin.getNickname());
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   public void setSkin(Player player, Skin skin, String name) {
     Optional<StoredSkin> newStoredSkin = skinStorage.getStoredSkin(skin.getOwner());
     if (newStoredSkin.isPresent()) {
