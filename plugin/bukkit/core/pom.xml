@@ -1,54 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>skins-plugin-bukkit</artifactId>
-        <groupId>com.mrivanplays</groupId>
-        <version>dev</version>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>skins-plugin-bukkit</artifactId>
+    <groupId>com.mrivanplays</groupId>
+    <version>dev</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>skins-plugin-bukkit-core</artifactId>
-    <version>1.1.2</version>
-    <packaging>jar</packaging>
+  <artifactId>skins-plugin-bukkit-core</artifactId>
+  <version>1.1.2</version>
+  <packaging>jar</packaging>
 
-    <name>Skins-Plugin-Bukkit-Core</name>
-    <description>Core side of the bukkit implementation of Skins plugin</description>
+  <name>Skins-Plugin-Bukkit-Core</name>
+  <description>Core side of the bukkit implementation of Skins plugin</description>
 
-    <build>
-        <defaultGoal>clean package</defaultGoal>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+  <build>
+    <defaultGoal>clean package</defaultGoal>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.mrivanplays</groupId>
-            <artifactId>skins-plugin-core</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.mrivanplays</groupId>
-            <artifactId>skins-plugin-bukkit-abstraction-handle</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-    </dependencies>
+  <dependencies>
+    <dependency>
+      <groupId>com.mrivanplays</groupId>
+      <artifactId>skins-plugin-core</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.mrivanplays</groupId>
+      <artifactId>skins-plugin-bukkit-abstraction-handle</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
 
 
 </project>

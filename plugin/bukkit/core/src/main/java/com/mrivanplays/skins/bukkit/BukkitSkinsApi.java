@@ -23,21 +23,15 @@ import org.bukkit.entity.Player;
 
 public class BukkitSkinsApi extends AbstractSkinsApi {
 
-    private final SkinsBukkit plugin;
+  private final SkinsBukkit plugin;
 
-    public BukkitSkinsApi(
-            SkinsBukkit plugin,
-            File dataFolder
-    ) {
-        super(dataFolder);
-        this.plugin = plugin;
-    }
+  public BukkitSkinsApi(SkinsBukkit plugin, File dataFolder) {
+    super(dataFolder);
+    this.plugin = plugin;
+  }
 
-    @Override
-    protected void setNPCSkin(
-            Player player,
-            Skin skin
-    ) {
-        plugin.getSkinSetter().setSkin(player, skin);
-    }
+  @Override
+  protected void setNPCSkin(Player player, Skin skin) {
+    plugin.getSkinSetter().setSkin(player, skin);
+  }
 }

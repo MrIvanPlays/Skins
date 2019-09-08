@@ -27,43 +27,41 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class DefaultSkinSetListener implements Listener {
 
-    private final SkinsBukkitPlugin plugin;
+  private final SkinsBukkitPlugin plugin;
 
-    public DefaultSkinSetListener(SkinsBukkitPlugin plugin) {
-        this.plugin = plugin;
-    }
+  public DefaultSkinSetListener(SkinsBukkitPlugin plugin) {
+    this.plugin = plugin;
+  }
 
-    @EventHandler
-    public void on(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        Optional<StoredSkin> storedSkinOptional = plugin.getSkinStorage().getPlayerSetSkin(player.getUniqueId());
-        if (storedSkinOptional.isPresent()) {
-            StoredSkin storedSkin = storedSkinOptional.get();
-            Skin skin = storedSkin.getSkin();
-            plugin.getApi().setSkin(player, checkForSkinUpdate(storedSkin.getName(), skin));
-        } else {
-            Optional<Skin> skinOptional = plugin.getApi().getOriginalSkin(player);
-            if (!skinOptional.isPresent()) {
-                return;
-            }
-            plugin.getApi().setSkin(player, checkForSkinUpdate(player.getName(), skinOptional.get()));
-        }
+  @EventHandler
+  public void on(PlayerJoinEvent event) {
+    Player player = event.getPlayer();
+    Optional<StoredSkin> storedSkinOptional =
+        plugin.getSkinStorage().getPlayerSetSkin(player.getUniqueId());
+    if (storedSkinOptional.isPresent()) {
+      StoredSkin storedSkin = storedSkinOptional.get();
+      Skin skin = storedSkin.getSkin();
+      plugin.getApi().setSkin(player, checkForSkinUpdate(storedSkin.getName(), skin));
+    } else {
+      Optional<Skin> skinOptional = plugin.getApi().getOriginalSkin(player);
+      if (!skinOptional.isPresent()) {
+        return;
+      }
+      plugin.getApi().setSkin(player, checkForSkinUpdate(player.getName(), skinOptional.get()));
     }
+  }
 
-    private Skin checkForSkinUpdate(
-            String name,
-            Skin skin
-    ) {
-        MojangResponse response = plugin.getSkinFetcher().apiFetch(name, skin.getOwner()).join();
-        if (response.getSkin().isPresent()) {
-            Skin fetched = response.getSkin().get();
-            if (skin.getTexture().equalsIgnoreCase(fetched.getTexture())) {
-                return skin;
-            } else {
-                return fetched;
-            }
-        } else {
-            return skin;
-        }
+  private Skin checkForSkinUpdate(String name, Skin skin) {
+    MojangResponse response = plugin.getSkinFetcher().apiFetch(name, skin.getOwner()).join();
+    if (response.getSkin().isPresent()) {
+      Skin fetched = response.getSkin().get();
+      if (skin.getTexture().equalsIgnoreCase(fetched.getTexture())) {
+        return skin;
+      } else {
+        return fetched;
+      }
+    } else {
+      return skin;
     }
+  }
 }

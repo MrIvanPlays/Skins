@@ -21,7 +21,7 @@ import java.io.File;
 
 public class ProtocolSupportSkinsApi extends AbstractSkinsApi {
 
-    public ProtocolSupportSkinsApi(File dataFolder) {
-        super(dataFolder);
-    }
+  public ProtocolSupportSkinsApi(File dataFolder) {
+    super(dataFolder);
+  }
 }

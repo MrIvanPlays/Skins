@@ -30,83 +30,66 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractSkinsApi implements SkinsApi {
 
-    private final SkinFetcher skinFetcher;
-    private final SkinStorage skinStorage;
+  private final SkinFetcher skinFetcher;
+  private final SkinStorage skinStorage;
 
-    public AbstractSkinsApi(File dataFolder) {
-        skinStorage = new SkinStorage(dataFolder);
-        skinFetcher = new SkinFetcher(skinStorage);
-    }
+  public AbstractSkinsApi(File dataFolder) {
+    skinStorage = new SkinStorage(dataFolder);
+    skinFetcher = new SkinFetcher(skinStorage);
+  }
 
-    @Override
-    public Optional<Skin> getSetSkin(@NotNull Player player) {
-        return skinStorage.getPlayerSetSkin(player.getUniqueId()).map(StoredSkin::getSkin);
-    }
+  @Override
+  public Optional<Skin> getSetSkin(@NotNull Player player) {
+    return skinStorage.getPlayerSetSkin(player.getUniqueId()).map(StoredSkin::getSkin);
+  }
 
-    @Override
-    @NotNull
-    public MojangResponse getSkin(@NotNull String username) {
-        return skinFetcher.getSkin(username);
-    }
+  @Override
+  @NotNull
+  public MojangResponse getSkin(@NotNull String username) {
+    return skinFetcher.getSkin(username);
+  }
 
-    @Override
-    public void setSkin(
-            @NotNull Player player,
-            @NotNull Skin skin
-    ) {
-        setSkin(player, skin, skinFetcher.fetchName(skin.getOwner()).join());
-    }
+  @Override
+  public void setSkin(@NotNull Player player, @NotNull Skin skin) {
+    setSkin(player, skin, skinFetcher.fetchName(skin.getOwner()).join());
+  }
 
-    public void setSkin(
-            Player player,
-            Skin skin,
-            String name
-    ) {
-        Optional<StoredSkin> newStoredSkin = skinStorage.getStoredSkin(skin.getOwner());
-        if (newStoredSkin.isPresent()) {
-            StoredSkin skinStored = newStoredSkin.get();
-            skinStorage.modifyStoredSkin(player.getUniqueId(), skinStored);
-        } else {
-            Set<String> keys = skinStorage.getKeys();
-            List<Integer> keysAsInts = keys.stream().map(Integer::parseInt).collect(Collectors.toList());
-            keysAsInts.sort(new Comparator<Integer>() {
-                @Override
-                public int compare(
-                        Integer o1,
-                        Integer o2
-                ) {
-                    return Integer.compare(o1, o2);
-                }
-            }.reversed());
-            int biggestNumber;
-            if (keysAsInts.isEmpty()) {
-                biggestNumber = 0;
-            } else {
-                biggestNumber = keysAsInts.get(0);
+  public void setSkin(Player player, Skin skin, String name) {
+    Optional<StoredSkin> newStoredSkin = skinStorage.getStoredSkin(skin.getOwner());
+    if (newStoredSkin.isPresent()) {
+      StoredSkin skinStored = newStoredSkin.get();
+      skinStorage.modifyStoredSkin(player.getUniqueId(), skinStored);
+    } else {
+      Set<String> keys = skinStorage.getKeys();
+      List<Integer> keysAsInts = keys.stream().map(Integer::parseInt).collect(Collectors.toList());
+      keysAsInts.sort(
+          new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+              return Integer.compare(o1, o2);
             }
-            keysAsInts.clear();
-            keys.clear();
-            StoredSkin skinStored = new StoredSkin(
-                    skin,
-                    Integer.toString(biggestNumber + 1),
-                    name
-            );
-            skinStorage.modifyStoredSkin(player.getUniqueId(), skinStored);
-        }
-        setNPCSkin(player, skin);
+          }.reversed());
+      int biggestNumber;
+      if (keysAsInts.isEmpty()) {
+        biggestNumber = 0;
+      } else {
+        biggestNumber = keysAsInts.get(0);
+      }
+      keysAsInts.clear();
+      keys.clear();
+      StoredSkin skinStored = new StoredSkin(skin, Integer.toString(biggestNumber + 1), name);
+      skinStorage.modifyStoredSkin(player.getUniqueId(), skinStored);
     }
+    setNPCSkin(player, skin);
+  }
 
-    protected void setNPCSkin(
-            Player player,
-            Skin skin
-    ) {
-    }
+  protected void setNPCSkin(Player player, Skin skin) {}
 
-    public SkinFetcher getSkinFetcher() {
-        return skinFetcher;
-    }
+  public SkinFetcher getSkinFetcher() {
+    return skinFetcher;
+  }
 
-    public SkinStorage getSkinStorage() {
-        return skinStorage;
-    }
+  public SkinStorage getSkinStorage() {
+    return skinStorage;
+  }
 }

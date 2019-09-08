@@ -24,21 +24,21 @@ import java.io.File;
 
 public class SkinsBukkit implements SkinsPlugin {
 
-    private SkinSetter skinSetter;
-    private SkinsApi skinsApi;
+  private SkinSetter skinSetter;
+  private SkinsApi skinsApi;
 
-    @Override
-    public void enable(File dataFolder) {
-        skinSetter = SkinSetterHandler.getSkinSetter();
-        skinsApi = new BukkitSkinsApi(this, dataFolder);
-    }
+  @Override
+  public void enable(File dataFolder) {
+    skinSetter = SkinSetterHandler.getSkinSetter();
+    skinsApi = new BukkitSkinsApi(this, dataFolder);
+  }
 
-    @Override
-    public SkinsApi getApi() {
-        return skinsApi;
-    }
+  @Override
+  public SkinsApi getApi() {
+    return skinsApi;
+  }
 
-    public SkinSetter getSkinSetter() {
-        return skinSetter;
-    }
+  public SkinSetter getSkinSetter() {
+    return skinSetter;
+  }
 }

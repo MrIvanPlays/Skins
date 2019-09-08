@@ -23,13 +23,11 @@ import org.bukkit.entity.Player;
 
 public class SkinSetter1_14_R1 implements SkinSetter {
 
-    @Override
-    public void setSkin(
-            Player player,
-            Skin skin
-    ) {
-        ((CraftPlayer) player).getProfile()
-                .getProperties()
-                .put("textures", new Property("textures", skin.getTexture(), skin.getSignature()));
-    }
+  @Override
+  public void setSkin(Player player, Skin skin) {
+    ((CraftPlayer) player)
+        .getProfile()
+        .getProperties()
+        .put("textures", new Property("textures", skin.getTexture(), skin.getSignature()));
+  }
 }

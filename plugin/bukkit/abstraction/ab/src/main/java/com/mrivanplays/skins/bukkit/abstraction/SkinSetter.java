@@ -21,8 +21,5 @@ import org.bukkit.entity.Player;
 
 public interface SkinSetter {
 
-    void setSkin(
-            Player player,
-            Skin skin
-    );
+  void setSkin(Player player, Skin skin);
 }

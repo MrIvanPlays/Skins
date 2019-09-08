@@ -21,7 +21,7 @@ import java.io.File;
 
 public interface SkinsPlugin {
 
-    void enable(File dataFolder);
+  void enable(File dataFolder);
 
-    SkinsApi getApi();
+  SkinsApi getApi();
 }

@@ -22,15 +22,15 @@ import java.io.File;
 
 public class SkinsPaper implements SkinsPlugin {
 
-    private PaperSkinsApi api;
+  private PaperSkinsApi api;
 
-    @Override
-    public void enable(File dataFolder) {
-        api = new PaperSkinsApi(dataFolder);
-    }
+  @Override
+  public void enable(File dataFolder) {
+    api = new PaperSkinsApi(dataFolder);
+  }
 
-    @Override
-    public SkinsApi getApi() {
-        return api;
-    }
+  @Override
+  public SkinsApi getApi() {
+    return api;
+  }
 }

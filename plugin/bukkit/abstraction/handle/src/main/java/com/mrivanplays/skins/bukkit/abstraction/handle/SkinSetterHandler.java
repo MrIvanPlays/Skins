@@ -23,15 +23,15 @@ import org.bukkit.Bukkit;
 
 public class SkinSetterHandler {
 
-    public static SkinSetter getSkinSetter() {
-        String version = Bukkit.getServer().getClass().getName().replace(".", ",").split(",")[3];
-        switch (version) {
-            case "v1_13_R2":
-                return new SkinSetter1_13_R2();
-            case "v1_14_R1":
-                return new SkinSetter1_14_R1();
-            default:
-                return null;
-        }
+  public static SkinSetter getSkinSetter() {
+    String version = Bukkit.getServer().getClass().getName().replace(".", ",").split(",")[3];
+    switch (version) {
+      case "v1_13_R2":
+        return new SkinSetter1_13_R2();
+      case "v1_14_R1":
+        return new SkinSetter1_14_R1();
+      default:
+        return null;
     }
+  }
 }

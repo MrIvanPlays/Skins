@@ -22,15 +22,15 @@ import java.io.File;
 
 public class SkinsProtocolSupport implements SkinsPlugin {
 
-    private SkinsApi api;
+  private SkinsApi api;
 
-    @Override
-    public void enable(File dataFolder) {
-        api = new ProtocolSupportSkinsApi(dataFolder);
-    }
+  @Override
+  public void enable(File dataFolder) {
+    api = new ProtocolSupportSkinsApi(dataFolder);
+  }
 
-    @Override
-    public SkinsApi getApi() {
-        return api;
-    }
+  @Override
+  public SkinsApi getApi() {
+    return api;
+  }
 }

@@ -30,135 +30,121 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 public class SkinStorage {
 
-    private final File file;
-    private final FileConfiguration configuration;
-    private final String section;
+  private final File file;
+  private final FileConfiguration configuration;
+  private final String section;
 
-    public SkinStorage(File dataFolder) {
-        file = new File(dataFolder, "skinstorage.yml");
-        createFile();
-        configuration = YamlConfiguration.loadConfiguration(file);
-        section = "skins";
-    }
+  public SkinStorage(File dataFolder) {
+    file = new File(dataFolder, "skinstorage.yml");
+    createFile();
+    configuration = YamlConfiguration.loadConfiguration(file);
+    section = "skins";
+  }
 
-    public Optional<StoredSkin> getStoredSkin(UUID owner) {
-        return deserialize().stream()
-                .filter(skin -> skin.getSkin().getOwner().equals(owner))
-                .findFirst();
-    }
+  public Optional<StoredSkin> getStoredSkin(UUID owner) {
+    return deserialize().stream()
+        .filter(skin -> skin.getSkin().getOwner().equals(owner))
+        .findFirst();
+  }
 
-    public Optional<StoredSkin> getPlayerSetSkin(UUID player) {
-        return deserialize().stream()
-                .filter(skin -> skin.getAcquirers().contains(player.toString()))
-                .findFirst();
-    }
+  public Optional<StoredSkin> getPlayerSetSkin(UUID player) {
+    return deserialize().stream()
+        .filter(skin -> skin.getAcquirers().contains(player.toString()))
+        .findFirst();
+  }
 
-    public void modifySkin(StoredSkin newStoredSkin) {
-        configuration.set(
-                section + "." + newStoredSkin.getConfigurationKey() + ".texture",
-                newStoredSkin.getSkin().getTexture()
-        );
-        configuration.set(
-                section + "." + newStoredSkin.getConfigurationKey() + ".signature",
-                newStoredSkin.getSkin().getSignature()
-        );
-        save();
-    }
+  public void modifySkin(StoredSkin newStoredSkin) {
+    configuration.set(
+        section + "." + newStoredSkin.getConfigurationKey() + ".texture",
+        newStoredSkin.getSkin().getTexture());
+    configuration.set(
+        section + "." + newStoredSkin.getConfigurationKey() + ".signature",
+        newStoredSkin.getSkin().getSignature());
+    save();
+  }
 
-    public void modifyStoredSkin(
-            UUID player,
-            StoredSkin newStoredSkin
-    ) {
-        Optional<StoredSkin> currentStoredSkin = getPlayerSetSkin(player);
-        if (currentStoredSkin.isPresent()) {
-            StoredSkin skin = currentStoredSkin.get();
-            StoredSkin duplicate = skin.duplicate();
-            duplicate.removeAcquirer(player);
-            configuration.set(
-                    section + "." + duplicate.getConfigurationKey() + ".texture",
-                    duplicate.getSkin().getTexture()
-            );
-            configuration.set(
-                    section + "." + duplicate.getConfigurationKey() + ".signature",
-                    duplicate.getSkin().getSignature()
-            );
-            configuration.set(
-                    section + "." + duplicate.getConfigurationKey() + ".owner",
-                    duplicate.getSkin().getOwner().toString()
-            );
-            configuration.set(
-                    section + "." + duplicate.getConfigurationKey() + ".ownerName",
-                    duplicate.getName()
-            );
-            configuration.set(section + "." + duplicate.getConfigurationKey() + ".acquirers", duplicate.getAcquirers());
-            save();
-        }
-        StoredSkin newDuplicate = newStoredSkin.duplicate();
-        newDuplicate.addAcquirer(player);
-        configuration.set(
-                section + "." + newDuplicate.getConfigurationKey() + ".texture",
-                newDuplicate.getSkin().getTexture()
-        );
-        configuration.set(
-                section + "." + newDuplicate.getConfigurationKey() + ".signature",
-                newDuplicate.getSkin().getSignature()
-        );
-        configuration.set(
-                section + "." + newDuplicate.getConfigurationKey() + ".owner",
-                newDuplicate.getSkin().getOwner().toString()
-        );
-        configuration.set(
-                section + "." + newDuplicate.getConfigurationKey() + ".ownerName",
-                newDuplicate.getName()
-        );
-        configuration.set(
-                section + "." + newDuplicate.getConfigurationKey() + ".acquirers",
-                newDuplicate.getAcquirers()
-        );
-        save();
+  public void modifyStoredSkin(UUID player, StoredSkin newStoredSkin) {
+    Optional<StoredSkin> currentStoredSkin = getPlayerSetSkin(player);
+    if (currentStoredSkin.isPresent()) {
+      StoredSkin skin = currentStoredSkin.get();
+      StoredSkin duplicate = skin.duplicate();
+      duplicate.removeAcquirer(player);
+      configuration.set(
+          section + "." + duplicate.getConfigurationKey() + ".texture",
+          duplicate.getSkin().getTexture());
+      configuration.set(
+          section + "." + duplicate.getConfigurationKey() + ".signature",
+          duplicate.getSkin().getSignature());
+      configuration.set(
+          section + "." + duplicate.getConfigurationKey() + ".owner",
+          duplicate.getSkin().getOwner().toString());
+      configuration.set(
+          section + "." + duplicate.getConfigurationKey() + ".ownerName", duplicate.getName());
+      configuration.set(
+          section + "." + duplicate.getConfigurationKey() + ".acquirers", duplicate.getAcquirers());
+      save();
     }
+    StoredSkin newDuplicate = newStoredSkin.duplicate();
+    newDuplicate.addAcquirer(player);
+    configuration.set(
+        section + "." + newDuplicate.getConfigurationKey() + ".texture",
+        newDuplicate.getSkin().getTexture());
+    configuration.set(
+        section + "." + newDuplicate.getConfigurationKey() + ".signature",
+        newDuplicate.getSkin().getSignature());
+    configuration.set(
+        section + "." + newDuplicate.getConfigurationKey() + ".owner",
+        newDuplicate.getSkin().getOwner().toString());
+    configuration.set(
+        section + "." + newDuplicate.getConfigurationKey() + ".ownerName", newDuplicate.getName());
+    configuration.set(
+        section + "." + newDuplicate.getConfigurationKey() + ".acquirers",
+        newDuplicate.getAcquirers());
+    save();
+  }
 
-    public Set<String> getKeys() {
-        if (!configuration.isSet(section)) {
-            return Collections.emptySet();
-        }
-        return configuration.getConfigurationSection(section).getKeys(false);
+  public Set<String> getKeys() {
+    if (!configuration.isSet(section)) {
+      return Collections.emptySet();
     }
+    return configuration.getConfigurationSection(section).getKeys(false);
+  }
 
-    private List<StoredSkin> deserialize() {
-        List<StoredSkin> storedSkins = new ArrayList<>();
-        if (!configuration.isSet(section)) {
-            return storedSkins;
-        }
-        Set<String> keys = getKeys();
-        for (String key : keys) {
-            UUID skinOwner = UUID.fromString(configuration.getString(section + "." + key + ".owner"));
-            String ownerName = configuration.getString(section + "." + key + ".ownerName");
-            String texture = configuration.getString(section + "." + key + ".texture");
-            String signature = configuration.getString(section + "." + key + ".signature");
-            List<String> acquirers = configuration.getStringList(section + "." + key + ".acquirers");
-            StoredSkin storedSkin = new StoredSkin(new Skin(skinOwner, texture, signature), acquirers, key, ownerName);
-            storedSkins.add(storedSkin);
-        }
-        return storedSkins;
+  private List<StoredSkin> deserialize() {
+    List<StoredSkin> storedSkins = new ArrayList<>();
+    if (!configuration.isSet(section)) {
+      return storedSkins;
     }
+    Set<String> keys = getKeys();
+    for (String key : keys) {
+      UUID skinOwner = UUID.fromString(configuration.getString(section + "." + key + ".owner"));
+      String ownerName = configuration.getString(section + "." + key + ".ownerName");
+      String texture = configuration.getString(section + "." + key + ".texture");
+      String signature = configuration.getString(section + "." + key + ".signature");
+      List<String> acquirers = configuration.getStringList(section + "." + key + ".acquirers");
+      StoredSkin storedSkin =
+          new StoredSkin(new Skin(skinOwner, texture, signature), acquirers, key, ownerName);
+      storedSkins.add(storedSkin);
+    }
+    return storedSkins;
+  }
 
-    private void createFile() {
-        if (!file.exists()) {
-            if (!file.getParentFile().exists()) {
-                file.getParentFile().mkdirs();
-            }
-            try {
-                file.createNewFile();
-            } catch (IOException ignored) {
-            }
-        }
+  private void createFile() {
+    if (!file.exists()) {
+      if (!file.getParentFile().exists()) {
+        file.getParentFile().mkdirs();
+      }
+      try {
+        file.createNewFile();
+      } catch (IOException ignored) {
+      }
     }
+  }
 
-    private void save() {
-        try {
-            configuration.save(file);
-        } catch (IOException ignored) {
-        }
+  private void save() {
+    try {
+      configuration.save(file);
+    } catch (IOException ignored) {
     }
+  }
 }
