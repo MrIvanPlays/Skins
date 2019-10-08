@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -65,10 +66,15 @@ public abstract class AbstractSkinsApi implements SkinsApi {
   }
 
   public void setSkin(Player player, Skin skin, String name) {
+    modifyStoredSkin(player.getUniqueId(), skin, name);
+    setNPCSkin(player, skin);
+  }
+
+  public void modifyStoredSkin(UUID uuid, Skin skin, String name) {
     Optional<StoredSkin> newStoredSkin = skinStorage.getStoredSkin(skin.getOwner());
     if (newStoredSkin.isPresent()) {
       StoredSkin skinStored = newStoredSkin.get();
-      skinStorage.modifyStoredSkin(player.getUniqueId(), skinStored);
+      skinStorage.modifyStoredSkin(uuid, skinStored);
     } else {
       Set<String> keys = skinStorage.getKeys();
       List<Integer> keysAsInts = keys.stream().map(Integer::parseInt).collect(Collectors.toList());
@@ -88,12 +94,12 @@ public abstract class AbstractSkinsApi implements SkinsApi {
       keysAsInts.clear();
       keys.clear();
       StoredSkin skinStored = new StoredSkin(skin, Integer.toString(biggestNumber + 1), name);
-      skinStorage.modifyStoredSkin(player.getUniqueId(), skinStored);
+      skinStorage.modifyStoredSkin(uuid, skinStored);
     }
-    setNPCSkin(player, skin);
   }
 
-  protected void setNPCSkin(Player player, Skin skin) {}
+  protected void setNPCSkin(Player player, Skin skin) {
+  }
 
   public SkinFetcher getSkinFetcher() {
     return skinFetcher;

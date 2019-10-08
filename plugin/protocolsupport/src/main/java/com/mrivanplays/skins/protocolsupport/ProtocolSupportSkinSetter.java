@@ -18,8 +18,7 @@ package com.mrivanplays.skins.protocolsupport;
 
 import com.mrivanplays.skins.api.MojangResponse;
 import com.mrivanplays.skins.api.Skin;
-import com.mrivanplays.skins.core.SkinFetcher;
-import com.mrivanplays.skins.core.SkinStorage;
+import com.mrivanplays.skins.core.AbstractSkinsApi;
 import com.mrivanplays.skins.core.StoredSkin;
 import java.util.Comparator;
 import java.util.List;
@@ -34,18 +33,17 @@ import protocolsupport.api.utils.ProfileProperty;
 
 public class ProtocolSupportSkinSetter implements Listener {
 
-  private final SkinStorage skinStorage;
-  private final SkinFetcher skinFetcher;
+  private final AbstractSkinsApi skinsApi;
 
-  public ProtocolSupportSkinSetter(SkinStorage skinStorage, SkinFetcher skinFetcher) {
-    this.skinStorage = skinStorage;
-    this.skinFetcher = skinFetcher;
+  public ProtocolSupportSkinSetter(AbstractSkinsApi skinsApi) {
+    this.skinsApi = skinsApi;
   }
 
   @EventHandler
   public void on(PlayerProfileCompleteEvent event) {
     Profile profile = event.getConnection().getProfile();
-    Optional<StoredSkin> storedSkinOptional = skinStorage.getPlayerSetSkin(profile.getUUID());
+    Optional<StoredSkin> storedSkinOptional = skinsApi.getSkinStorage()
+        .getPlayerSetSkin(profile.getUUID());
     if (storedSkinOptional.isPresent()) {
       StoredSkin storedSkin = storedSkinOptional.get();
       Skin skin = storedSkin.getSkin();
@@ -56,15 +54,16 @@ public class ProtocolSupportSkinSetter implements Listener {
       }
       StoredSkin newStoredSkin = storedSkin.duplicate();
       newStoredSkin.setSkin(setSkin);
-      skinStorage.modifyStoredSkin(profile.getUUID(), newStoredSkin);
+      skinsApi.getSkinStorage().modifyStoredSkin(profile.getUUID(), newStoredSkin);
       event.addProperty(
           new ProfileProperty("textures", setSkin.getTexture(), setSkin.getSignature()));
     } else {
-      MojangResponse response = skinFetcher.getSkin(profile.getName());
+      MojangResponse response = skinsApi.getSkinFetcher().getSkin(profile.getName());
       if (response.getSkin().isPresent()) {
         Skin skin = response.getSkin().get();
         Skin setSkin = checkForSkinUpdate(profile.getName(), skin);
-        Optional<StoredSkin> playerOriginal = skinStorage.getStoredSkin(setSkin.getOwner());
+        Optional<StoredSkin> playerOriginal = skinsApi.getSkinStorage()
+            .getStoredSkin(setSkin.getOwner());
         if (playerOriginal.isPresent()) {
           StoredSkin storedSkin = playerOriginal.get();
           if (storedSkin.getSkin().equals(setSkin)) {
@@ -74,9 +73,9 @@ public class ProtocolSupportSkinSetter implements Listener {
           }
           StoredSkin duplicate = storedSkin.duplicate();
           duplicate.setSkin(setSkin);
-          skinStorage.modifySkin(storedSkin);
+          skinsApi.getSkinStorage().modifySkin(storedSkin);
         } else {
-          Set<String> keys = skinStorage.getKeys();
+          Set<String> keys = skinsApi.getSkinStorage().getKeys();
           List<Integer> keysAsInts =
               keys.stream().map(Integer::parseInt).collect(Collectors.toList());
           keysAsInts.sort(
@@ -97,7 +96,7 @@ public class ProtocolSupportSkinSetter implements Listener {
           StoredSkin storedSkin =
               new StoredSkin(setSkin, Integer.toString(biggestNumber + 1), profile.getName());
           storedSkin.addAcquirer(profile.getUUID());
-          skinStorage.modifyStoredSkin(profile.getUUID(), storedSkin);
+          skinsApi.getSkinStorage().modifyStoredSkin(profile.getUUID(), storedSkin);
         }
         event.addProperty(
             new ProfileProperty("textures", setSkin.getTexture(), setSkin.getSignature()));
@@ -106,7 +105,7 @@ public class ProtocolSupportSkinSetter implements Listener {
   }
 
   private Skin checkForSkinUpdate(String name, Skin skin) {
-    MojangResponse response = skinFetcher.apiFetch(name, skin.getOwner()).join();
+    MojangResponse response = skinsApi.getSkinFetcher().apiFetch(name, skin.getOwner()).join();
     if (response.getSkin().isPresent()) {
       Skin fetched = response.getSkin().get();
       if (skin.getTexture().equalsIgnoreCase(fetched.getTexture())) {

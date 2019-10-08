@@ -95,7 +95,7 @@ public class SkinsBukkitPlugin extends JavaPlugin {
     } else {
       getServer()
           .getPluginManager()
-          .registerEvents(new ProtocolSupportSkinSetter(skinStorage, skinFetcher), this);
+          .registerEvents(new ProtocolSupportSkinSetter(abstractSkinsApi), this);
       getLogger().info("Running on " + PaperLib.getEnvironment().getName() + " & ProtocolSupport");
     }
     new UpdateCheckerSetup(this, "skins.updatenotify").setup();
