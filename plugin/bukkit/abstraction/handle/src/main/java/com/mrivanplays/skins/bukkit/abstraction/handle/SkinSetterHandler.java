@@ -19,6 +19,7 @@ package com.mrivanplays.skins.bukkit.abstraction.handle;
 import com.mrivanplays.skins.bukkit.abstraction.SkinSetter;
 import com.mrivanplays.skins.bukkit.abstraction.SkinSetter1_13_R2;
 import com.mrivanplays.skins.bukkit.abstraction.SkinSetter1_14_R1;
+import com.mrivanplays.skins.bukkit.abstraction.SkinSetter1_15_R1;
 import org.bukkit.Bukkit;
 
 public class SkinSetterHandler {
@@ -30,6 +31,8 @@ public class SkinSetterHandler {
         return new SkinSetter1_13_R2();
       case "v1_14_R1":
         return new SkinSetter1_14_R1();
+      case "v1_15_R1":
+        return new SkinSetter1_15_R1();
       default:
         return null;
     }

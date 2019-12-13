@@ -15,7 +15,9 @@
     <module>ab</module>
     <module>v1_13_R2</module>
     <module>v1_14_R1</module>
+    <module>v1_15_R1</module>
     <module>handle</module>
+    <module>v1_15_R1</module>
   </modules>
   <packaging>pom</packaging>
 
