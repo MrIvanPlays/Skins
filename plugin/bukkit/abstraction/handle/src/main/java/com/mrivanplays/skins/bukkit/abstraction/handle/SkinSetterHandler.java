@@ -16,16 +16,16 @@
 */
 package com.mrivanplays.skins.bukkit.abstraction.handle;
 
+import com.mrivanplays.skins.bukkit.abstraction.AbstractionUtils;
 import com.mrivanplays.skins.bukkit.abstraction.SkinSetter;
 import com.mrivanplays.skins.bukkit.abstraction.SkinSetter1_13_R2;
 import com.mrivanplays.skins.bukkit.abstraction.SkinSetter1_14_R1;
 import com.mrivanplays.skins.bukkit.abstraction.SkinSetter1_15_R1;
-import org.bukkit.Bukkit;
 
 public class SkinSetterHandler {
 
   public static SkinSetter getSkinSetter() {
-    String version = Bukkit.getServer().getClass().getName().replace(".", ",").split(",")[3];
+    String version = AbstractionUtils.NMS_VERSION;
     switch (version) {
       case "v1_13_R2":
         return new SkinSetter1_13_R2();

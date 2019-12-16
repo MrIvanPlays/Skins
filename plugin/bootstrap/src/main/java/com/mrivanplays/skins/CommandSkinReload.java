@@ -43,7 +43,7 @@ public class CommandSkinReload implements TabExecutor {
       sender.sendMessage(plugin.color(plugin.getConfig().getString("messages.no-permission")));
       return true;
     }
-    plugin.reloadConfig();
+    plugin.reload();
     sender.sendMessage(ChatColor.GREEN + "Config reloaded successfully!");
     return true;
   }

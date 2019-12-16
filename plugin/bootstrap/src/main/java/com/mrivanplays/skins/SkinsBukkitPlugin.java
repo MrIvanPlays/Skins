@@ -18,6 +18,7 @@ package com.mrivanplays.skins;
 
 import com.mrivanplays.skins.api.SkinsApi;
 import com.mrivanplays.skins.bukkit.SkinsBukkit;
+import com.mrivanplays.skins.bukkit.abstraction.AbstractionUtils;
 import com.mrivanplays.skins.core.AbstractSkinsApi;
 import com.mrivanplays.skins.core.SkinFetcher;
 import com.mrivanplays.skins.core.SkinStorage;
@@ -37,6 +38,7 @@ public class SkinsBukkitPlugin extends JavaPlugin {
   private SkinStorage skinStorage;
   private SkinFetcher skinFetcher;
   private AbstractSkinsApi abstractSkinsApi;
+  private SkinsMenu skinsMenu;
 
   @Override
   public void onLoad() {
@@ -58,8 +60,8 @@ public class SkinsBukkitPlugin extends JavaPlugin {
         }
         api = skinsBukkit.getApi();
       } else {
-        String version = getServer().getVersion();
-        if (!version.contains("1.13.2") && !version.contains("1.14")) {
+        String version = AbstractionUtils.NMS_VERSION;
+        if (!version.equalsIgnoreCase("v1_13_R2") && !version.equalsIgnoreCase("v1_14_R1") && !version.equalsIgnoreCase("v1_15_R1")) {
           getLogger().severe("You are running unsupported minecraft version, disabling...");
           disabled = true;
           return;
@@ -78,7 +80,6 @@ public class SkinsBukkitPlugin extends JavaPlugin {
       getServer().getPluginManager().disablePlugin(this);
       return;
     }
-    PaperLib.suggestPaper(this);
     saveDefaultConfig();
     abstractSkinsApi = (AbstractSkinsApi) api;
     skinFetcher = abstractSkinsApi.getSkinFetcher();
@@ -89,6 +90,10 @@ public class SkinsBukkitPlugin extends JavaPlugin {
     CommandSkinReload commandSkinReload = new CommandSkinReload(this);
     getCommand("skinreload").setExecutor(commandSkinReload);
     getCommand("skinreload").setTabCompleter(commandSkinReload);
+    skinsMenu = new SkinsMenu(this);
+    CommandSkinMenu commandSkinMenu = new CommandSkinMenu(this);
+    getCommand("skinmenu").setExecutor(commandSkinMenu);
+    getCommand("skinmenu").setTabCompleter(commandSkinMenu);
     if (!isProtocolSupport()) {
       getServer().getPluginManager().registerEvents(new DefaultSkinSetListener(this), this);
       getLogger().info("Running on " + PaperLib.getEnvironment().getName());
@@ -119,5 +124,14 @@ public class SkinsBukkitPlugin extends JavaPlugin {
 
   private boolean isProtocolSupport() {
     return getServer().getPluginManager().getPlugin("ProtocolSupport") != null;
+  }
+
+  public SkinsMenu getSkinsMenu() {
+    return skinsMenu;
+  }
+
+  public void reload() {
+    this.reloadConfig();
+    this.skinsMenu = new SkinsMenu(this);
   }
 }

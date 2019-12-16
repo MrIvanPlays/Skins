@@ -110,7 +110,7 @@ public class SkinStorage {
     return configuration.getConfigurationSection(section).getKeys(false);
   }
 
-  private List<StoredSkin> deserialize() {
+  public List<StoredSkin> deserialize() {
     List<StoredSkin> storedSkins = new ArrayList<>();
     if (!configuration.isSet(section)) {
       return storedSkins;
