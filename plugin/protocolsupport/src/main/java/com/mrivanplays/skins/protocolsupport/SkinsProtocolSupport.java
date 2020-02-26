@@ -1,32 +1,17 @@
-/*
-    Copyright (C) 2019 Ivan Pekov
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published
-    by the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
 package com.mrivanplays.skins.protocolsupport;
 
 import com.mrivanplays.skins.api.SkinsApi;
 import com.mrivanplays.skins.core.SkinsPlugin;
 import java.io.File;
+import java.util.logging.Logger;
 
 public class SkinsProtocolSupport implements SkinsPlugin {
 
   private SkinsApi api;
 
   @Override
-  public void enable(File dataFolder) {
-    api = new ProtocolSupportSkinsApi(dataFolder);
+  public void enable(File dataFolder, Logger logger) {
+    api = new ProtocolSupportSkinsApi(dataFolder, logger);
   }
 
   @Override

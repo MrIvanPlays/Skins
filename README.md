@@ -5,9 +5,9 @@
 # Skins
 Plugin created by MrIvanPlays
 
-Supports 1.13.2 & 1.14.x
+Supports 1.12.x, 1.13.2, 1.14.x, 1.15.x
 
-Spigot page: https://www.spigotmc.org/resources/skins-1-13-2-1-14-x.70829/
+Spigot page: click [here](https://www.spigotmc.org/resources/skins-1-13-2-1-14-x.70829/)
 
 ## Development builds
 Usually development builds are not recommended for a big server as they may contain

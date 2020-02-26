@@ -6,13 +6,13 @@ import com.mrivanplays.skins.api.Skin;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_14_R1.CraftOfflinePlayer;
-import org.bukkit.craftbukkit.v1_14_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_12_R1.CraftOfflinePlayer;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
-public class SkinSetter1_14_R1 implements SkinSetter {
+public class SkinSetter1_12_R1 implements SkinSetter {
 
   @Override
   public void setSkin(Player player, Skin skin) {

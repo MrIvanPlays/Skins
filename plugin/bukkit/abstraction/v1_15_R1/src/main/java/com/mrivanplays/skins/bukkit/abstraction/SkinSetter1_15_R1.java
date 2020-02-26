@@ -1,31 +1,16 @@
-/*
-    Copyright (c) 2019 Ivan Pekov
-    Copyright (c) 2019 Contributors
-
-    Permission is hereby granted, free of charge, to any person obtaining a copy
-    of this software and associated documentation files (the "Software"), to deal
-    in the Software without restriction, including without limitation the rights
-    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    copies of the Software, and to permit persons to whom the Software is
-    furnished to do so, subject to the following conditions:
-
-    The above copyright notice and this permission notice shall be included in all
-    copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-    SOFTWARE.
-*/
 package com.mrivanplays.skins.bukkit.abstraction;
 
+import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mrivanplays.skins.api.Skin;
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_15_R1.CraftOfflinePlayer;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 
 public class SkinSetter1_15_R1 implements SkinSetter {
 
@@ -35,5 +20,31 @@ public class SkinSetter1_15_R1 implements SkinSetter {
         .getProfile()
         .getProperties()
         .put("textures", new Property("textures", skin.getTexture(), skin.getSignature()));
+  }
+
+  @Override
+  public ItemStack getMenuItem(ItemStack item, Skin skin, String ownerName) {
+    CraftOfflinePlayer player = (CraftOfflinePlayer) Bukkit.getOfflinePlayer(skin.getOwner());
+    GameProfile profile = new GameProfile(skin.getOwner(), ownerName);
+    profile
+        .getProperties()
+        .put("textures", new Property("textures", skin.getTexture(), skin.getSignature()));
+    try {
+      Field profileField = player.getClass().getDeclaredField("profile");
+      profileField.setAccessible(true);
+      profileField.set(player, profile);
+    } catch (IllegalAccessException | NoSuchFieldException e) {
+      e.printStackTrace();
+    }
+    SkullMeta meta = (SkullMeta) item.getItemMeta();
+    meta.setDisplayName(ownerName + " skin");
+    meta.setOwningPlayer(player);
+    meta.setLore(
+        Arrays.asList(
+            "Left click to set the skin",
+            "(Keep in mind this skin is being cached and may not be up to date)"));
+    ItemStack duplicate = item.clone();
+    duplicate.setItemMeta(meta);
+    return duplicate;
   }
 }

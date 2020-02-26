@@ -1,19 +1,3 @@
-/*
-    Copyright (C) 2019 Ivan Pekov
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published
-    by the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
 package com.mrivanplays.skins.api;
 
 import java.util.Optional;
@@ -43,8 +27,7 @@ public interface SkinsApi {
    * @return optional of skin if this player is in mojang's database, empty optional otherwise
    */
   default Optional<Skin> getOriginalSkin(@NotNull Player player) {
-    MojangResponse response = getSkin(player.getName());
-    return Optional.ofNullable(response.getSkin().isPresent() ? response.getSkin().get() : null);
+    return getSkin(player.getName()).getSkin();
   }
 
   /**
@@ -78,17 +61,6 @@ public interface SkinsApi {
    */
   @NotNull
   MojangResponse getSkin(@NotNull String username);
-
-  /**
-   * Sets the skin of the specified player.
-   *
-   * @param player the player you want to set the skin of
-   * @param skin the skin you want to set on the player
-   * @deprecated always fetches name from mojang api. The alternative is {@link #setSkin(Player,
-   *     MojangResponse)}
-   */
-  @Deprecated
-  void setSkin(@NotNull Player player, @NotNull Skin skin);
 
   /**
    * Sets the skin of the specified player.

@@ -1,24 +1,8 @@
-/*
-    Copyright (C) 2019 Ivan Pekov
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published
-    by the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
 package com.mrivanplays.skins;
 
 import com.mrivanplays.skins.api.SkinsApi;
 import com.mrivanplays.skins.bukkit.SkinsBukkit;
-import com.mrivanplays.skins.bukkit.abstraction.AbstractionUtils;
+import com.mrivanplays.skins.bukkit.abstraction.SupportedVersions;
 import com.mrivanplays.skins.core.AbstractSkinsApi;
 import com.mrivanplays.skins.core.SkinFetcher;
 import com.mrivanplays.skins.core.SkinStorage;
@@ -43,16 +27,18 @@ public class SkinsBukkitPlugin extends JavaPlugin {
   @Override
   public void onLoad() {
     new MetricsLite(this);
-    PaperLib.suggestPaper(this);
+    if (!PaperLib.isPaper()) {
+      getLogger().warning("Skins works better if you run Paper!");
+    }
     if (isProtocolSupport()) {
       getLogger().warning("You are running ProtocolSupport! Applying modifications to skin sets");
       SkinsProtocolSupport plugin = new SkinsProtocolSupport();
-      plugin.enable(getDataFolder());
+      plugin.enable(getDataFolder(), getLogger());
       api = plugin.getApi();
     } else {
       if (!PaperLib.isPaper()) {
         SkinsBukkit skinsBukkit = new SkinsBukkit();
-        skinsBukkit.enable(getDataFolder());
+        skinsBukkit.enable(getDataFolder(), getLogger());
         if (skinsBukkit.getSkinSetter() == null) {
           getLogger().severe("You are running unsupported minecraft version, disabling...");
           disabled = true;
@@ -60,14 +46,13 @@ public class SkinsBukkitPlugin extends JavaPlugin {
         }
         api = skinsBukkit.getApi();
       } else {
-        String version = AbstractionUtils.NMS_VERSION;
-        if (!version.equalsIgnoreCase("v1_13_R2") && !version.equalsIgnoreCase("v1_14_R1") && !version.equalsIgnoreCase("v1_15_R1")) {
+        if (!SupportedVersions.isCurrentSupported()) {
           getLogger().severe("You are running unsupported minecraft version, disabling...");
           disabled = true;
           return;
         }
         SkinsPaper paper = new SkinsPaper();
-        paper.enable(getDataFolder());
+        paper.enable(getDataFolder(), getLogger());
         api = paper.getApi();
       }
     }

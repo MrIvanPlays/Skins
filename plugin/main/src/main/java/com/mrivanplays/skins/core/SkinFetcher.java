@@ -1,19 +1,3 @@
-/*
-    Copyright (C) 2019 Ivan Pekov
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published
-    by the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
 package com.mrivanplays.skins.core;
 
 import com.google.gson.JsonArray;
@@ -30,27 +14,32 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Logger;
 
-public class SkinFetcher {
+public final class SkinFetcher {
 
   private final List<MojangResponse> knownResponses = new ArrayList<>();
   private final SkinStorage skinStorage;
+  private Logger logger;
 
-  public SkinFetcher(SkinStorage skinStorage) {
+  public SkinFetcher(SkinStorage skinStorage, Logger logger) {
     this.skinStorage = skinStorage;
+    this.logger = logger;
   }
 
-  private MojangResponse getSkin(String name, UUID uuid) {
+  public MojangResponseHolder getSkin(String name, UUID uuid) {
     Optional<MojangResponse> search =
         knownResponses.stream()
             .filter(
                 response ->
-                    response.getNickname().toLowerCase().equalsIgnoreCase(name.toLowerCase()))
+                    response.getUuid().isPresent()
+                        ? response.getUuid().get().equals(uuid)
+                        : response.getNickname().equalsIgnoreCase(name))
             .findFirst();
     if (search.isPresent()) {
       MojangResponse response = search.get();
       if (response.getSkin().isPresent()) {
-        return response;
+        return new MojangResponseHolder(response, false);
       } else {
         Optional<StoredSkin> storedSkin = skinStorage.getStoredSkin(uuid);
         if (storedSkin.isPresent()) {
@@ -59,14 +48,14 @@ public class SkinFetcher {
           if (!contains(mojangResponse)) {
             knownResponses.add(mojangResponse);
           }
-          return mojangResponse;
+          return new MojangResponseHolder(mojangResponse, false);
         } else {
           knownResponses.remove(response);
           MojangResponse apiFetch = apiFetch(name, uuid).join();
           if (!contains(apiFetch)) {
             knownResponses.add(apiFetch);
           }
-          return apiFetch;
+          return new MojangResponseHolder(apiFetch, true);
         }
       }
     } else {
@@ -74,7 +63,7 @@ public class SkinFetcher {
       if (!contains(response)) {
         knownResponses.add(response);
       }
-      return response;
+      return new MojangResponseHolder(response, true);
     }
   }
 
@@ -93,7 +82,7 @@ public class SkinFetcher {
                     .parse(new InputStreamReader(connection.getInputStream()))
                     .getAsJsonObject();
             if (object.has("error")) {
-              System.err.println(
+              logger.severe(
                   "[Skins] The server's being rate limited by mojang api. "
                       + "You may expect some players not having skins.");
               return new MojangResponse(name, uuid, null);
@@ -119,12 +108,12 @@ public class SkinFetcher {
         });
   }
 
-  public MojangResponse getSkin(String name) {
+  public MojangResponseHolder getSkin(String name) {
     UUID fetchedUUID = fetchUUID(name);
     if (fetchedUUID != null) {
       return getSkin(name, fetchedUUID);
     } else {
-      return new MojangResponse(name, null, null);
+      return new MojangResponseHolder(new MojangResponse(name, null, null), false);
     }
   }
 
@@ -137,35 +126,15 @@ public class SkinFetcher {
     return null;
   }
 
-  public CompletableFuture<String> fetchName(UUID uuid) {
-    return CompletableFuture.supplyAsync(
-        () -> {
-          try {
-            URL url =
-                new URL(
-                    "https://api.mojang.com/user/profiles/"
-                        + uuid.toString().replace("-", "")
-                        + "/names");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            JsonArray names =
-                new JsonParser()
-                    .parse(new InputStreamReader(connection.getInputStream()))
-                    .getAsJsonArray();
-            JsonObject lastName = names.get(names.size() - 1).getAsJsonObject();
-            return lastName.get("name").getAsString();
-          } catch (Exception e) {
-            return "";
-          }
-        });
-  }
-
   private boolean contains(MojangResponse response) {
     return knownResponses.stream()
         .anyMatch(
-            storage ->
-                storage
-                    .getNickname()
-                    .toLowerCase()
-                    .equalsIgnoreCase(response.getNickname().toLowerCase()));
+            storage -> {
+              if (storage.getUuid().isPresent() && response.getUuid().isPresent()) {
+                return storage.getUuid().get().equals(response.getUuid().get());
+              } else {
+                return storage.getNickname().equalsIgnoreCase(response.getNickname());
+              }
+            });
   }
 }
