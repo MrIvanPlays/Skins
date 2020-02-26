@@ -38,6 +38,10 @@
                   <pattern>org.bstats.bukkit</pattern>
                   <shadedPattern>com.mrivanplays.skins.lib.bstats</shadedPattern>
                 </relocation>
+                <relocation>
+                  <pattern>com.mrivanplays.pagedinventory</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.pagedinventory</shadedPattern>
+                </relocation>
               </relocations>
             </configuration>
           </execution>
