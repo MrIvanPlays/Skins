@@ -1,3 +1,4 @@
+[![Build Status](https://ci.mrivanplays.com/buildStatus/icon?job=Skins)](https://ci.mrivanplays.com/job/Skins/)
 ![license](https://img.shields.io/github/license/MrIvanPlays/Skins.svg?style=for-the-badge)
 ![issues](https://img.shields.io/github/issues/MrIvanPlays/Skins.svg?style=for-the-badge)
 ![api version](https://img.shields.io/bintray/v/mrivanplaysbg/mrivanplays/Skins.svg?style=for-the-badge)
