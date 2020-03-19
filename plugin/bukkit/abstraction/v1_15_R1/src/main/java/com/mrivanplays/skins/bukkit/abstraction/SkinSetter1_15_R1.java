@@ -4,13 +4,16 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mrivanplays.skins.api.Skin;
 import java.lang.reflect.Field;
-import java.util.Arrays;
+import java.util.List;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.v1_15_R1.CraftOfflinePlayer;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.inventory.meta.tags.ItemTagType;
+import org.bukkit.persistence.PersistentDataType;
 
 public class SkinSetter1_15_R1 implements SkinSetter {
 
@@ -23,7 +26,8 @@ public class SkinSetter1_15_R1 implements SkinSetter {
   }
 
   @Override
-  public ItemStack getMenuItem(ItemStack item, Skin skin, String ownerName) {
+  public ItemStack getMenuItem(
+      ItemStack item, Skin skin, String ownerName, String headNameFormat, List<String> lore) {
     CraftOfflinePlayer player = (CraftOfflinePlayer) Bukkit.getOfflinePlayer(skin.getOwner());
     GameProfile profile = new GameProfile(skin.getOwner(), ownerName);
     profile
@@ -37,12 +41,9 @@ public class SkinSetter1_15_R1 implements SkinSetter {
       e.printStackTrace();
     }
     SkullMeta meta = (SkullMeta) item.getItemMeta();
-    meta.setDisplayName(ownerName + " skin");
+    meta.setDisplayName(headNameFormat.replace("%name%", ownerName));
     meta.setOwningPlayer(player);
-    meta.setLore(
-        Arrays.asList(
-            "Left click to set the skin",
-            "(Keep in mind this skin is being cached and may not be up to date)"));
+    meta.setLore(lore);
     ItemStack duplicate = item.clone();
     duplicate.setItemMeta(meta);
     return duplicate;

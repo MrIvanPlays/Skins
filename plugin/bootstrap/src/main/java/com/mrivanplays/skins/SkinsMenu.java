@@ -10,17 +10,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 public class SkinsMenu {
 
   private PagedInventory pagedInventory;
+  private SkinsBukkitPlugin plugin;
 
   public SkinsMenu(SkinsBukkitPlugin plugin) {
+    this.plugin = plugin;
     Map<Integer, ItemStack> itemCache = new HashMap<>();
     List<StoredSkin> skins = plugin.getSkinStorage().deserialize();
     SkinSetter itemSetter = SkinSetterHandler.getSkinSetter();
@@ -28,7 +34,11 @@ public class SkinsMenu {
       StoredSkin storedSkin = skins.get(i);
       ItemStack item =
           itemSetter.getMenuItem(
-              new ItemStack(Material.PLAYER_HEAD), storedSkin.getSkin(), storedSkin.getName());
+              new ItemStack(Material.PLAYER_HEAD),
+              storedSkin.getSkin(),
+              storedSkin.getName(),
+              plugin.color(plugin.getConfig().getString("messages.skin-menu-head-name")),
+              colorList(plugin.getConfig().getStringList("messages.skin-menu-lore")));
       itemCache.put(i, item);
     }
 
@@ -38,19 +48,28 @@ public class SkinsMenu {
     for (int i = 0; i < pages.size(); i++) {
       pagedInventoryBuilder.page(i + 1, pages.get(i));
     }
+
+    ItemStack previousItem =
+        createItem(
+            plugin.color(plugin.getConfig().getString("messages.skin-menu-previous-page-label")),
+            Material.PAPER);
+
+    ItemStack nextItem =
+        createItem(
+            plugin.color(plugin.getConfig().getString("messages.skin-menu-next-page-label")),
+            Material.BOOK);
+
+    ItemStack closeItem =
+        createItem(
+            plugin.color(plugin.getConfig().getString("messages.skin-menu-close-page-label")),
+            Material.BARRIER);
+
     pagedInventory =
         pagedInventoryBuilder
             .navigationItem(
-                0,
-                NavigationItem.create(
-                    SkinsMenuSwitchItems.previousItem, NavigationItem.Action.PREVIOUS_PAGE))
-            .navigationItem(
-                4,
-                NavigationItem.create(SkinsMenuSwitchItems.closeItem, NavigationItem.Action.CLOSE))
-            .navigationItem(
-                8,
-                NavigationItem.create(
-                    SkinsMenuSwitchItems.nextItem, NavigationItem.Action.NEXT_PAGE))
+                0, NavigationItem.create(previousItem, NavigationItem.Action.PREVIOUS_PAGE))
+            .navigationItem(4, NavigationItem.create(closeItem, NavigationItem.Action.CLOSE))
+            .navigationItem(8, NavigationItem.create(nextItem, NavigationItem.Action.NEXT_PAGE))
             .build();
 
     pagedInventory.addOnClickFunction(
@@ -66,11 +85,12 @@ public class SkinsMenu {
           if (!item.getItemMeta().hasDisplayName()) {
             return;
           }
-          String displayName = item.getItemMeta().getDisplayName();
-          int space = displayName.indexOf(' ');
-          String skinName = displayName.substring(0, space).trim();
+          if (!(item.getItemMeta() instanceof SkullMeta)) {
+            return;
+          }
+          SkullMeta meta = (SkullMeta) item.getItemMeta();
 
-          plugin.getServer().dispatchCommand(player, "skinset " + skinName);
+          plugin.getServer().dispatchCommand(player, "skinset " + meta.getOwningPlayer().getName());
           player.closeInventory();
         });
   }
@@ -98,8 +118,13 @@ public class SkinsMenu {
     List<Inventory> pages = new ArrayList<>();
     int pageNum = 1;
     for (Map<Integer, ItemStack> page : pagesRaw) {
-      Inventory inventory =
-          Bukkit.createInventory(null, 54, "List of skins (Page #" + pageNum + ")");
+      String title =
+          plugin.color(
+              plugin
+                  .getConfig()
+                  .getString("messages.skin-menu-inventory")
+                  .replace("%pageNum%", Integer.toString(pageNum)));
+      Inventory inventory = Bukkit.createInventory(null, 54, title);
       for (Map.Entry<Integer, ItemStack> entry : page.entrySet()) {
         inventory.setItem(entry.getKey() + 9, entry.getValue());
       }
@@ -117,5 +142,19 @@ public class SkinsMenu {
       mapPos++;
     }
     return copy;
+  }
+
+  private List<String> colorList(List<String> list) {
+    return list.stream()
+        .map(s -> ChatColor.translateAlternateColorCodes('&', s))
+        .collect(Collectors.toList());
+  }
+
+  private ItemStack createItem(String name, Material type) {
+    ItemStack item = new ItemStack(type);
+    ItemMeta meta = item.getItemMeta();
+    meta.setDisplayName(name);
+    item.setItemMeta(meta);
+    return item;
   }
 }

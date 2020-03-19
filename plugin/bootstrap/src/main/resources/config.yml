@@ -11,6 +11,14 @@ messages:
   cooldown: "&cYou have to wait %timeLeft% more second(s) before using that command"
   not-premium: "&cThis player isn't premium."
   skin-set-successfully: "&aSkin set successfully! If it didn't applied, try reconnecting to the server!"
+  skin-menu-previous-page-label: "&aPrevious page"
+  skin-menu-next-page-label: "&aNext page"
+  skin-menu-close-page-label: "Close inventory"
+  skin-menu-head-name: "%name% 's skin"
+  skin-menu-inventory: "List of skins (Page #%pageNum%)"
+  skin-menu-lore:
+    - "Left click to set the skin"
+    - "(Keep in mind this skin is being cached and may not be up to date)"
 
 # Check for updates
 # Recommended leaving true
