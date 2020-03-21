@@ -1,17 +1,23 @@
 package com.mrivanplays.skins;
 
+import com.mrivanplays.skins.api.MojangResponse;
+import com.mrivanplays.skins.api.Skin;
 import com.mrivanplays.skins.api.SkinsApi;
 import com.mrivanplays.skins.bukkit.SkinsBukkit;
+import com.mrivanplays.skins.bukkit.abstraction.SkinSetter;
 import com.mrivanplays.skins.bukkit.abstraction.SupportedVersions;
+import com.mrivanplays.skins.bukkit.abstraction.handle.SkinSetterHandler;
 import com.mrivanplays.skins.core.AbstractSkinsApi;
 import com.mrivanplays.skins.core.SkinFetcher;
 import com.mrivanplays.skins.core.SkinStorage;
+import com.mrivanplays.skins.core.SkullItemBuilderImpl.SkullItemBuilderData;
 import com.mrivanplays.skins.paper.SkinsPaper;
 import com.mrivanplays.skins.protocolsupport.ProtocolSupportSkinSetter;
 import com.mrivanplays.skins.protocolsupport.SkinsProtocolSupport;
-import io.papermc.lib.PaperLib;
+import java.util.function.Function;
 import org.bstats.bukkit.MetricsLite;
 import org.bukkit.ChatColor;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -27,19 +33,28 @@ public class SkinsBukkitPlugin extends JavaPlugin {
   @Override
   public void onLoad() {
     new MetricsLite(this);
-    if (!PaperLib.isPaper()) {
+    SkinSetter skinSetter = SkinSetterHandler.getSkinSetter();
+    Function<SkullItemBuilderData, ItemStack> transformer =
+        data -> {
+          MojangResponse response = data.getOwner();
+          Skin skin = response.getSkin().orElse(null);
+          return skinSetter.getMenuItem(
+              skin, response.getNickname(), data.getItemName(), data.getItemLore());
+        };
+
+    if (!Platform.isPaper()) {
       getLogger().warning("Skins works better if you run Paper!");
     }
     if (isProtocolSupport()) {
       getLogger().warning("You are running ProtocolSupport! Applying modifications to skin sets");
       SkinsProtocolSupport plugin = new SkinsProtocolSupport();
-      plugin.enable(getDataFolder(), getLogger());
+      plugin.enable(getDataFolder(), getLogger(), transformer);
       api = plugin.getApi();
     } else {
-      if (!PaperLib.isPaper()) {
+      if (!Platform.isPaper()) {
         SkinsBukkit skinsBukkit = new SkinsBukkit();
-        skinsBukkit.enable(getDataFolder(), getLogger());
-        if (skinsBukkit.getSkinSetter() == null) {
+        skinsBukkit.enable(getDataFolder(), getLogger(), transformer);
+        if (skinSetter == null) {
           getLogger().severe("You are running unsupported minecraft version, disabling...");
           disabled = true;
           return;
@@ -52,7 +67,7 @@ public class SkinsBukkitPlugin extends JavaPlugin {
           return;
         }
         SkinsPaper paper = new SkinsPaper();
-        paper.enable(getDataFolder(), getLogger());
+        paper.enable(getDataFolder(), getLogger(), transformer);
         api = paper.getApi();
       }
     }
@@ -81,12 +96,12 @@ public class SkinsBukkitPlugin extends JavaPlugin {
     getCommand("skinmenu").setTabCompleter(commandSkinMenu);
     if (!isProtocolSupport()) {
       getServer().getPluginManager().registerEvents(new DefaultSkinSetListener(this), this);
-      getLogger().info("Running on " + PaperLib.getEnvironment().getName());
+      getLogger().info("Running on " + Platform.TYPE.name().toLowerCase());
     } else {
       getServer()
           .getPluginManager()
           .registerEvents(new ProtocolSupportSkinSetter(abstractSkinsApi), this);
-      getLogger().info("Running on " + PaperLib.getEnvironment().getName() + " & ProtocolSupport");
+      getLogger().info("Running on " + Platform.TYPE.name().toLowerCase() + " & ProtocolSupport");
     }
     new UpdateCheckerSetup(this, "skins.updatenotify").setup();
   }

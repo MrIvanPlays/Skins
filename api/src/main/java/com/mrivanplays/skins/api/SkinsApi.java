@@ -70,4 +70,13 @@ public interface SkinsApi {
    * @return whether or not the skin change was successful
    */
   boolean setSkin(@NotNull Player player, @NotNull MojangResponse skin);
+
+  /**
+   * Creates a new {@link SkullItemBuilder}
+   *
+   * @return skull item builder
+   * @see SkullItemBuilder
+   */
+  @NotNull
+  SkullItemBuilder newSkullItemBuilder();
 }

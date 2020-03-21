@@ -25,7 +25,18 @@ public class SkinSetter1_12_R1 implements SkinSetter {
   }
 
   @Override
-  public ItemStack getMenuItem(Skin skin, String ownerName, String headNameFormat, List<String> lore) {
+  public ItemStack getMenuItem(
+      Skin skin, String ownerName, String headNameFormat, List<String> lore) {
+    if (skin == null) {
+      ItemStack item = new ItemStack(Material.SKULL_ITEM, 1, (byte) SkullType.PLAYER.ordinal());
+      SkullMeta meta = (SkullMeta) item.getItemMeta();
+      if (headNameFormat != null) {
+        meta.setDisplayName(headNameFormat.replace("%name%", ownerName));
+      }
+      meta.setLore(lore);
+      item.setItemMeta(meta);
+      return item;
+    }
     CraftOfflinePlayer player = (CraftOfflinePlayer) Bukkit.getOfflinePlayer(skin.getOwner());
     GameProfile profile = new GameProfile(skin.getOwner(), ownerName);
     profile
@@ -40,7 +51,9 @@ public class SkinSetter1_12_R1 implements SkinSetter {
     }
     ItemStack item = new ItemStack(Material.SKULL_ITEM, 1, (byte) SkullType.PLAYER.ordinal());
     SkullMeta meta = (SkullMeta) item.getItemMeta();
-    meta.setDisplayName(headNameFormat.replace("%name%", ownerName));
+    if (headNameFormat != null) {
+      meta.setDisplayName(headNameFormat.replace("%name%", ownerName));
+    }
     meta.setOwningPlayer(player);
     meta.setLore(lore);
     item.setItemMeta(meta);

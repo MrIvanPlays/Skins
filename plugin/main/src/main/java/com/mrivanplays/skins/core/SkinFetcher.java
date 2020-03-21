@@ -83,7 +83,7 @@ public final class SkinFetcher {
                     .getAsJsonObject();
             if (object.has("error")) {
               logger.severe(
-                  "[Skins] The server's being rate limited by mojang api. "
+                  "The server's being rate limited by mojang api. "
                       + "You may expect some players not having skins.");
               return new MojangResponse(name, uuid, null);
             }

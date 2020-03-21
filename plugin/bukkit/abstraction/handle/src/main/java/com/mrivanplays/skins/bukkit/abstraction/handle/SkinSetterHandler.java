@@ -9,23 +9,27 @@ import com.mrivanplays.skins.bukkit.abstraction.SupportedVersions;
 
 public class SkinSetterHandler {
 
+  private static SkinSetter instance = null;
+
   public static SkinSetter getSkinSetter() {
+    if (instance != null) {
+      return instance;
+    }
     SupportedVersions version = SupportedVersions.getCurrent();
     if (version == null) {
       return null;
     } else {
       switch (version) {
         case v1_12_R1:
-          return new SkinSetter1_12_R1();
+          instance = new SkinSetter1_12_R1();
         case v1_13_R2:
-          return new SkinSetter1_13_R2();
+          instance = new SkinSetter1_13_R2();
         case v1_14_R1:
-          return new SkinSetter1_14_R1();
+          instance = new SkinSetter1_14_R1();
         case v1_15_R1:
-          return new SkinSetter1_15_R1();
-        default:
-          return null;
+          instance = new SkinSetter1_15_R1();
       }
     }
+    return instance;
   }
 }
