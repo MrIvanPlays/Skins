@@ -48,7 +48,7 @@ public class SkinsBukkitPlugin extends JavaPlugin {
             getDataFolder(),
             transformer,
             new MojangDataProvider(getLogger()),
-            command -> getServer().getScheduler().runTaskAsynchronously(this, command));
+            Runnable::run);
 
     if (!Platform.isPaper()) {
       getLogger().warning("Skins works better if you run Paper!");
