@@ -9,6 +9,5 @@ public interface SkinSetter {
 
   void setSkin(Player player, Skin skin);
 
-  ItemStack getMenuItem(
-      ItemStack item, Skin skin, String ownerName, String headNameFormat, List<String> lore);
+  ItemStack getMenuItem(Skin skin, String ownerName, String headNameFormat, List<String> lore);
 }

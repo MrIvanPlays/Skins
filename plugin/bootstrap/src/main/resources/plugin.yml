@@ -1,7 +1,7 @@
 name: Skins
 description: Skins plugin
 main: com.mrivanplays.skins.SkinsBukkitPlugin
-version: 1.1.5
+version: ${project.version}
 api-version: 1.13
 authors:
   - MrIvanPlays

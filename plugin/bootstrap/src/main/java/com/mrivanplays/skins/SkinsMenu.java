@@ -34,7 +34,6 @@ public class SkinsMenu {
       StoredSkin storedSkin = skins.get(i);
       ItemStack item =
           itemSetter.getMenuItem(
-              new ItemStack(Material.PLAYER_HEAD),
               storedSkin.getSkin(),
               storedSkin.getName(),
               plugin.color(plugin.getConfig().getString("messages.skin-menu-head-name")),

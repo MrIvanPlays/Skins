@@ -6,6 +6,7 @@ import com.mrivanplays.skins.api.Skin;
 import java.lang.reflect.Field;
 import java.util.List;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_13_R2.CraftOfflinePlayer;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -23,8 +24,7 @@ public class SkinSetter1_13_R2 implements SkinSetter {
   }
 
   @Override
-  public ItemStack getMenuItem(
-      ItemStack item, Skin skin, String ownerName, String headNameFormat, List<String> lore) {
+  public ItemStack getMenuItem(Skin skin, String ownerName, String headNameFormat, List<String> lore) {
     CraftOfflinePlayer player = (CraftOfflinePlayer) Bukkit.getOfflinePlayer(skin.getOwner());
     GameProfile profile = new GameProfile(skin.getOwner(), ownerName);
     profile
@@ -37,12 +37,12 @@ public class SkinSetter1_13_R2 implements SkinSetter {
     } catch (IllegalAccessException | NoSuchFieldException e) {
       e.printStackTrace();
     }
+    ItemStack item = new ItemStack(Material.PLAYER_HEAD);
     SkullMeta meta = (SkullMeta) item.getItemMeta();
     meta.setDisplayName(headNameFormat.replace("%name%", ownerName));
     meta.setOwningPlayer(player);
     meta.setLore(lore);
-    ItemStack duplicate = item.clone();
-    duplicate.setItemMeta(meta);
-    return duplicate;
+    item.setItemMeta(meta);
+    return item;
   }
 }
