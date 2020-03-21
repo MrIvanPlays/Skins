@@ -81,7 +81,7 @@ public interface SkinsApi {
   SkullItemBuilder newSkullItemBuilder();
 
   /**
-   * Sets a new data provider, for fetching skin & uuid information.
+   * Sets a new data provider, for fetching skin and uuid information.
    *
    * @param dataProvider data provider
    */
