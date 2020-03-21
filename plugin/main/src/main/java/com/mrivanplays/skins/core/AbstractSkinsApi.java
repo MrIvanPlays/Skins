@@ -23,9 +23,7 @@ public abstract class AbstractSkinsApi implements SkinsApi {
 
   public AbstractSkinsApi(InitializationData initializationData) {
     skinStorage = new SkinStorage(initializationData.getDataFolder());
-    skinFetcher =
-        new SkinFetcher(
-            skinStorage, initializationData.getDataProvider(), initializationData.getAsync());
+    skinFetcher = new SkinFetcher(skinStorage, initializationData.getDataProvider());
     this.transformer = initializationData.getTransformer();
   }
 

@@ -14,12 +14,10 @@ public final class SkinFetcher {
   private final List<MojangResponse> knownResponses = new ArrayList<>();
   private final SkinStorage skinStorage;
   private DataProvider dataProvider;
-  private Executor async;
 
-  public SkinFetcher(SkinStorage skinStorage, DataProvider dataProvider, Executor async) {
+  public SkinFetcher(SkinStorage skinStorage, DataProvider dataProvider) {
     this.skinStorage = skinStorage;
     this.dataProvider = dataProvider;
-    this.async = async;
   }
 
   public MojangResponseHolder getSkin(String name, UUID uuid) {
@@ -71,8 +69,7 @@ public final class SkinFetcher {
   }
 
   public CompletableFuture<MojangResponse> apiFetch(String name, UUID uuid) {
-    return CompletableFuture.supplyAsync(
-        () -> dataProvider.retrieveSkinResponse(name, uuid), async);
+    return CompletableFuture.supplyAsync(() -> dataProvider.retrieveSkinResponse(name, uuid));
   }
 
   public MojangResponseHolder getSkin(String name) {
