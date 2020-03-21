@@ -1,17 +1,16 @@
 package com.mrivanplays.skins.core;
 
+import com.mrivanplays.skins.api.DataProvider;
 import com.mrivanplays.skins.api.MojangResponse;
 import com.mrivanplays.skins.api.Skin;
 import com.mrivanplays.skins.api.SkinsApi;
 import com.mrivanplays.skins.api.SkullItemBuilder;
 import com.mrivanplays.skins.core.SkullItemBuilderImpl.SkullItemBuilderData;
-import java.io.File;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
-import java.util.logging.Logger;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -22,11 +21,12 @@ public abstract class AbstractSkinsApi implements SkinsApi {
   private final SkinStorage skinStorage;
   private final Function<SkullItemBuilderData, ItemStack> transformer;
 
-  public AbstractSkinsApi(
-      File dataFolder, Logger logger, Function<SkullItemBuilderData, ItemStack> transfomer) {
-    skinStorage = new SkinStorage(dataFolder);
-    skinFetcher = new SkinFetcher(skinStorage, logger);
-    this.transformer = transfomer;
+  public AbstractSkinsApi(InitializationData initializationData) {
+    skinStorage = new SkinStorage(initializationData.getDataFolder());
+    skinFetcher =
+        new SkinFetcher(
+            skinStorage, initializationData.getDataProvider(), initializationData.getAsync());
+    this.transformer = initializationData.getTransformer();
   }
 
   @Override
@@ -59,6 +59,14 @@ public abstract class AbstractSkinsApi implements SkinsApi {
   @NotNull
   public SkullItemBuilder newSkullItemBuilder() {
     return new SkullItemBuilderImpl(transformer);
+  }
+
+  @Override
+  public void setDataProvider(@NotNull DataProvider dataProvider) {
+    if (skinFetcher.getDataProvider().equals(dataProvider)) {
+      return;
+    }
+    skinFetcher.setDataProvider(dataProvider);
   }
 
   public void setSkin(Player player, Skin skin, String name) {

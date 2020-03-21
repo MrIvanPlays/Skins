@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 
 public interface SkinsPlugin {
 
-  void enable(File dataFolder, Logger logger, Function<SkullItemBuilderData, ItemStack> transformer);
+  void enable(InitializationData initializationData);
 
   SkinsApi getApi();
 }

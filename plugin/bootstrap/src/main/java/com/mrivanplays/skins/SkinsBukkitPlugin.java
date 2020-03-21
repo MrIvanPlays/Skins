@@ -8,6 +8,8 @@ import com.mrivanplays.skins.bukkit.abstraction.SkinSetter;
 import com.mrivanplays.skins.bukkit.abstraction.SupportedVersions;
 import com.mrivanplays.skins.bukkit.abstraction.handle.SkinSetterHandler;
 import com.mrivanplays.skins.core.AbstractSkinsApi;
+import com.mrivanplays.skins.core.InitializationData;
+import com.mrivanplays.skins.core.MojangDataProvider;
 import com.mrivanplays.skins.core.SkinFetcher;
 import com.mrivanplays.skins.core.SkinStorage;
 import com.mrivanplays.skins.core.SkullItemBuilderImpl.SkullItemBuilderData;
@@ -41,6 +43,12 @@ public class SkinsBukkitPlugin extends JavaPlugin {
           return skinSetter.getMenuItem(
               skin, response.getNickname(), data.getItemName(), data.getItemLore());
         };
+    InitializationData initializationData =
+        new InitializationData(
+            getDataFolder(),
+            transformer,
+            new MojangDataProvider(getLogger()),
+            command -> getServer().getScheduler().runTaskAsynchronously(this, command));
 
     if (!Platform.isPaper()) {
       getLogger().warning("Skins works better if you run Paper!");
@@ -48,12 +56,12 @@ public class SkinsBukkitPlugin extends JavaPlugin {
     if (isProtocolSupport()) {
       getLogger().warning("You are running ProtocolSupport! Applying modifications to skin sets");
       SkinsProtocolSupport plugin = new SkinsProtocolSupport();
-      plugin.enable(getDataFolder(), getLogger(), transformer);
+      plugin.enable(initializationData);
       api = plugin.getApi();
     } else {
       if (!Platform.isPaper()) {
         SkinsBukkit skinsBukkit = new SkinsBukkit();
-        skinsBukkit.enable(getDataFolder(), getLogger(), transformer);
+        skinsBukkit.enable(initializationData);
         if (skinSetter == null) {
           getLogger().severe("You are running unsupported minecraft version, disabling...");
           disabled = true;
@@ -67,7 +75,7 @@ public class SkinsBukkitPlugin extends JavaPlugin {
           return;
         }
         SkinsPaper paper = new SkinsPaper();
-        paper.enable(getDataFolder(), getLogger(), transformer);
+        paper.enable(initializationData);
         api = paper.getApi();
       }
     }
