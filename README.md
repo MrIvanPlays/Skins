@@ -1,7 +1,7 @@
 [![Build Status](https://ci.mrivanplays.com/buildStatus/icon?job=Skins)](https://ci.mrivanplays.com/job/Skins/)
 ![license](https://img.shields.io/github/license/MrIvanPlays/Skins.svg?style=for-the-badge)
 ![issues](https://img.shields.io/github/issues/MrIvanPlays/Skins.svg?style=for-the-badge)
-![api version](https://img.shields.io/bintray/v/mrivanplaysbg/mrivanplays/Skins.svg?style=for-the-badge)
+![api version](https://img.shields.io/maven-metadata/v?color=%20blue&label=latest%20version&metadataUrl=https%3A%2F%2Frepo.mrivanplays.com%2Frepository%2Fivan-snapshots%2Fcom%2Fmrivanplays%2Fskins-api%2Fmaven-metadata.xml&style=for-the-badge)
 [![support](https://img.shields.io/discord/493674712334073878.svg?colorB=Blue&logo=discord&label=Support&style=for-the-badge)](https://mrivanplays.com/discord)
 # Skins
 Plugin created by MrIvanPlays
@@ -17,30 +17,45 @@ a bunch of bugs. It is better to use a stable build which you can find at
 
 Retrieving a development build can be easily done by cloning the repository, then
 cd into the base directory, then run `mvn package`, retrieving jar from 
-`plugin/bootstrap/target`
+`plugin/bootstrap/target` or downloading jar from CI located [here](https://ci.mrivanplays.com/job/Skins/)
 
 ## Developer API
 
-#### Installation with maven:
+#### Installation:
+
+NOTE: For older versions that 1.1.6-SNAPSHOT, you should use the old bintray repo url (https://dl.bintray.com/mrivanplaysbg/mrivanplays/) in order to achieve download.
+
+Maven: 
 ```html
 <repositories>
-    <repository>
-      <id>mrivanplays</id>
-      <url>https://dl.bintray.com/mrivanplaysbg/mrivanplays/</url>
-    </repository>
+     <repository>
+         <id>ivan</id>
+         <url>https://repo.mrivanplays.com/repository/ivan/</url>
+     </repository>
 </repositories>
 
 <dependencies>
     <dependency>
       <groupId>com.mrivanplays</groupId>
       <artifactId>skins-api</artifactId>
-      <version>LATEST</version>
+      <version>VERSION</version> <!-- Replace with latest version -->
       <scope>provided</scope>
     </dependency>
 </dependencies>
 ```
 
-I don't know gradle so I can't show you that
+Gradle:
+```groovy
+repositories {
+  maven {
+    url "https://repo.mrivanplays.com/repository/ivan/"
+  }
+}
+
+dependencies {
+  compileOnly 'com.mrivanplays:skins-api:VERSION' // replace version with latest version
+}
+```
 
 #### Obtaining api instance
 ```java

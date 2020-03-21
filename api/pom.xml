@@ -34,12 +34,13 @@
 
   <distributionManagement>
     <repository>
-      <id>bintray-mrivanplaysbg-com.github.mrivanplays</id>
-      <name>MrIvanPlaysBG-com.github.mrivanplays</name>
-      <url>
-        https://api.bintray.com/maven/mrivanplaysbg/mrivanplays/Skins/;publish=1
-      </url>
+      <id>ivan-releases</id>
+      <url>https://repo.mrivanplays.com/repository/ivan-releases/</url>
     </repository>
+    <snapshotRepository>
+      <id>ivan-snapshots</id>
+      <url>https://repo.mrivanplays.com/repository/ivan-snapshots/</url>
+    </snapshotRepository>
   </distributionManagement>
 
   <profiles>
