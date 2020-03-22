@@ -3,9 +3,10 @@ package com.mrivanplays.skins;
 import com.mrivanplays.pagedinventory.api.NavigationItem;
 import com.mrivanplays.pagedinventory.api.PagedInventory;
 import com.mrivanplays.pagedinventory.api.PagedInventoryBuilder;
+import com.mrivanplays.skins.api.MojangResponse;
+import com.mrivanplays.skins.api.Skin;
 import com.mrivanplays.skins.bukkit.abstraction.SkinSetter;
 import com.mrivanplays.skins.bukkit.abstraction.handle.SkinSetterHandler;
-import com.mrivanplays.skins.core.StoredSkin;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,14 +29,15 @@ public class SkinsMenu {
   public SkinsMenu(SkinsBukkitPlugin plugin) {
     this.plugin = plugin;
     Map<Integer, ItemStack> itemCache = new HashMap<>();
-    List<StoredSkin> skins = plugin.getSkinStorage().deserialize();
+    List<MojangResponse> skins = plugin.getSkinFetcher().getKnownResponses();
     SkinSetter itemSetter = SkinSetterHandler.getSkinSetter();
     for (int i = 0; i < skins.size(); i++) {
-      StoredSkin storedSkin = skins.get(i);
+      MojangResponse response = skins.get(i);
+      Skin skin = response.getSkin().orElse(null);
       ItemStack item =
           itemSetter.getMenuItem(
-              storedSkin.getSkin(),
-              storedSkin.getName(),
+              skin,
+              response.getNickname(),
               plugin.color(plugin.getConfig().getString("messages.skin-menu-head-name")),
               colorList(plugin.getConfig().getStringList("messages.skin-menu-lore")));
       itemCache.put(i, item);

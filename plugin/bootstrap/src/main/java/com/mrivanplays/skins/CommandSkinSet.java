@@ -1,8 +1,6 @@
 package com.mrivanplays.skins;
 
 import com.mrivanplays.skins.api.MojangResponse;
-import com.mrivanplays.skins.api.Skin;
-import com.mrivanplays.skins.core.MojangResponseHolder;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -52,25 +50,13 @@ public class CommandSkinSet implements TabExecutor {
         return true;
       }
     }
-    MojangResponseHolder responseHolder = plugin.getApi().getSkinHolder(args[0]);
-    if (responseHolder.isJustFetched()) {
-      if (!responseHolder.getResponse().getSkin().isPresent()) {
-        player.sendMessage(plugin.color(plugin.getConfig().getString("messages.not-premium")));
-      } else {
-        plugin.getApi().setSkin(player, responseHolder.getResponse());
-        player.sendMessage(
-            plugin.color(plugin.getConfig().getString("messages.skin-set-successfully")));
-      }
+    MojangResponse response = plugin.getApi().getSkin(args[0]);
+    if (!response.getSkin().isPresent()) {
+      player.sendMessage(plugin.color(plugin.getConfig().getString("messages.not-premium")));
     } else {
-      if (!responseHolder.getResponse().getSkin().isPresent()) {
-        player.sendMessage(plugin.color(plugin.getConfig().getString("messages.not-premium")));
-      } else {
-        Skin skin = responseHolder.getResponse().getSkin().get();
-        Skin setSkin = checkForSkinUpdate(args[0], skin);
-        plugin.getApi().setSkin(player, setSkin, args[0]);
-        player.sendMessage(
-            plugin.color(plugin.getConfig().getString("messages.skin-set-successfully")));
-      }
+      plugin.getApi().setSkin(player, response);
+      player.sendMessage(
+          plugin.color(plugin.getConfig().getString("messages.skin-set-successfully")));
     }
     long cooldown = 1000 * 30;
     cooldownMap.put(player.getUniqueId(), System.currentTimeMillis() + cooldown);
@@ -84,19 +70,5 @@ public class CommandSkinSet implements TabExecutor {
       @NotNull String s,
       @NotNull String[] strings) {
     return Collections.emptyList();
-  }
-
-  private Skin checkForSkinUpdate(String name, Skin skin) {
-    MojangResponse response = plugin.getSkinFetcher().apiFetch(name, skin.getOwner()).join();
-    if (response.getSkin().isPresent()) {
-      Skin fetched = response.getSkin().get();
-      if (skin.getTexture().equalsIgnoreCase(fetched.getTexture())) {
-        return skin;
-      } else {
-        return fetched;
-      }
-    } else {
-      return skin;
-    }
   }
 }

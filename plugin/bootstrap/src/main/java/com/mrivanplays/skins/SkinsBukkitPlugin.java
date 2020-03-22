@@ -11,13 +11,17 @@ import com.mrivanplays.skins.core.AbstractSkinsApi;
 import com.mrivanplays.skins.core.InitializationData;
 import com.mrivanplays.skins.core.MojangDataProvider;
 import com.mrivanplays.skins.core.SkinFetcher;
-import com.mrivanplays.skins.core.SkinStorage;
+import com.mrivanplays.skins.core.storage.SkinStorage;
 import com.mrivanplays.skins.core.SkullItemBuilderImpl.SkullItemBuilderData;
+import com.mrivanplays.skins.core.storage.YamlSkinStorage;
 import com.mrivanplays.skins.paper.SkinsPaper;
 import com.mrivanplays.skins.protocolsupport.ProtocolSupportSkinSetter;
 import com.mrivanplays.skins.protocolsupport.SkinsProtocolSupport;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.function.Function;
 import org.bstats.bukkit.MetricsLite;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.ServicePriority;
@@ -31,9 +35,11 @@ public class SkinsBukkitPlugin extends JavaPlugin {
   private SkinFetcher skinFetcher;
   private AbstractSkinsApi abstractSkinsApi;
   private SkinsMenu skinsMenu;
+  private Instant startTime;
 
   @Override
   public void onLoad() {
+    startTime = Instant.now();
     new MetricsLite(this);
     SkinSetter skinSetter = SkinSetterHandler.getSkinSetter();
     Function<SkullItemBuilderData, ItemStack> transformer =
@@ -43,9 +49,10 @@ public class SkinsBukkitPlugin extends JavaPlugin {
           return skinSetter.getMenuItem(
               skin, response.getNickname(), data.getItemName(), data.getItemLore());
         };
+    skinStorage = new YamlSkinStorage(getDataFolder());
     InitializationData initializationData =
         new InitializationData(
-            getDataFolder(),
+            skinStorage,
             transformer,
             new MojangDataProvider(getLogger()));
 
@@ -90,27 +97,26 @@ public class SkinsBukkitPlugin extends JavaPlugin {
     saveDefaultConfig();
     abstractSkinsApi = (AbstractSkinsApi) api;
     skinFetcher = abstractSkinsApi.getSkinFetcher();
-    skinStorage = abstractSkinsApi.getSkinStorage();
-    CommandSkinSet commandSkinSet = new CommandSkinSet(this);
-    getCommand("skinset").setExecutor(commandSkinSet);
-    getCommand("skinset").setTabCompleter(commandSkinSet);
-    CommandSkinReload commandSkinReload = new CommandSkinReload(this);
-    getCommand("skinreload").setExecutor(commandSkinReload);
-    getCommand("skinreload").setTabCompleter(commandSkinReload);
+    skinFetcher.startUpdateCheck(this, 1800); // 1800 seconds - 30 minutes
+    getCommand("skinset").setExecutor(new CommandSkinSet(this));
+    getCommand("skinreload").setExecutor(new CommandSkinReload(this));
     skinsMenu = new SkinsMenu(this);
-    CommandSkinMenu commandSkinMenu = new CommandSkinMenu(this);
-    getCommand("skinmenu").setExecutor(commandSkinMenu);
-    getCommand("skinmenu").setTabCompleter(commandSkinMenu);
+    getCommand("skinmenu").setExecutor(new CommandSkinMenu(this));
     if (!isProtocolSupport()) {
       getServer().getPluginManager().registerEvents(new DefaultSkinSetListener(this), this);
-      getLogger().info("Running on " + Platform.TYPE.name().toLowerCase());
+      getLogger().info("ENVIRONMENT: " + Platform.TYPE.name());
     } else {
       getServer()
           .getPluginManager()
           .registerEvents(new ProtocolSupportSkinSetter(abstractSkinsApi), this);
-      getLogger().info("Running on " + Platform.TYPE.name().toLowerCase() + " & ProtocolSupport");
+      getLogger().info("ENVIRONMENT: " + Platform.TYPE.name() + " & PROTOCOLSUPPORT");
     }
+    String version = Bukkit.getVersion();
+    String minecraftVersion = version.substring(version.indexOf('('), version.indexOf(')')).replace("MC: ", "");
+    getLogger().info("MINECRAFT VERSION: " + minecraftVersion);
     new UpdateCheckerSetup(this, "skins.updatenotify").setup();
+    Duration timeTaken = Duration.between(startTime, Instant.now());
+    getLogger().info("Successfully enabled. (took " + timeTaken.toMillis() + " ms)");
   }
 
   public AbstractSkinsApi getApi() {

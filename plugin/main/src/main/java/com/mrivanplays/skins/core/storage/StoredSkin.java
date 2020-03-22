@@ -1,4 +1,4 @@
-package com.mrivanplays.skins.core;
+package com.mrivanplays.skins.core.storage;
 
 import com.mrivanplays.skins.api.Skin;
 import java.util.ArrayList;
@@ -8,7 +8,7 @@ import java.util.UUID;
 public class StoredSkin {
 
   private Skin skin;
-  private final List<String> acquirers;
+  private List<String> acquirers;
   private final String configurationKey;
   private final String name;
 
