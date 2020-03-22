@@ -6,8 +6,6 @@ import com.mrivanplays.skins.api.Skin;
 import com.mrivanplays.skins.api.SkinsApi;
 import com.mrivanplays.skins.api.SkullItemBuilder;
 import com.mrivanplays.skins.core.SkullItemBuilderImpl.SkullItemBuilderData;
-import com.mrivanplays.skins.core.storage.SkinStorage;
-import com.mrivanplays.skins.core.storage.StoredSkin;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Set;
@@ -20,11 +18,11 @@ import org.jetbrains.annotations.NotNull;
 public abstract class AbstractSkinsApi implements SkinsApi {
 
   private final SkinFetcher skinFetcher;
-  private SkinStorage skinStorage;
+  private final SkinStorage skinStorage;
   private final Function<SkullItemBuilderData, ItemStack> transformer;
 
   public AbstractSkinsApi(InitializationData initializationData) {
-    skinStorage = initializationData.getSkinStorage();
+    skinStorage = new SkinStorage(initializationData.getDataFolder());
     skinFetcher = new SkinFetcher(skinStorage, initializationData.getDataProvider());
     this.transformer = initializationData.getTransformer();
   }
@@ -37,6 +35,11 @@ public abstract class AbstractSkinsApi implements SkinsApi {
   @Override
   @NotNull
   public MojangResponse getSkin(@NotNull String username) {
+    MojangResponseHolder holder = skinFetcher.getSkin(username);
+    return holder.getResponse();
+  }
+
+  public MojangResponseHolder getSkinHolder(String username) {
     return skinFetcher.getSkin(username);
   }
 

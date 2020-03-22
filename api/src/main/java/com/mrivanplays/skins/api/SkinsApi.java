@@ -20,8 +20,8 @@ public interface SkinsApi {
   /**
    * Gets the player's skin, which is set on the premium account of this player. This might be null
    * if the specified player's nickname has no premium account. Also keep in mind that the skin
-   * given could not be updated as the already fetched skins get cached and get updated on regular
-   * basis.
+   * given could not be updated as the already fetched skins get cached and get updated when
+   * ./skinset or a join from the specified skin name occurs.
    *
    * @param player the player you want to get the original skin of
    * @return optional of skin if this player is in mojang's database, empty optional otherwise
@@ -52,11 +52,12 @@ public interface SkinsApi {
 
   /**
    * Gets the skin of the specified username by fetching {@link java.util.UUID} and skin from the
-   * {@link DataProvider} specified. The response is never null, however, the parts into the
-   * response may be null.
+   * mojang api. The response is never null, however, the parts into the response may be null if the
+   * mojang api is down or the server's being rate limited by the mojang api.
    *
    * @param username the username of the premium account you want to get skin
-   * @return response with all data, or response with none data
+   * @return response with all data, or response with none data if mojang api is down or the
+   *     server's being rate limited.
    */
   @NotNull
   MojangResponse getSkin(@NotNull String username);
@@ -65,7 +66,7 @@ public interface SkinsApi {
    * Sets the skin of the specified player.
    *
    * @param player the player you want to set the skin of
-   * @param skin the skin in mojang response form that you want to set on the player
+   * @param skin the skin in mojang responce form that you want to set on the player
    * @return whether or not the skin change was successful
    */
   boolean setSkin(@NotNull Player player, @NotNull MojangResponse skin);

@@ -1,11 +1,11 @@
-package com.mrivanplays.skins.core.storage;
+package com.mrivanplays.skins.core;
 
 import com.mrivanplays.skins.api.Skin;
-import com.mrivanplays.skins.core.storage.StoredSkin;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -13,34 +13,41 @@ import java.util.UUID;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-public final class YamlSkinStorage implements SkinStorage {
+public final class SkinStorage {
 
   private final File file;
   private final FileConfiguration configuration;
   private final String section;
 
-  public YamlSkinStorage(File dataFolder) {
+  public SkinStorage(File dataFolder) {
     file = new File(dataFolder, "skinstorage.yml");
     createFile();
     configuration = YamlConfiguration.loadConfiguration(file);
     section = "skins";
   }
 
-  @Override
   public Optional<StoredSkin> getStoredSkin(UUID owner) {
     return deserialize().stream()
         .filter(skin -> skin.getSkin().getOwner().equals(owner))
         .findFirst();
   }
 
-  @Override
   public Optional<StoredSkin> getPlayerSetSkin(UUID player) {
     return deserialize().stream()
         .filter(skin -> skin.getAcquirers().contains(player.toString()))
         .findFirst();
   }
 
-  @Override
+  public void modifySkin(StoredSkin newStoredSkin) {
+    configuration.set(
+        section + "." + newStoredSkin.getConfigurationKey() + ".texture",
+        newStoredSkin.getSkin().getTexture());
+    configuration.set(
+        section + "." + newStoredSkin.getConfigurationKey() + ".signature",
+        newStoredSkin.getSkin().getSignature());
+    save();
+  }
+
   public void modifyStoredSkin(UUID player, StoredSkin newStoredSkin) {
     UUID owner = newStoredSkin.getSkin().getOwner();
     Optional<StoredSkin> playerSet = getPlayerSetSkin(player);
@@ -48,13 +55,7 @@ public final class YamlSkinStorage implements SkinStorage {
       StoredSkin skin = playerSet.get();
       if (skin.getSkin().getOwner().equals(owner)) {
         if (!skin.getSkin().getTexture().equalsIgnoreCase(newStoredSkin.getSkin().getTexture())) {
-          configuration.set(
-              section + "." + newStoredSkin.getConfigurationKey() + ".texture",
-              newStoredSkin.getSkin().getTexture());
-          configuration.set(
-              section + "." + newStoredSkin.getConfigurationKey() + ".signature",
-              newStoredSkin.getSkin().getSignature());
-          save();
+          modifySkin(newStoredSkin);
         }
       } else {
         // current
@@ -146,7 +147,6 @@ public final class YamlSkinStorage implements SkinStorage {
     }
   }
 
-  @Override
   public Set<String> getKeys() {
     if (!configuration.isSet(section)) {
       return Collections.emptySet();

@@ -2,16 +2,12 @@ package com.mrivanplays.skins.core;
 
 import com.mrivanplays.skins.api.DataProvider;
 import com.mrivanplays.skins.api.MojangResponse;
-import com.mrivanplays.skins.api.Skin;
-import com.mrivanplays.skins.core.storage.SkinStorage;
-import com.mrivanplays.skins.core.storage.StoredSkin;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import org.bukkit.plugin.Plugin;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 public final class SkinFetcher {
 
@@ -24,7 +20,7 @@ public final class SkinFetcher {
     this.dataProvider = dataProvider;
   }
 
-  public MojangResponse getSkin(String name, UUID uuid) {
+  public MojangResponseHolder getSkin(String name, UUID uuid) {
     Optional<MojangResponse> search =
         knownResponses.stream()
             .filter(
@@ -36,66 +32,32 @@ public final class SkinFetcher {
     if (search.isPresent()) {
       MojangResponse response = search.get();
       if (response.getSkin().isPresent()) {
-        return response;
+        return new MojangResponseHolder(response, false);
       } else {
         Optional<StoredSkin> storedSkin = skinStorage.getStoredSkin(uuid);
         if (storedSkin.isPresent()) {
           StoredSkin sskin = storedSkin.get();
           MojangResponse mojangResponse = new MojangResponse(name, uuid, sskin.getSkin());
-          knownResponses.replaceAll(
-              resp -> {
-                if (resp.getNickname().equalsIgnoreCase(name)) {
-                  return mojangResponse;
-                }
-                return resp;
-              });
-          return mojangResponse;
+          if (!contains(mojangResponse)) {
+            knownResponses.add(mojangResponse);
+          }
+          return new MojangResponseHolder(mojangResponse, false);
         } else {
           knownResponses.remove(response);
-          MojangResponse apiFetch = dataProvider.retrieveSkinResponse(name, uuid);
-          knownResponses.add(apiFetch);
-          return apiFetch;
+          MojangResponse apiFetch = apiFetch(name, uuid).join();
+          if (!contains(apiFetch)) {
+            knownResponses.add(apiFetch);
+          }
+          return new MojangResponseHolder(apiFetch, true);
         }
       }
     } else {
-      MojangResponse response = dataProvider.retrieveSkinResponse(name, uuid);
-      knownResponses.add(response);
-      return response;
+      MojangResponse response = apiFetch(name, uuid).join();
+      if (!contains(response)) {
+        knownResponses.add(response);
+      }
+      return new MojangResponseHolder(response, true);
     }
-  }
-
-  public List<MojangResponse> getKnownResponses() {
-    return knownResponses;
-  }
-
-  public void startUpdateCheck(Plugin plugin, int secondsFreq) {
-    plugin
-        .getServer()
-        .getScheduler()
-        .runTaskTimerAsynchronously(
-            plugin,
-            () -> {
-              Map<MojangResponse, MojangResponse> replacements = new HashMap<>();
-              for (MojangResponse response : knownResponses) {
-                MojangResponse apiFetch =
-                    dataProvider.retrieveSkinResponse(response.getNickname(), response.getUUID());
-                Optional<Skin> skinOptional = apiFetch.getSkin();
-                if (!skinOptional.isPresent()) {
-                  continue;
-                }
-                replacements.put(response, apiFetch);
-              }
-              try {
-                for (Map.Entry<MojangResponse, MojangResponse> entry : replacements.entrySet()) {
-                  knownResponses.remove(entry.getKey());
-                  knownResponses.add(entry.getValue());
-                }
-              } finally {
-                replacements.clear();
-              }
-            },
-            0,
-            secondsFreq * 20);
   }
 
   public DataProvider getDataProvider() {
@@ -106,11 +68,32 @@ public final class SkinFetcher {
     this.dataProvider = dataProvider;
   }
 
-  public MojangResponse getSkin(String name) {
-    return getSkin(name, fetchUUID(name));
+  public CompletableFuture<MojangResponse> apiFetch(String name, UUID uuid) {
+    return CompletableFuture.supplyAsync(() -> dataProvider.retrieveSkinResponse(name, uuid));
+  }
+
+  public MojangResponseHolder getSkin(String name) {
+    UUID fetchedUUID = fetchUUID(name);
+    if (fetchedUUID != null) {
+      return getSkin(name, fetchedUUID);
+    } else {
+      return new MojangResponseHolder(new MojangResponse(name, null, null), false);
+    }
   }
 
   public UUID fetchUUID(String name) {
     return dataProvider.retrieveUuid(name);
+  }
+
+  private boolean contains(MojangResponse response) {
+    return knownResponses.stream()
+        .anyMatch(
+            storage -> {
+              if (storage.getUuid().isPresent() && response.getUuid().isPresent()) {
+                return storage.getUuid().get().equals(response.getUuid().get());
+              } else {
+                return storage.getNickname().equalsIgnoreCase(response.getNickname());
+              }
+            });
   }
 }

@@ -17,8 +17,7 @@ public final class Skin {
   }
 
   /**
-   * Returns the owner of this skin by data from the specified {@link DataProvider} in the {@link
-   * SkinsApi}
+   * Returns the owner of this skin by data from the Mojang API
    *
    * @return owner
    */
@@ -29,7 +28,7 @@ public final class Skin {
 
   /**
    * Returns a base64 encoded {@link String}, representing the skin and (if have) the cape of of the
-   * {@link #getOwner()} by data from the specified {@link DataProvider} in the {@link SkinsApi}
+   * {@link #getOwner()} by data from the Mojang API
    *
    * @return texture
    */
