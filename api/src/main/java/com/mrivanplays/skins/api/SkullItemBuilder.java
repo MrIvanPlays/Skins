@@ -15,7 +15,7 @@ public interface SkullItemBuilder {
   /**
    * Sets the owner of the skull
    *
-   * @param owner mojang api response for skin, representing the owner of the skull.
+   * @param owner data provider response for skin, representing the owner of the skull.
    * @return this instance for chaining
    */
   @NotNull

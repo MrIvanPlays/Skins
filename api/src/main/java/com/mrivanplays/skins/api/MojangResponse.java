@@ -29,8 +29,9 @@ public final class MojangResponse {
   }
 
   /**
-   * Returns the {@link UUID} of the specified {@link #getNickname()}, according to mojang api. The
-   * return value may be empty if the plugin wasn't able to fetch it.
+   * Returns the {@link UUID} of the specified {@link #getNickname()}, according to the {@link
+   * DataProvider} set in the {@link SkinsApi}. The return value may be empty if the plugin wasn't
+   * able to fetch it.
    *
    * @return uuid, according to mojang api, or empty optional if failure
    */
@@ -39,9 +40,9 @@ public final class MojangResponse {
   }
 
   /**
-   * Returns the {@link Skin} of the specified {@link #getUuid()}, according to mojang api. The
-   * return value may be empty if the plugin wasn't able to fetch {@link #getUuid()} or wasn't able
-   * to fetch the skin.
+   * Returns the {@link Skin} of the specified {@link #getUuid()}, according to the {@link
+   * DataProvider} set in the {@link SkinsApi}. The return value may be empty if the plugin wasn't
+   * able to fetch {@link #getUuid()} or wasn't able to fetch the skin.
    *
    * @return skin, or empty optional if failure
    */

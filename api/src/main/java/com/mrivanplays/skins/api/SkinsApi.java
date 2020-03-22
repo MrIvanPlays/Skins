@@ -52,8 +52,8 @@ public interface SkinsApi {
 
   /**
    * Gets the skin of the specified username by fetching {@link java.util.UUID} and skin from the
-   * mojang api. The response is never null, however, the parts into the response may be null if the
-   * mojang api is down or the server's being rate limited by the mojang api.
+   * {@link DataProvider} set. The response is never null, however, the parts into the response may
+   * be null if the data provider wasn't able to fetch them, for one reason or another.
    *
    * @param username the username of the premium account you want to get skin
    * @return response with all data, or response with none data if mojang api is down or the
@@ -66,7 +66,7 @@ public interface SkinsApi {
    * Sets the skin of the specified player.
    *
    * @param player the player you want to set the skin of
-   * @param skin the skin in mojang responce form that you want to set on the player
+   * @param skin the skin in response form that you want to set on the player
    * @return whether or not the skin change was successful
    */
   boolean setSkin(@NotNull Player player, @NotNull MojangResponse skin);
