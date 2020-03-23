@@ -1,15 +1,12 @@
 package com.mrivanplays.skins;
 
-import java.util.Collections;
-import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class CommandSkinReload implements TabExecutor {
+public class CommandSkinReload implements CommandExecutor {
 
   private final SkinsBukkitPlugin plugin;
 
@@ -30,14 +27,5 @@ public class CommandSkinReload implements TabExecutor {
     plugin.reload();
     sender.sendMessage(ChatColor.GREEN + "Config reloaded successfully!");
     return true;
-  }
-
-  @Override
-  public @Nullable List<String> onTabComplete(
-      @NotNull CommandSender commandSender,
-      @NotNull Command command,
-      @NotNull String s,
-      @NotNull String[] strings) {
-    return Collections.emptyList();
   }
 }

@@ -7,8 +7,6 @@ import com.mrivanplays.skins.api.SkinsApi;
 import com.mrivanplays.skins.api.SkullItemBuilder;
 import com.mrivanplays.skins.core.SkullItemBuilderImpl.SkullItemBuilderData;
 import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import org.bukkit.entity.Player;
@@ -28,25 +26,38 @@ public abstract class AbstractSkinsApi implements SkinsApi {
   }
 
   @Override
+  @Deprecated
   public Optional<Skin> getSetSkin(@NotNull Player player) {
     return skinStorage.getPlayerSetSkin(player.getUniqueId()).map(StoredSkin::getSkin);
   }
 
   @Override
-  @NotNull
-  public MojangResponse getSkin(@NotNull String username) {
-    MojangResponseHolder holder = skinFetcher.getSkin(username);
-    return holder.getResponse();
+  public @NotNull MojangResponse getSetSkinResponse(@NotNull Player player) {
+    return skinStorage
+        .getPlayerSetSkin(player.getUniqueId())
+        .map(storedSkin -> getSkin(storedSkin.getName()))
+        .orElseGet(() -> getOriginalSkinResponse(player));
   }
 
-  public MojangResponseHolder getSkinHolder(String username) {
+  public MojangResponse getSetSkinResponse(String playerName, UUID playerUUID) {
+    return skinStorage
+        .getPlayerSetSkin(playerUUID)
+        .map(storedSkin -> getSkin(storedSkin.getName()))
+        .orElseGet(() -> getSkin(playerName));
+  }
+
+  @Override
+  @NotNull
+  public MojangResponse getSkin(@NotNull String username) {
     return skinFetcher.getSkin(username);
   }
 
   @Override
   public boolean setSkin(@NotNull Player player, @NotNull MojangResponse skin) {
     if (skin.getSkin().isPresent()) {
-      setSkin(player, skin.getSkin().get(), skin.getNickname());
+      Skin skinObj = skin.getSkin().get();
+      modifyStoredSkin(player.getUniqueId(), skinObj);
+      setNPCSkin(player, skinObj);
       return true;
     } else {
       return false;
@@ -67,29 +78,19 @@ public abstract class AbstractSkinsApi implements SkinsApi {
     skinFetcher.setDataProvider(dataProvider);
   }
 
-  public void setSkin(Player player, Skin skin, String name) {
-    modifyStoredSkin(player.getUniqueId(), skin, name);
-    setNPCSkin(player, skin);
-  }
-
-  public void modifyStoredSkin(UUID uuid, Skin skin, String name) {
-    Optional<StoredSkin> newStoredSkin = skinStorage.getStoredSkin(skin.getOwner());
-    if (newStoredSkin.isPresent()) {
-      StoredSkin skinStored = newStoredSkin.get();
-      skinStorage.modifyStoredSkin(uuid, skinStored);
-    } else {
-      Set<String> keys = skinStorage.getKeys();
-      OptionalInt biggestNumberStored = keys.stream().mapToInt(Integer::parseInt).max();
-      int biggestNumber;
-      if (!biggestNumberStored.isPresent()) {
-        biggestNumber = 0;
-      } else {
-        biggestNumber = biggestNumberStored.getAsInt();
+  public void modifyStoredSkin(UUID uuid, Skin skin) {
+    Optional<StoredSkin> storedSkinOptional = skinStorage.getStoredSkin(skin.getOwner());
+    if (storedSkinOptional.isPresent()) {
+      StoredSkin storedSkin = storedSkinOptional.get();
+      if (storedSkin.getAcquirers().contains(uuid.toString())) {
+        return;
       }
-      keys.clear();
-      StoredSkin skinStored = new StoredSkin(skin, Integer.toString(biggestNumber + 1), name);
-      skinStorage.modifyStoredSkin(uuid, skinStored);
+      StoredSkin dup = storedSkin.duplicate();
+      dup.addAcquirer(uuid);
+      skinStorage.updateAcquirers(dup);
     }
+    // do nothing when not present
+    // stored skin isn't present when skin wasn't present when data was fetched.
   }
 
   protected void setNPCSkin(Player player, Skin skin) {}

@@ -1,5 +1,6 @@
 package com.mrivanplays.skins.api;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
@@ -48,5 +49,26 @@ public final class MojangResponse {
    */
   public Optional<Skin> getSkin() {
     return Optional.ofNullable(skin);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    MojangResponse that = (MojangResponse) o;
+    if (that.getSkin().isPresent() && getSkin().isPresent()) {
+      return that.getSkin().get().equals(getSkin().get())
+          && Objects.equals(getNickname(), that.getNickname());
+    }
+    return Objects.equals(getNickname(), that.getNickname());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(getNickname(), getUuid(), getSkin());
   }
 }

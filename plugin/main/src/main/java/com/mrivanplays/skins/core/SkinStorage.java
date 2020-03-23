@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -48,103 +47,24 @@ public final class SkinStorage {
     save();
   }
 
-  public void modifyStoredSkin(UUID player, StoredSkin newStoredSkin) {
-    UUID owner = newStoredSkin.getSkin().getOwner();
-    Optional<StoredSkin> playerSet = getPlayerSetSkin(player);
-    if (playerSet.isPresent()) {
-      StoredSkin skin = playerSet.get();
-      if (skin.getSkin().getOwner().equals(owner)) {
-        if (!skin.getSkin().getTexture().equalsIgnoreCase(newStoredSkin.getSkin().getTexture())) {
-          modifySkin(newStoredSkin);
-        }
-      } else {
-        // current
-        StoredSkin duplicate = skin.duplicate();
-        duplicate.removeAcquirer(player);
-        configuration.set(
-            section + "." + duplicate.getConfigurationKey() + ".acquirers",
-            duplicate.getAcquirers());
+  public void putFullSkin(StoredSkin skin) {
+    configuration.set(
+        section + "." + skin.getConfigurationKey() + ".texture", skin.getSkin().getTexture());
+    configuration.set(
+        section + "." + skin.getConfigurationKey() + ".signature", skin.getSkin().getSignature());
+    configuration.set(
+        section + "." + skin.getConfigurationKey() + ".owner",
+        skin.getSkin().getOwner().toString());
+    configuration.set(section + "." + skin.getConfigurationKey() + ".ownerName", skin.getName());
+    configuration.set(
+        section + "." + skin.getConfigurationKey() + ".acquirers", skin.getAcquirers());
+    save();
+  }
 
-        // new
-        if (!getKeys().contains(newStoredSkin.getConfigurationKey())) {
-          StoredSkin newDuplicate = newStoredSkin.duplicate();
-          newDuplicate.addAcquirer(player);
-          configuration.set(
-              section + "." + newDuplicate.getConfigurationKey() + ".texture",
-              newDuplicate.getSkin().getTexture());
-          configuration.set(
-              section + "." + newDuplicate.getConfigurationKey() + ".signature",
-              newDuplicate.getSkin().getSignature());
-          configuration.set(
-              section + "." + newDuplicate.getConfigurationKey() + ".owner",
-              newDuplicate.getSkin().getOwner().toString());
-          configuration.set(
-              section + "." + newDuplicate.getConfigurationKey() + ".ownerName",
-              newDuplicate.getName());
-          configuration.set(
-              section + "." + newDuplicate.getConfigurationKey() + ".acquirers",
-              newDuplicate.getAcquirers());
-        } else {
-          StoredSkin nowStored = getStoredSkin(newStoredSkin.getSkin().getOwner()).get();
-          if (!nowStored
-              .getSkin()
-              .getTexture()
-              .equalsIgnoreCase(newStoredSkin.getSkin().getTexture())) {
-            configuration.set(
-                section + "." + newStoredSkin.getConfigurationKey() + ".texture",
-                newStoredSkin.getSkin().getTexture());
-            configuration.set(
-                section + "." + newStoredSkin.getConfigurationKey() + ".signature",
-                newStoredSkin.getSkin().getSignature());
-          }
-          nowStored.addAcquirer(player);
-          configuration.set(
-              section + "." + nowStored.getConfigurationKey() + ".acquirers",
-              nowStored.getAcquirers());
-        }
-
-        save();
-      }
-    } else {
-      if (!getKeys().contains(newStoredSkin.getConfigurationKey())) {
-        StoredSkin newDuplicate = newStoredSkin.duplicate();
-        newDuplicate.addAcquirer(player);
-        configuration.set(
-            section + "." + newDuplicate.getConfigurationKey() + ".texture",
-            newDuplicate.getSkin().getTexture());
-        configuration.set(
-            section + "." + newDuplicate.getConfigurationKey() + ".signature",
-            newDuplicate.getSkin().getSignature());
-        configuration.set(
-            section + "." + newDuplicate.getConfigurationKey() + ".owner",
-            newDuplicate.getSkin().getOwner().toString());
-        configuration.set(
-            section + "." + newDuplicate.getConfigurationKey() + ".ownerName",
-            newDuplicate.getName());
-        configuration.set(
-            section + "." + newDuplicate.getConfigurationKey() + ".acquirers",
-            newDuplicate.getAcquirers());
-      } else {
-        StoredSkin nowStored = getStoredSkin(newStoredSkin.getSkin().getOwner()).get();
-        if (!nowStored
-            .getSkin()
-            .getTexture()
-            .equalsIgnoreCase(newStoredSkin.getSkin().getTexture())) {
-          configuration.set(
-              section + "." + newStoredSkin.getConfigurationKey() + ".texture",
-              newStoredSkin.getSkin().getTexture());
-          configuration.set(
-              section + "." + newStoredSkin.getConfigurationKey() + ".signature",
-              newStoredSkin.getSkin().getSignature());
-        }
-        nowStored.addAcquirer(player);
-        configuration.set(
-            section + "." + nowStored.getConfigurationKey() + ".acquirers",
-            nowStored.getAcquirers());
-      }
-
-      save();
-    }
+  public void updateAcquirers(StoredSkin skin) {
+    configuration.set(
+        section + "." + skin.getConfigurationKey() + ".acquirers", skin.getAcquirers());
+    save();
   }
 
   public Set<String> getKeys() {

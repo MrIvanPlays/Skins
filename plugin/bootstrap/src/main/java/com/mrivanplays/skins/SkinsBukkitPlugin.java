@@ -16,9 +16,11 @@ import com.mrivanplays.skins.core.SkullItemBuilderImpl.SkullItemBuilderData;
 import com.mrivanplays.skins.paper.SkinsPaper;
 import com.mrivanplays.skins.protocolsupport.ProtocolSupportSkinSetter;
 import com.mrivanplays.skins.protocolsupport.SkinsProtocolSupport;
+import java.util.Collections;
 import java.util.function.Function;
 import org.bstats.bukkit.MetricsLite;
 import org.bukkit.ChatColor;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -44,10 +46,7 @@ public class SkinsBukkitPlugin extends JavaPlugin {
               skin, response.getNickname(), data.getItemName(), data.getItemLore());
         };
     InitializationData initializationData =
-        new InitializationData(
-            getDataFolder(),
-            transformer,
-            new MojangDataProvider(getLogger()));
+        new InitializationData(getDataFolder(), transformer, new MojangDataProvider(getLogger()));
 
     if (!Platform.isPaper()) {
       getLogger().warning("Skins works better if you run Paper!");
@@ -91,16 +90,15 @@ public class SkinsBukkitPlugin extends JavaPlugin {
     abstractSkinsApi = (AbstractSkinsApi) api;
     skinFetcher = abstractSkinsApi.getSkinFetcher();
     skinStorage = abstractSkinsApi.getSkinStorage();
-    CommandSkinSet commandSkinSet = new CommandSkinSet(this);
-    getCommand("skinset").setExecutor(commandSkinSet);
-    getCommand("skinset").setTabCompleter(commandSkinSet);
-    CommandSkinReload commandSkinReload = new CommandSkinReload(this);
-    getCommand("skinreload").setExecutor(commandSkinReload);
-    getCommand("skinreload").setTabCompleter(commandSkinReload);
+
+    final TabCompleter EMPTY = (sender, command, label, args) -> Collections.emptyList();
+    getCommand("skinset").setExecutor(new CommandSkinSet(this));
+    getCommand("skinreload").setExecutor(new CommandSkinReload(this));
+    getCommand("skinreload").setTabCompleter(EMPTY);
     skinsMenu = new SkinsMenu(this);
-    CommandSkinMenu commandSkinMenu = new CommandSkinMenu(this);
-    getCommand("skinmenu").setExecutor(commandSkinMenu);
-    getCommand("skinmenu").setTabCompleter(commandSkinMenu);
+    getCommand("skinmenu").setExecutor(new CommandSkinMenu(this));
+    getCommand("skinmenu").setTabCompleter(EMPTY);
+
     if (!isProtocolSupport()) {
       getServer().getPluginManager().registerEvents(new DefaultSkinSetListener(this), this);
       getLogger().info("Running on " + Platform.TYPE.name().toLowerCase());

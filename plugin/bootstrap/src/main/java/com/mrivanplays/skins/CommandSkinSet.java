@@ -1,13 +1,18 @@
 package com.mrivanplays.skins;
 
 import com.mrivanplays.skins.api.MojangResponse;
-import com.mrivanplays.skins.api.Skin;
-import com.mrivanplays.skins.core.MojangResponseHolder;
+import com.mrivanplays.skins.core.StoredSkin;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -52,26 +57,12 @@ public class CommandSkinSet implements TabExecutor {
         return true;
       }
     }
-    MojangResponseHolder responseHolder = plugin.getApi().getSkinHolder(args[0]);
-    if (responseHolder.isJustFetched()) {
-      if (!responseHolder.getResponse().getSkin().isPresent()) {
-        player.sendMessage(plugin.color(plugin.getConfig().getString("messages.not-premium")));
-      } else {
-        plugin.getApi().setSkin(player, responseHolder.getResponse());
-        player.sendMessage(
-            plugin.color(plugin.getConfig().getString("messages.skin-set-successfully")));
-      }
-    } else {
-      if (!responseHolder.getResponse().getSkin().isPresent()) {
-        player.sendMessage(plugin.color(plugin.getConfig().getString("messages.not-premium")));
-      } else {
-        Skin skin = responseHolder.getResponse().getSkin().get();
-        Skin setSkin = checkForSkinUpdate(args[0], skin);
-        plugin.getApi().setSkin(player, setSkin, args[0]);
-        player.sendMessage(
-            plugin.color(plugin.getConfig().getString("messages.skin-set-successfully")));
-      }
+    MojangResponse response = plugin.getApi().getSkin(args[0]);
+    if (!response.getSkin().isPresent()) {
+      player.sendMessage(plugin.color(plugin.getConfig().getString("messages.not-premium")));
+      return true;
     }
+    plugin.getApi().setSkin(player, response);
     long cooldown = 1000 * 30;
     cooldownMap.put(player.getUniqueId(), System.currentTimeMillis() + cooldown);
     return true;
@@ -79,24 +70,37 @@ public class CommandSkinSet implements TabExecutor {
 
   @Override
   public @Nullable List<String> onTabComplete(
-      @NotNull CommandSender commandSender,
+      @NotNull CommandSender sender,
       @NotNull Command command,
       @NotNull String s,
-      @NotNull String[] strings) {
-    return Collections.emptyList();
-  }
+      @NotNull String[] args) {
+    if (args.length == 1) {
+      List<String> matches = new ArrayList<>();
+      matches.addAll(
+          plugin.getApi().getSkinStorage().deserialize().stream()
+              .map(StoredSkin::getName)
+              .collect(Collectors.toList()));
+      List<OfflinePlayer> playersCombined = new ArrayList<>();
+      playersCombined.addAll(
+          Arrays.stream(Bukkit.getOfflinePlayers()).collect(Collectors.toList()));
 
-  private Skin checkForSkinUpdate(String name, Skin skin) {
-    MojangResponse response = plugin.getSkinFetcher().apiFetch(name, skin.getOwner()).join();
-    if (response.getSkin().isPresent()) {
-      Skin fetched = response.getSkin().get();
-      if (skin.getTexture().equalsIgnoreCase(fetched.getTexture())) {
-        return skin;
-      } else {
-        return fetched;
+      Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
+      for (Player player : onlinePlayers) {
+        if (!playersCombined.contains(player)) {
+          playersCombined.add(player);
+        }
       }
-    } else {
-      return skin;
+
+      matches.addAll(
+          playersCombined.stream()
+              .filter(player -> player.getName() != null)
+              .map(OfflinePlayer::getName)
+              .collect(Collectors.toList()));
+
+      return matches.stream()
+          .filter(match -> match.toLowerCase().startsWith(args[0].toLowerCase()))
+          .collect(Collectors.toList());
     }
+    return Collections.emptyList();
   }
 }
