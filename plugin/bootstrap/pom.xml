@@ -14,10 +14,29 @@
   <version>${plugin.version}</version>
   <packaging>jar</packaging>
 
+  <name>Skins</name>
+  <description>Main plugin implementation</description>
+
   <build>
     <defaultGoal>clean package</defaultGoal>
-    <finalName>Skins-${project.version}</finalName>
+    <finalName>Skins-${buildNumber}</finalName>
     <plugins>
+      <plugin>
+        <groupId>net.md-5</groupId>
+        <artifactId>scriptus</artifactId>
+        <version>0.3.2</version>
+        <configuration>
+          <format>git:${project.name}:${project.version}:%s:${buildNumber}</format>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>initialize</phase>
+            <goals>
+              <goal>describe</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
@@ -47,6 +66,18 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.2.0</version>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Implementation-Version>${describe}</Implementation-Version>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
     </plugins>
     <resources>
       <resource>
@@ -55,6 +86,36 @@
       </resource>
     </resources>
   </build>
+
+  <scm>
+    <connection>scm:git:git@github.com:MrIvanPlays/Skins.git</connection>
+    <developerConnection>scm:git:git@github.com:MrIvanPlays/Skins.git</developerConnection>
+    <url>git@github.com:MrIvanPlays/Skins.git</url>
+  </scm>
+
+  <issueManagement>
+    <system>GitHub</system>
+    <url>https://github.com/MrIvanPlays/Skins/issues</url>
+  </issueManagement>
+
+  <ciManagement>
+    <system>jenkins</system>
+    <url>http://ci.mrivanplays.com/job/Skins</url>
+  </ciManagement>
+
+  <developers>
+    <developer>
+      <id>MrIvanPlays</id>
+    </developer>
+  </developers>
+
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>http://www.opensource.org/licenses/mit-license.php</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
 
   <repositories>
     <repository>

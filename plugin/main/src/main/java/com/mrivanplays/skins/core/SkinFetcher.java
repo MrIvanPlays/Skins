@@ -30,11 +30,7 @@ public final class SkinFetcher {
   public MojangResponse getSkin(String name, UUID uuid) {
     Optional<MojangResponse> search =
         knownResponses.stream()
-            .filter(
-                response ->
-                    response.getUuid().isPresent()
-                        ? response.getUuid().get().equals(uuid)
-                        : response.getNickname().equalsIgnoreCase(name))
+            .filter(response -> response.getNickname().equalsIgnoreCase(name))
             .findFirst();
     if (search.isPresent()) {
       MojangResponse response = search.get();
@@ -42,7 +38,7 @@ public final class SkinFetcher {
         Skin skin = response.getSkin().get();
         Skin updated = checkForSkinUpdate(skin, name);
         if (!skin.equals(updated)) {
-          MojangResponse newResponse = new MojangResponse(name, uuid, updated);
+          MojangResponse newResponse = new MojangResponse(name, updated);
           knownResponses.remove(response);
           knownResponses.add(newResponse);
           Optional<StoredSkin> storedSkinOptional = skinStorage.getStoredSkin(uuid);
@@ -67,11 +63,11 @@ public final class SkinFetcher {
             StoredSkin dup = storedSkin.duplicate();
             dup.setSkin(updated);
             skinStorage.modifySkin(dup);
-            MojangResponse resp = new MojangResponse(name, uuid, updated);
+            MojangResponse resp = new MojangResponse(name, updated);
             knownResponses.add(resp);
             return resp;
           } else {
-            MojangResponse resp = new MojangResponse(name, uuid, storedSkin.getSkin());
+            MojangResponse resp = new MojangResponse(name, storedSkin.getSkin());
             knownResponses.add(resp);
             return resp;
           }
@@ -92,11 +88,11 @@ public final class SkinFetcher {
           StoredSkin dup = storedSkin.duplicate();
           dup.setSkin(updated);
           skinStorage.modifySkin(dup);
-          MojangResponse response = new MojangResponse(name, uuid, updated);
+          MojangResponse response = new MojangResponse(name, updated);
           knownResponses.add(response);
           return response;
         } else {
-          MojangResponse response = new MojangResponse(name, uuid, storedSkin.getSkin());
+          MojangResponse response = new MojangResponse(name, storedSkin.getSkin());
           knownResponses.add(response);
           return response;
         }
@@ -122,7 +118,10 @@ public final class SkinFetcher {
       }
       keys.clear();
       StoredSkin skinStored =
-          new StoredSkin(apiFetch.getSkin().get(), Integer.toString(biggestNumber + 1), apiFetch.getNickname());
+          new StoredSkin(
+              apiFetch.getSkin().get(),
+              Integer.toString(biggestNumber + 1),
+              apiFetch.getNickname());
       skinStorage.putFullSkin(skinStored);
     }
   }
@@ -144,7 +143,7 @@ public final class SkinFetcher {
     if (fetchedUUID != null) {
       return getSkin(name, fetchedUUID);
     } else {
-      return new MojangResponse(name, null, null);
+      return new MojangResponse(name, null);
     }
   }
 

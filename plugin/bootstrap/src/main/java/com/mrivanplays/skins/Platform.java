@@ -23,8 +23,18 @@ public class Platform {
   }
 
   public enum PlatformType {
-    PAPER,
-    SPIGOT,
-    CRAFTBUKKIT
+    PAPER("Paper"),
+    SPIGOT("Spigot"),
+    CRAFTBUKKIT("CraftBukkit");
+
+    private String capitalizedName;
+
+    PlatformType(String capitalizedName) {
+      this.capitalizedName = capitalizedName;
+    }
+
+    public String getName() {
+      return capitalizedName;
+    }
   }
 }

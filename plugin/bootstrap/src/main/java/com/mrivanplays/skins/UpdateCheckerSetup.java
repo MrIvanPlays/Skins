@@ -6,7 +6,6 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -46,9 +45,14 @@ public class UpdateCheckerSetup implements Listener {
                       .getPluginManager()
                       .registerEvents(UpdateCheckerSetup.this, plugin);
                 } else if (reason == UpdateChecker.UpdateReason.UNRELEASED_VERSION) {
-                  plugin
-                      .getLogger()
-                      .severe("!! RUNNING UNRELEASED VERSION OF Skins !! (Is this a dev build?)");
+                  String currentVersion = plugin.getDescription().getVersion();
+                  if (currentVersion.contains("SNAPSHOT")) {
+                    plugin.getLogger().severe("!! RUNNING DEV BUILD OF Skins !!");
+                  } else {
+                    plugin
+                        .getLogger()
+                        .severe("!! RUNNING UNRELEASED VERSION OF Skins !! (Is this a dev build?)");
+                  }
                   plugin
                       .getServer()
                       .getPluginManager()
@@ -81,10 +85,16 @@ public class UpdateCheckerSetup implements Listener {
             .getScheduler()
             .scheduleSyncDelayedTask(
                 plugin,
-                () ->
+                () -> {
+                  String version = plugin.getDescription().getVersion();
+                  if (version.contains("SNAPSHOT")) {
+                    player.sendMessage(plugin.color("&4&l!! RUNNING DEV BUILD OF Skins !!"));
+                  } else {
                     player.sendMessage(
                         plugin.color(
-                            "&4&l!! RUNNING UNRELEASED VERSION OF Skins !! &e(Is this a dev build?)")));
+                            "&4&l!! RUNNING UNRELEASED VERSION OF Skins !! &e(Is this a dev build?)"));
+                  }
+                });
       }
     }
   }

@@ -13,6 +13,18 @@ public final class MojangResponse {
   private final UUID uuid;
   private final Skin skin;
 
+  public MojangResponse(@NotNull String nickname, @Nullable Skin skin) {
+    this.nickname = nickname;
+    if (skin != null) {
+      this.uuid = skin.getOwner();
+    } else {
+      this.uuid = null;
+    }
+    this.skin = skin;
+  }
+
+  /** @deprecated uuid can be retrieved via skin */
+  @Deprecated
   public MojangResponse(@NotNull String nickname, @Nullable UUID uuid, @Nullable Skin skin) {
     this.nickname = nickname;
     this.uuid = uuid;
@@ -34,16 +46,16 @@ public final class MojangResponse {
    * DataProvider} set in the {@link SkinsApi}. The return value may be empty if the plugin wasn't
    * able to fetch it.
    *
-   * @return uuid, according to mojang api, or empty optional if failure
+   * @return uuid, according to data provider, or empty optional if failure
+   * @deprecated skin object holds a uuid
    */
+  @Deprecated
   public Optional<UUID> getUuid() {
     return Optional.ofNullable(uuid);
   }
 
   /**
-   * Returns the {@link Skin} of the specified {@link #getUuid()}, according to the {@link
-   * DataProvider} set in the {@link SkinsApi}. The return value may be empty if the plugin wasn't
-   * able to fetch {@link #getUuid()} or wasn't able to fetch the skin.
+   * Returns the {@link Skin}, held by this response.
    *
    * @return skin, or empty optional if failure
    */
@@ -69,6 +81,6 @@ public final class MojangResponse {
 
   @Override
   public int hashCode() {
-    return Objects.hash(getNickname(), getUuid(), getSkin());
+    return Objects.hash(getNickname(), getSkin());
   }
 }

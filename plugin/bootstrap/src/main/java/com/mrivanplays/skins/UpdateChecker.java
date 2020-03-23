@@ -44,7 +44,7 @@ public final class UpdateChecker {
         return (secondSplit.length > firstSplit.length) ? second : first;
       };
 
-  private static final String USER_AGENT = "Poll-update-checker";
+  private static final String USER_AGENT = "skins-update-checker";
   private static final String UPDATE_URL = "https://api.spigotmc.org/legacy/update.php?resource=%d";
   private static final Pattern DECIMAL_SCHEME_PATTERN = Pattern.compile("\\d+(?:\\.\\d+)*");
 

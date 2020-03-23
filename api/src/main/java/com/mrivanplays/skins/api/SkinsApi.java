@@ -1,5 +1,6 @@
 package com.mrivanplays.skins.api;
 
+import com.google.common.base.Preconditions;
 import java.util.Optional;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -53,6 +54,7 @@ public interface SkinsApi {
    */
   @NotNull
   default MojangResponse getOriginalSkinResponse(@NotNull Player player) {
+    Preconditions.checkNotNull(player, "player");
     return getSkin(player.getName());
   }
 

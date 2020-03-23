@@ -1,5 +1,6 @@
 package com.mrivanplays.skins.core;
 
+import com.google.common.base.Preconditions;
 import com.mrivanplays.skins.api.DataProvider;
 import com.mrivanplays.skins.api.MojangResponse;
 import com.mrivanplays.skins.api.Skin;
@@ -28,11 +29,13 @@ public abstract class AbstractSkinsApi implements SkinsApi {
   @Override
   @Deprecated
   public Optional<Skin> getSetSkin(@NotNull Player player) {
+    Preconditions.checkNotNull(player, "player");
     return skinStorage.getPlayerSetSkin(player.getUniqueId()).map(StoredSkin::getSkin);
   }
 
   @Override
   public @NotNull MojangResponse getSetSkinResponse(@NotNull Player player) {
+    Preconditions.checkNotNull(player, "player");
     return skinStorage
         .getPlayerSetSkin(player.getUniqueId())
         .map(storedSkin -> getSkin(storedSkin.getName()))
@@ -49,11 +52,14 @@ public abstract class AbstractSkinsApi implements SkinsApi {
   @Override
   @NotNull
   public MojangResponse getSkin(@NotNull String username) {
+    Preconditions.checkNotNull(username, "username");
     return skinFetcher.getSkin(username);
   }
 
   @Override
   public boolean setSkin(@NotNull Player player, @NotNull MojangResponse skin) {
+    Preconditions.checkNotNull(player, "player");
+    Preconditions.checkNotNull(skin, "skin");
     if (skin.getSkin().isPresent()) {
       Skin skinObj = skin.getSkin().get();
       modifyStoredSkin(player.getUniqueId(), skinObj);
@@ -72,6 +78,7 @@ public abstract class AbstractSkinsApi implements SkinsApi {
 
   @Override
   public void setDataProvider(@NotNull DataProvider dataProvider) {
+    Preconditions.checkNotNull(dataProvider, "dataProvider");
     if (skinFetcher.getDataProvider().equals(dataProvider)) {
       return;
     }
@@ -94,10 +101,6 @@ public abstract class AbstractSkinsApi implements SkinsApi {
   }
 
   protected void setNPCSkin(Player player, Skin skin) {}
-
-  public SkinFetcher getSkinFetcher() {
-    return skinFetcher;
-  }
 
   public SkinStorage getSkinStorage() {
     return skinStorage;

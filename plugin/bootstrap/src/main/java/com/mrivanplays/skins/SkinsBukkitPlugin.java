@@ -30,7 +30,6 @@ public class SkinsBukkitPlugin extends JavaPlugin {
   private SkinsApi api;
   private boolean disabled = false;
   private SkinStorage skinStorage;
-  private SkinFetcher skinFetcher;
   private AbstractSkinsApi abstractSkinsApi;
   private SkinsMenu skinsMenu;
 
@@ -88,7 +87,6 @@ public class SkinsBukkitPlugin extends JavaPlugin {
     }
     saveDefaultConfig();
     abstractSkinsApi = (AbstractSkinsApi) api;
-    skinFetcher = abstractSkinsApi.getSkinFetcher();
     skinStorage = abstractSkinsApi.getSkinStorage();
 
     final TabCompleter EMPTY = (sender, command, label, args) -> Collections.emptyList();
@@ -98,15 +96,17 @@ public class SkinsBukkitPlugin extends JavaPlugin {
     skinsMenu = new SkinsMenu(this);
     getCommand("skinmenu").setExecutor(new CommandSkinMenu(this));
     getCommand("skinmenu").setTabCompleter(EMPTY);
+    getCommand("skininfo").setExecutor(new CommandSkinInfo(this));
+    getCommand("skininfo").setTabCompleter(EMPTY);
 
     if (!isProtocolSupport()) {
       getServer().getPluginManager().registerEvents(new DefaultSkinSetListener(this), this);
-      getLogger().info("Running on " + Platform.TYPE.name().toLowerCase());
+      getLogger().info("Running on " + Platform.TYPE.getName());
     } else {
       getServer()
           .getPluginManager()
           .registerEvents(new ProtocolSupportSkinSetter(abstractSkinsApi), this);
-      getLogger().info("Running on " + Platform.TYPE.name().toLowerCase() + " & ProtocolSupport");
+      getLogger().info("Running on " + Platform.TYPE.getName() + " & ProtocolSupport");
     }
     new UpdateCheckerSetup(this, "skins.updatenotify").setup();
   }
@@ -121,10 +121,6 @@ public class SkinsBukkitPlugin extends JavaPlugin {
 
   public SkinStorage getSkinStorage() {
     return skinStorage;
-  }
-
-  public SkinFetcher getSkinFetcher() {
-    return skinFetcher;
   }
 
   private boolean isProtocolSupport() {

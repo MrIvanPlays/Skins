@@ -1,5 +1,6 @@
 package com.mrivanplays.skins.api;
 
+import java.util.Objects;
 import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,13 +52,22 @@ public final class Skin {
 
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof Skin)) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Skin other = (Skin) o;
-    // signature not included as this may differ
-    // because the mojang api is returning different signature
-    // after 2-3 requests
-    return other.getOwner().equals(owner) && other.getTexture().equalsIgnoreCase(texture);
+    // signature not included as it may differ
+    // the default provider used after 2-3 requests it gives different signature.
+    Skin skin = (Skin) o;
+    return Objects.equals(getOwner(), skin.getOwner())
+        && Objects.equals(getTexture(), skin.getTexture());
+  }
+
+  @Override
+  public int hashCode() {
+    // signature not included as it may differ
+    return Objects.hash(getOwner(), getTexture());
   }
 }

@@ -70,7 +70,7 @@ public final class MojangDataProvider implements DataProvider {
         logger.severe(
             "The server's being rate limited by mojang api. "
                 + "You may expect some players not having skins.");
-        return new MojangResponse(name, uuid, null);
+        return new MojangResponse(name, null);
       }
       JsonArray properties = object.get("properties").getAsJsonArray();
       for (JsonElement property : properties) {
@@ -84,12 +84,12 @@ public final class MojangDataProvider implements DataProvider {
         String texture = propertyObject.get("value").getAsString();
         String signature = propertyObject.get("signature").getAsString();
         Skin skin = new Skin(uuid, texture, signature);
-        return new MojangResponse(name, uuid, skin);
+        return new MojangResponse(name, skin);
       }
     } catch (Exception e) {
-      return new MojangResponse(name, uuid, null);
+      return new MojangResponse(name, null);
     }
-    return new MojangResponse(name, uuid, null);
+    return new MojangResponse(name, null);
   }
 
   private UUID getUuid(String id) {
