@@ -98,6 +98,16 @@ public abstract class AbstractSkinsApi implements SkinsApi {
     Optional<StoredSkin> storedSkinOptional = skinStorage.getStoredSkin(skin.getOwner());
     if (storedSkinOptional.isPresent()) {
       StoredSkin storedSkin = storedSkinOptional.get();
+      Optional<StoredSkin> currentStoredSkinOptional = skinStorage.getPlayerSetSkin(uuid);
+      if (currentStoredSkinOptional.isPresent()) {
+        StoredSkin currentStoredSkin = currentStoredSkinOptional.get();
+        if (currentStoredSkin.equals(storedSkin)) {
+          return;
+        }
+        StoredSkin dup = currentStoredSkin.duplicate();
+        dup.removeAcquirer(uuid);
+        skinStorage.updateAcquirers(dup);
+      }
       if (storedSkin.getAcquirers().contains(uuid.toString())) {
         return;
       }

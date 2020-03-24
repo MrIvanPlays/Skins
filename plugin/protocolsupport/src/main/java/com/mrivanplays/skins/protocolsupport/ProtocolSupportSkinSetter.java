@@ -24,6 +24,7 @@ public class ProtocolSupportSkinSetter implements Listener {
     if (response.getSkin().isPresent()) {
       Skin skin = response.getSkin().get();
       event.addProperty(new ProfileProperty("textures", skin.getTexture(), skin.getSignature()));
+      skinsApi.modifyStoredSkin(profile.getUUID(), skin);
     }
   }
 }

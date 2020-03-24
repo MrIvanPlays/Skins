@@ -3,6 +3,7 @@ package com.mrivanplays.skins.core;
 import com.mrivanplays.skins.api.Skin;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class StoredSkin {
@@ -57,5 +58,23 @@ public class StoredSkin {
 
   public StoredSkin duplicate() {
     return new StoredSkin(skin, acquirers, configurationKey, name);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    StoredSkin that = (StoredSkin) o;
+    return that.getConfigurationKey().equalsIgnoreCase(this.getConfigurationKey())
+        && that.getSkin().getOwner().equals(this.getSkin().getOwner());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(getConfigurationKey(), getSkin());
   }
 }
