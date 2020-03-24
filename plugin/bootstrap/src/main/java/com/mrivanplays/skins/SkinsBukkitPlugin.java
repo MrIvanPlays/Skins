@@ -3,6 +3,7 @@ package com.mrivanplays.skins;
 import com.mrivanplays.skins.api.MojangResponse;
 import com.mrivanplays.skins.api.Skin;
 import com.mrivanplays.skins.api.SkinsApi;
+import com.mrivanplays.skins.api.SkinsVersionInfo;
 import com.mrivanplays.skins.bukkit.SkinsBukkit;
 import com.mrivanplays.skins.bukkit.abstraction.SkinSetter;
 import com.mrivanplays.skins.bukkit.abstraction.SupportedVersions;
@@ -10,7 +11,6 @@ import com.mrivanplays.skins.bukkit.abstraction.handle.SkinSetterHandler;
 import com.mrivanplays.skins.core.AbstractSkinsApi;
 import com.mrivanplays.skins.core.InitializationData;
 import com.mrivanplays.skins.core.MojangDataProvider;
-import com.mrivanplays.skins.core.SkinFetcher;
 import com.mrivanplays.skins.core.SkinStorage;
 import com.mrivanplays.skins.core.SkullItemBuilderImpl.SkullItemBuilderData;
 import com.mrivanplays.skins.paper.SkinsPaper;
@@ -45,7 +45,11 @@ public class SkinsBukkitPlugin extends JavaPlugin {
               skin, response.getNickname(), data.getItemName(), data.getItemLore());
         };
     InitializationData initializationData =
-        new InitializationData(getDataFolder(), transformer, new MojangDataProvider(getLogger()));
+        new InitializationData(
+            getDataFolder(),
+            transformer,
+            new MojangDataProvider(getLogger()),
+            initializeVersionInfo());
 
     if (!Platform.isPaper()) {
       getLogger().warning("Skins works better if you run Paper!");
@@ -134,5 +138,16 @@ public class SkinsBukkitPlugin extends JavaPlugin {
   public void reload() {
     this.reloadConfig();
     this.skinsMenu = new SkinsMenu(this);
+  }
+
+  private SkinsVersionInfo initializeVersionInfo() {
+    String version = getDescription().getVersion();
+    // example of implementation version
+    // git:Skins:1.1.6-SNAPSHOT:a5f217d:11
+    String implementationVersion = getClass().getPackage().getImplementationVersion();
+    String[] implVersionSplit = implementationVersion.split(":");
+    String commit = implVersionSplit[3];
+    int buildNumber = Integer.parseInt(implVersionSplit[4]);
+    return new SkinsVersionInfo(version, commit, buildNumber);
   }
 }

@@ -50,10 +50,6 @@
             <configuration>
               <relocations>
                 <relocation>
-                  <pattern>io.papermc.lib</pattern>
-                  <shadedPattern>com.mrivanplays.skins.lib.paperlib</shadedPattern>
-                </relocation>
-                <relocation>
                   <pattern>org.bstats.bukkit</pattern>
                   <shadedPattern>com.mrivanplays.skins.lib.bstats</shadedPattern>
                 </relocation>

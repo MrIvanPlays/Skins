@@ -107,4 +107,12 @@ public interface SkinsApi {
    * @param dataProvider data provider
    */
   void setDataProvider(@NotNull DataProvider dataProvider);
+
+  /**
+   * Returns the plugin's version info.
+   *
+   * @return detailed information object about the version of the plugin, implementing this api.
+   */
+  @NotNull
+  SkinsVersionInfo getVersionInfo();
 }

@@ -5,6 +5,7 @@ import com.mrivanplays.skins.api.DataProvider;
 import com.mrivanplays.skins.api.MojangResponse;
 import com.mrivanplays.skins.api.Skin;
 import com.mrivanplays.skins.api.SkinsApi;
+import com.mrivanplays.skins.api.SkinsVersionInfo;
 import com.mrivanplays.skins.api.SkullItemBuilder;
 import com.mrivanplays.skins.core.SkullItemBuilderImpl.SkullItemBuilderData;
 import java.util.Optional;
@@ -19,11 +20,13 @@ public abstract class AbstractSkinsApi implements SkinsApi {
   private final SkinFetcher skinFetcher;
   private final SkinStorage skinStorage;
   private final Function<SkullItemBuilderData, ItemStack> transformer;
+  private final SkinsVersionInfo versionInfo;
 
   public AbstractSkinsApi(InitializationData initializationData) {
     skinStorage = new SkinStorage(initializationData.getDataFolder());
     skinFetcher = new SkinFetcher(skinStorage, initializationData.getDataProvider());
     this.transformer = initializationData.getTransformer();
+    this.versionInfo = initializationData.getVersionInfo();
   }
 
   @Override
@@ -83,6 +86,12 @@ public abstract class AbstractSkinsApi implements SkinsApi {
       return;
     }
     skinFetcher.setDataProvider(dataProvider);
+  }
+
+  @Override
+  @NotNull
+  public SkinsVersionInfo getVersionInfo() {
+    return versionInfo;
   }
 
   public void modifyStoredSkin(UUID uuid, Skin skin) {
