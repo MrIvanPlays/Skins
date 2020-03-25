@@ -63,6 +63,8 @@ public class CommandSkinSet implements TabExecutor {
       return true;
     }
     plugin.getApi().setSkin(player, response);
+    player.sendMessage(
+        plugin.color(plugin.getConfig().getString("messages.skin-set-successfully")));
     long cooldown = 1000 * 30;
     cooldownMap.put(player.getUniqueId(), System.currentTimeMillis() + cooldown);
     return true;
