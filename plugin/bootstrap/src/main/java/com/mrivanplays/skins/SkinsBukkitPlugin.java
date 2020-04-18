@@ -157,7 +157,14 @@ public class SkinsBukkitPlugin extends JavaPlugin {
     String implementationVersion = getClass().getPackage().getImplementationVersion();
     String[] implVersionSplit = implementationVersion.split(":");
     String commit = implVersionSplit[3];
-    int buildNumber = Integer.parseInt(implVersionSplit[4]);
+    String buildNumberPart = implVersionSplit[4];
+    int buildNumber;
+    if (buildNumberPart.equalsIgnoreCase("unknown")) {
+      getLogger().warning("Could not detect proper build number, custom build?");
+      buildNumber = -1;
+    } else {
+      buildNumber = Integer.parseInt(buildNumberPart);
+    }
     return new SkinsVersionInfo(version, commit, buildNumber);
   }
 }

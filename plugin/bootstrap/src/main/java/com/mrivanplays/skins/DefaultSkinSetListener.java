@@ -3,8 +3,7 @@ package com.mrivanplays.skins;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerLoginEvent;
-import org.bukkit.event.player.PlayerLoginEvent.Result;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 public class DefaultSkinSetListener implements Listener {
 
@@ -15,10 +14,7 @@ public class DefaultSkinSetListener implements Listener {
   }
 
   @EventHandler(priority = EventPriority.HIGHEST)
-  public void onPlayerJoin(PlayerLoginEvent event) {
-    if (event.getResult() != Result.ALLOWED) {
-      return;
-    }
+  public void onPlayerJoin(PlayerJoinEvent event) {
     plugin
         .getApi()
         .setSkin(event.getPlayer(), plugin.getApi().getSetSkinResponse(event.getPlayer()));

@@ -8,10 +8,8 @@ import java.util.List;
 import java.util.UUID;
 import net.minecraft.server.v1_12_R1.NBTTagCompound;
 import net.minecraft.server.v1_12_R1.NBTTagString;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
-import org.bukkit.craftbukkit.v1_12_R1.CraftOfflinePlayer;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
@@ -31,44 +29,36 @@ public class SkinSetter1_12_R1 implements SkinSetter {
   @Override
   public ItemStack getMenuItem(
       Skin skin, String ownerName, String headNameFormat, List<String> lore) {
-    if (skin == null) {
-      ItemStack item = new ItemStack(Material.SKULL_ITEM, 1, (byte) SkullType.PLAYER.ordinal());
-      SkullMeta meta = (SkullMeta) item.getItemMeta();
-      if (headNameFormat != null) {
-        meta.setDisplayName(headNameFormat.replace("%name%", ownerName));
-      }
-      meta.setLore(lore);
-      item.setItemMeta(meta);
-      return item;
-    }
-    CraftOfflinePlayer player = (CraftOfflinePlayer) Bukkit.getOfflinePlayer(skin.getOwner());
-    GameProfile profile = new GameProfile(skin.getOwner(), ownerName);
-    profile
-        .getProperties()
-        .put("textures", new Property("textures", skin.getTexture(), skin.getSignature()));
-    try {
-      Field profileField = player.getClass().getDeclaredField("profile");
-      profileField.setAccessible(true);
-      profileField.set(player, profile);
-    } catch (IllegalAccessException | NoSuchFieldException e) {
-      e.printStackTrace();
-    }
     ItemStack item = new ItemStack(Material.SKULL_ITEM, 1, (byte) SkullType.PLAYER.ordinal());
-    net.minecraft.server.v1_12_R1.ItemStack nms = CraftItemStack.asNMSCopy(item);
-    NBTTagCompound tag = nms.getTag() == null ? new NBTTagCompound() : nms.getTag();
-    NBTTagCompound skins = new NBTTagCompound();
-    NBTTagCompound owner = new NBTTagCompound();
-    owner.set("name", new NBTTagString(ownerName));
-    owner.set("uuid", new NBTTagString(skin.getOwner().toString()));
-    skins.set("skullOwner", owner);
-    tag.set("skins", skins);
-    nms.setTag(tag);
-    item = CraftItemStack.asBukkitCopy(nms);
+    if (skin != null) {
+      net.minecraft.server.v1_12_R1.ItemStack nms = CraftItemStack.asNMSCopy(item);
+      NBTTagCompound tag = nms.getTag() == null ? new NBTTagCompound() : nms.getTag();
+      NBTTagCompound skins = new NBTTagCompound();
+      NBTTagCompound owner = new NBTTagCompound();
+      owner.set("name", new NBTTagString(ownerName));
+      owner.set("uuid", new NBTTagString(skin.getOwner().toString()));
+      skins.set("skullOwner", owner);
+      tag.set("skins", skins);
+      nms.setTag(tag);
+      item = CraftItemStack.asBukkitCopy(nms);
+    }
     SkullMeta meta = (SkullMeta) item.getItemMeta();
+    if (skin != null) {
+      GameProfile profile = new GameProfile(skin.getOwner(), ownerName);
+      profile
+          .getProperties()
+          .put("textures", new Property("textures", skin.getTexture(), skin.getSignature()));
+      try {
+        Field profileField = meta.getClass().getDeclaredField("profile");
+        profileField.setAccessible(true);
+        profileField.set(meta, profile);
+      } catch (IllegalAccessException | NoSuchFieldException e) {
+        e.printStackTrace();
+      }
+    }
     if (headNameFormat != null) {
       meta.setDisplayName(headNameFormat.replace("%name%", ownerName));
     }
-    meta.setOwningPlayer(player);
     meta.setLore(lore);
     item.setItemMeta(meta);
     return item;
@@ -93,7 +83,8 @@ public class SkinSetter1_12_R1 implements SkinSetter {
     NBTTagCompound skins = tag.getCompound("skins");
     NBTTagCompound owner = skins.getCompound("skullOwner");
     String ownerName = owner.getString("name");
-    UUID ownerUUID = owner.getString("uuid").isEmpty() ? null : UUID.fromString(owner.getString("uuid"));
+    UUID ownerUUID =
+        owner.getString("uuid").isEmpty() ? null : UUID.fromString(owner.getString("uuid"));
     if (ownerName.isEmpty() || ownerUUID == null) {
       return null;
     }

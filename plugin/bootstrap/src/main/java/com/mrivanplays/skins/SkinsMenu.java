@@ -1,6 +1,7 @@
 package com.mrivanplays.skins;
 
 import com.mrivanplays.pagedinventory.api.NavigationItem;
+import com.mrivanplays.pagedinventory.api.PageClick;
 import com.mrivanplays.pagedinventory.api.PagedInventory;
 import com.mrivanplays.pagedinventory.api.PagedInventoryBuilder;
 import com.mrivanplays.skins.api.MojangResponse;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -19,15 +21,55 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 
 public class SkinsMenu {
 
-  private PagedInventory pagedInventory;
   private SkinsBukkitPlugin plugin;
+
+  private final Consumer<PageClick> clickListener;
+  private final ItemStack previousItem;
+  private final ItemStack nextItem;
+  private final ItemStack closeItem;
 
   public SkinsMenu(SkinsBukkitPlugin plugin) {
     this.plugin = plugin;
+
+    previousItem =
+        createItem(
+            plugin.color(plugin.getConfig().getString("messages.skin-menu-previous-page-label")),
+            Material.PAPER);
+
+    nextItem =
+        createItem(
+            plugin.color(plugin.getConfig().getString("messages.skin-menu-next-page-label")),
+            Material.BOOK);
+
+    closeItem =
+        createItem(
+            plugin.color(plugin.getConfig().getString("messages.skin-menu-close-page-label")),
+            Material.BARRIER);
+
+    clickListener =
+        click -> {
+          Player player = click.getClicker();
+          ItemStack item = click.getClickedItem();
+          if (item == null) {
+            return;
+          }
+          MojangResponse response = plugin.getApi().getSkullOwner(item);
+          if (response == null) {
+            player.sendMessage(
+                plugin.color(plugin.getConfig().getString("messages.skin-menu-cannot-fetch-data")));
+            player.closeInventory();
+            return;
+          }
+
+          plugin.getServer().dispatchCommand(player, "skinset " + response.getNickname());
+          player.closeInventory();
+        };
+  }
+
+  public void openMenu(Player player) {
     Map<Integer, ItemStack> itemCache = new HashMap<>();
     List<StoredSkin> skins = plugin.getSkinStorage().deserialize();
     SkinSetter itemSetter = SkinSetterHandler.getSkinSetter();
@@ -42,58 +84,21 @@ public class SkinsMenu {
       itemCache.put(i, item);
     }
 
-    //
     List<Inventory> pages = getPages(getPagesRaw(itemCache));
     PagedInventoryBuilder pagedInventoryBuilder = PagedInventoryBuilder.createBuilder(plugin);
     for (int i = 0; i < pages.size(); i++) {
       pagedInventoryBuilder.page(i + 1, pages.get(i));
     }
 
-    ItemStack previousItem =
-        createItem(
-            plugin.color(plugin.getConfig().getString("messages.skin-menu-previous-page-label")),
-            Material.PAPER);
-
-    ItemStack nextItem =
-        createItem(
-            plugin.color(plugin.getConfig().getString("messages.skin-menu-next-page-label")),
-            Material.BOOK);
-
-    ItemStack closeItem =
-        createItem(
-            plugin.color(plugin.getConfig().getString("messages.skin-menu-close-page-label")),
-            Material.BARRIER);
-
-    pagedInventory =
+    PagedInventory pagedInventory =
         pagedInventoryBuilder
             .navigationItem(
                 0, NavigationItem.create(previousItem, NavigationItem.Action.PREVIOUS_PAGE))
             .navigationItem(4, NavigationItem.create(closeItem, NavigationItem.Action.CLOSE))
             .navigationItem(8, NavigationItem.create(nextItem, NavigationItem.Action.NEXT_PAGE))
+            .clickFunction(clickListener)
             .build();
 
-    pagedInventory.addOnClickFunction(
-        click -> {
-          Player player = click.getClicker();
-          ItemStack item = click.getClickedItem();
-          if (item == null) {
-            return;
-          }
-          MojangResponse response = plugin.getApi().getSkullOwner(item);
-          if (response == null) {
-            player.sendMessage(
-                "We're sorry, we weren't able to fetch the skin. Come back later :(");
-            player.closeInventory();
-            return;
-          }
-          System.out.println(response.getNickname());
-
-          plugin.getServer().dispatchCommand(player, "skinset " + response.getNickname());
-          player.closeInventory();
-        });
-  }
-
-  public void openMenu(Player player) {
     pagedInventory.open(player, 1);
   }
 

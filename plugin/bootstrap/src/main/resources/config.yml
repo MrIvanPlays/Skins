@@ -16,6 +16,7 @@ messages:
   skin-menu-close-page-label: "Close inventory"
   skin-menu-head-name: "%name% 's skin"
   skin-menu-inventory: "List of skins (Page #%pageNum%)"
+  skin-menu-cannot-fetch-data: "We're sorry, we weren't able to retrieve data about the owner of the skin. :( "
   skin-menu-lore:
     - "Left click to set the skin"
     - "(Keep in mind this skin is being cached and may not be up to date)"
