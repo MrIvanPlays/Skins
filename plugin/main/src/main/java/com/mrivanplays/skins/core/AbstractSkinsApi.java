@@ -8,24 +8,28 @@ import com.mrivanplays.skins.api.SkinsApi;
 import com.mrivanplays.skins.api.SkinsVersionInfo;
 import com.mrivanplays.skins.api.SkullItemBuilder;
 import com.mrivanplays.skins.core.SkullItemBuilderImpl.SkullItemBuilderData;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractSkinsApi implements SkinsApi {
 
   private final SkinFetcher skinFetcher;
   private final SkinStorage skinStorage;
-  private final Function<SkullItemBuilderData, ItemStack> transformer;
+  private final Function<SkullItemBuilderData, ItemStack> itemBuilderTransformer;
+  private final Function<ItemStack, MojangResponse> skullOwnerTransformer;
   private final SkinsVersionInfo versionInfo;
 
   public AbstractSkinsApi(InitializationData initializationData) {
     skinStorage = new SkinStorage(initializationData.getDataFolder());
     skinFetcher = new SkinFetcher(skinStorage, initializationData.getDataProvider());
-    this.transformer = initializationData.getTransformer();
+    this.itemBuilderTransformer = initializationData.getItemBuilderTransformer();
+    this.skullOwnerTransformer = initializationData.getSkullOwnerTransformer();
     this.versionInfo = initializationData.getVersionInfo();
   }
 
@@ -59,6 +63,10 @@ public abstract class AbstractSkinsApi implements SkinsApi {
     return skinFetcher.getSkin(username);
   }
 
+  public MojangResponse getSkin(String username, UUID uuid) {
+    return skinFetcher.getSkin(username, uuid);
+  }
+
   @Override
   public boolean setSkin(@NotNull Player player, @NotNull MojangResponse skin) {
     Preconditions.checkNotNull(player, "player");
@@ -76,7 +84,7 @@ public abstract class AbstractSkinsApi implements SkinsApi {
   @Override
   @NotNull
   public SkullItemBuilder newSkullItemBuilder() {
-    return new SkullItemBuilderImpl(transformer);
+    return new SkullItemBuilderImpl(itemBuilderTransformer);
   }
 
   @Override
@@ -92,6 +100,13 @@ public abstract class AbstractSkinsApi implements SkinsApi {
   @NotNull
   public SkinsVersionInfo getVersionInfo() {
     return versionInfo;
+  }
+
+  @Override
+  @Nullable
+  public MojangResponse getSkullOwner(@NotNull ItemStack item) {
+    Objects.requireNonNull(item, "item");
+    return skullOwnerTransformer.apply(item);
   }
 
   public void modifyStoredSkin(UUID uuid, Skin skin) {

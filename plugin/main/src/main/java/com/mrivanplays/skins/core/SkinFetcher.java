@@ -28,9 +28,6 @@ public final class SkinFetcher {
   }
 
   public MojangResponse getSkin(String name, UUID uuid) {
-    // todo: there's a bug somewhere here, where the fetchedAt map isn't handled and skin is fetched which gives steve.
-    // reproduce steps: 1. open skin menu, 2. try to set skin which isn't yours.
-    // we need to go deeper
     Optional<MojangResponse> search =
         knownResponses.stream()
             .filter(response -> response.getNickname().equalsIgnoreCase(name))

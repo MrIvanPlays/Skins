@@ -6,6 +6,7 @@ import com.mrivanplays.skins.api.SkinsApi;
 import com.mrivanplays.skins.api.SkinsVersionInfo;
 import com.mrivanplays.skins.bukkit.SkinsBukkit;
 import com.mrivanplays.skins.bukkit.abstraction.SkinSetter;
+import com.mrivanplays.skins.bukkit.abstraction.SkinSetter.SkullItemOwnerResponse;
 import com.mrivanplays.skins.bukkit.abstraction.SupportedVersions;
 import com.mrivanplays.skins.bukkit.abstraction.handle.SkinSetterHandler;
 import com.mrivanplays.skins.core.AbstractSkinsApi;
@@ -37,17 +38,26 @@ public class SkinsBukkitPlugin extends JavaPlugin {
   public void onLoad() {
     new MetricsLite(this);
     SkinSetter skinSetter = SkinSetterHandler.getSkinSetter();
-    Function<SkullItemBuilderData, ItemStack> transformer =
+    Function<SkullItemBuilderData, ItemStack> itemBuilderTransformer =
         data -> {
           MojangResponse response = data.getOwner();
           Skin skin = response.getSkin().orElse(null);
           return skinSetter.getMenuItem(
               skin, response.getNickname(), data.getItemName(), data.getItemLore());
         };
+    Function<ItemStack, MojangResponse> skullOwnerTransformer =
+        item -> {
+          SkullItemOwnerResponse response = skinSetter.getSkullOwner(item);
+          if (response == null) {
+            return null;
+          }
+          return abstractSkinsApi.getSkin(response.name, response.uuid);
+        };
     InitializationData initializationData =
         new InitializationData(
             getDataFolder(),
-            transformer,
+            itemBuilderTransformer,
+            skullOwnerTransformer,
             new MojangDataProvider(getLogger()),
             initializeVersionInfo());
 

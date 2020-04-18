@@ -3,6 +3,7 @@ package com.mrivanplays.skins;
 import com.mrivanplays.pagedinventory.api.NavigationItem;
 import com.mrivanplays.pagedinventory.api.PagedInventory;
 import com.mrivanplays.pagedinventory.api.PagedInventoryBuilder;
+import com.mrivanplays.skins.api.MojangResponse;
 import com.mrivanplays.skins.bukkit.abstraction.SkinSetter;
 import com.mrivanplays.skins.bukkit.abstraction.handle.SkinSetterHandler;
 import com.mrivanplays.skins.core.StoredSkin;
@@ -78,18 +79,16 @@ public class SkinsMenu {
           if (item == null) {
             return;
           }
-          if (!item.hasItemMeta()) {
+          MojangResponse response = plugin.getApi().getSkullOwner(item);
+          if (response == null) {
+            player.sendMessage(
+                "We're sorry, we weren't able to fetch the skin. Come back later :(");
+            player.closeInventory();
             return;
           }
-          if (!item.getItemMeta().hasDisplayName()) {
-            return;
-          }
-          if (!(item.getItemMeta() instanceof SkullMeta)) {
-            return;
-          }
-          SkullMeta meta = (SkullMeta) item.getItemMeta();
+          System.out.println(response.getNickname());
 
-          plugin.getServer().dispatchCommand(player, "skinset " + meta.getOwningPlayer().getName());
+          plugin.getServer().dispatchCommand(player, "skinset " + response.getNickname());
           player.closeInventory();
         });
   }
