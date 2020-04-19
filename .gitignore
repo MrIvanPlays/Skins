@@ -81,3 +81,6 @@ buildNumber.properties
 ### Intellij
 .idea/
 *.iml
+
+### Debug specific
+server/
