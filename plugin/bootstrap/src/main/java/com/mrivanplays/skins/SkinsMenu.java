@@ -64,7 +64,7 @@ public class SkinsMenu {
             return;
           }
 
-          plugin.getServer().dispatchCommand(player, "skinset " + response.getNickname());
+          plugin.getSkinSetCommand().invokeSkinSet(player, response);
           player.closeInventory();
         };
   }

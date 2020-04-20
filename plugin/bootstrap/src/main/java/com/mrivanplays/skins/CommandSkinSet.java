@@ -44,6 +44,10 @@ public class CommandSkinSet implements TabExecutor {
       player.sendMessage(plugin.color(plugin.getConfig().getString("messages.command-usage")));
       return true;
     }
+    return invokeSkinSet(player, plugin.getApi().getSkin(args[0]));
+  }
+
+  public boolean invokeSkinSet(Player player, MojangResponse response) {
     Long timeLeft = cooldownMap.get(player.getUniqueId());
     if (timeLeft != null) {
       long remainingTime = (timeLeft - System.currentTimeMillis()) / 1000;
@@ -57,7 +61,6 @@ public class CommandSkinSet implements TabExecutor {
         return true;
       }
     }
-    MojangResponse response = plugin.getApi().getSkin(args[0]);
     if (!response.getSkin().isPresent()) {
       player.sendMessage(plugin.color(plugin.getConfig().getString("messages.not-premium")));
       return true;

@@ -33,6 +33,7 @@ public class SkinsBukkitPlugin extends JavaPlugin {
   private SkinStorage skinStorage;
   private AbstractSkinsApi abstractSkinsApi;
   private SkinsMenu skinsMenu;
+  private CommandSkinSet skinSetCommand;
 
   @Override
   public void onLoad() {
@@ -104,7 +105,8 @@ public class SkinsBukkitPlugin extends JavaPlugin {
     skinStorage = abstractSkinsApi.getSkinStorage();
 
     final TabCompleter EMPTY = (sender, command, label, args) -> Collections.emptyList();
-    getCommand("skinset").setExecutor(new CommandSkinSet(this));
+    skinSetCommand = new CommandSkinSet(this);
+    getCommand("skinset").setExecutor(skinSetCommand);
     getCommand("skinreload").setExecutor(new CommandSkinReload(this));
     getCommand("skinreload").setTabCompleter(EMPTY);
     skinsMenu = new SkinsMenu(this);
@@ -143,6 +145,10 @@ public class SkinsBukkitPlugin extends JavaPlugin {
 
   public SkinsMenu getSkinsMenu() {
     return skinsMenu;
+  }
+
+  public CommandSkinSet getSkinSetCommand() {
+    return skinSetCommand;
   }
 
   public void reload() {
