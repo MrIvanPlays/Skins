@@ -139,11 +139,16 @@ public final class SkinFetcher {
   }
 
   public MojangResponse getSkin(String name) {
-    UUID fetchedUUID = dataProvider.retrieveUuid(name);
-    if (fetchedUUID != null) {
-      return getSkin(name, fetchedUUID);
+    Optional<StoredSkin> ssOptional = skinStorage.getStoredSkin(name);
+    if (ssOptional.isPresent()) {
+      return getSkin(name, ssOptional.get().getSkin().getOwner());
     } else {
-      return new MojangResponse(name, null);
+      UUID fetchedUUID = dataProvider.retrieveUuid(name);
+      if (fetchedUUID != null) {
+        return getSkin(name, fetchedUUID);
+      } else {
+        return new MojangResponse(name, null);
+      }
     }
   }
 

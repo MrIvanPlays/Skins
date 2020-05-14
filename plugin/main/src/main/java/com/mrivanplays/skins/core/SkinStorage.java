@@ -25,6 +25,13 @@ public final class SkinStorage {
     section = "skins";
   }
 
+  public Optional<StoredSkin> getStoredSkin(String ownerName) {
+    return deserialize()
+        .stream()
+        .filter(skin -> skin.getName().equalsIgnoreCase(ownerName))
+        .findFirst();
+  }
+
   public Optional<StoredSkin> getStoredSkin(UUID owner) {
     return deserialize().stream()
         .filter(skin -> skin.getSkin().getOwner().equals(owner))
