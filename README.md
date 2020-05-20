@@ -1,7 +1,7 @@
 [![Build Status](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.mrivanplays.com%2Fjob%2FSkins%2F&style=for-the-badge)](https://ci.mrivanplays.com/job/Skins/)
 ![license](https://img.shields.io/github/license/MrIvanPlays/Skins.svg?style=for-the-badge)
 ![issues](https://img.shields.io/github/issues/MrIvanPlays/Skins.svg?style=for-the-badge)
-![api version](https://img.shields.io/maven-metadata/v?color=%20blue&label=latest%20version&metadataUrl=https%3A%2F%2Frepo.mrivanplays.com%2Frepository%2Fivan-snapshots%2Fcom%2Fmrivanplays%2Fskins-api%2Fmaven-metadata.xml&style=for-the-badge)
+![api version](https://img.shields.io/maven-metadata/v?color=%20blue&label=latest%20version&metadataUrl=https%3A%2F%2Frepo.mrivanplays.com%2Frepository%2Fivan%2Fcom%2Fmrivanplays%2Fskins-api%2Fmaven-metadata.xml&style=for-the-badge)
 [![support](https://img.shields.io/discord/493674712334073878.svg?colorB=Blue&logo=discord&label=Support&style=for-the-badge)](https://mrivanplays.com/discord)
 # Skins
 Plugin created by MrIvanPlays
