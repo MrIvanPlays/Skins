@@ -25,8 +25,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.bukkit</groupId>
-      <artifactId>bukkit</artifactId>
+      <groupId>org.spigotmc</groupId>
+      <artifactId>spigot-api</artifactId>
       <version>${spigot.version}</version>
       <scope>provided</scope>
     </dependency>

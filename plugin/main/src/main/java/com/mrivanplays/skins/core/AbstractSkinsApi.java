@@ -34,13 +34,6 @@ public abstract class AbstractSkinsApi implements SkinsApi {
   }
 
   @Override
-  @Deprecated
-  public Optional<Skin> getSetSkin(@NotNull Player player) {
-    Preconditions.checkNotNull(player, "player");
-    return skinStorage.getPlayerSetSkin(player.getUniqueId()).map(StoredSkin::getSkin);
-  }
-
-  @Override
   public @NotNull MojangResponse getSetSkinResponse(@NotNull Player player) {
     Preconditions.checkNotNull(player, "player");
     return skinStorage
@@ -134,7 +127,7 @@ public abstract class AbstractSkinsApi implements SkinsApi {
     // stored skin isn't present when skin wasn't present when data was fetched.
   }
 
-  protected void setNPCSkin(Player player, Skin skin) {}
+  protected abstract void setNPCSkin(Player player, Skin skin);
 
   public SkinStorage getSkinStorage() {
     return skinStorage;

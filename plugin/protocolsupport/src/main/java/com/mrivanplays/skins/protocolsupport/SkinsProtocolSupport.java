@@ -2,6 +2,7 @@ package com.mrivanplays.skins.protocolsupport;
 
 import com.mrivanplays.skins.api.SkinsApi;
 import com.mrivanplays.skins.core.InitializationData;
+import com.mrivanplays.skins.core.NoDSSApi;
 import com.mrivanplays.skins.core.SkinsPlugin;
 
 public class SkinsProtocolSupport implements SkinsPlugin {
@@ -10,7 +11,7 @@ public class SkinsProtocolSupport implements SkinsPlugin {
 
   @Override
   public void enable(InitializationData initializationData) {
-    api = new ProtocolSupportSkinsApi(initializationData);
+    api = new NoDSSApi(initializationData);
   }
 
   @Override

@@ -18,6 +18,7 @@
     <module>handle</module>
     <module>v1_15_R1</module>
     <module>v1_12_R1</module>
+    <module>v1_16_R1</module>
   </modules>
   <packaging>pom</packaging>
 

@@ -10,24 +10,10 @@ import org.jetbrains.annotations.Nullable;
 public final class MojangResponse {
 
   private final String nickname;
-  private final UUID uuid;
   private final Skin skin;
 
   public MojangResponse(@NotNull String nickname, @Nullable Skin skin) {
     this.nickname = nickname;
-    if (skin != null) {
-      this.uuid = skin.getOwner();
-    } else {
-      this.uuid = null;
-    }
-    this.skin = skin;
-  }
-
-  /** @deprecated uuid can be retrieved via skin */
-  @Deprecated
-  public MojangResponse(@NotNull String nickname, @Nullable UUID uuid, @Nullable Skin skin) {
-    this.nickname = nickname;
-    this.uuid = uuid;
     this.skin = skin;
   }
 
@@ -39,19 +25,6 @@ public final class MojangResponse {
   @NotNull
   public String getNickname() {
     return nickname;
-  }
-
-  /**
-   * Returns the {@link UUID} of the specified {@link #getNickname()}, according to the {@link
-   * DataProvider} set in the {@link SkinsApi}. The return value may be empty if the plugin wasn't
-   * able to fetch it.
-   *
-   * @return uuid, according to data provider, or empty optional if failure
-   * @deprecated skin object holds a uuid
-   */
-  @Deprecated
-  public Optional<UUID> getUuid() {
-    return Optional.ofNullable(uuid);
   }
 
   /**

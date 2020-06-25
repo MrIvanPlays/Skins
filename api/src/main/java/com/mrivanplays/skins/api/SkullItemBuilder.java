@@ -1,6 +1,7 @@
 package com.mrivanplays.skins.api;
 
 import java.util.List;
+import java.util.function.Supplier;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
  * of the caching Skins plugin is doing in order to prevent bukkit api from sending requests to
  * mojang api for skull owner skin.
  */
-public interface SkullItemBuilder {
+public interface SkullItemBuilder extends Supplier<ItemStack> {
 
   /**
    * Sets the owner of the skull
@@ -46,4 +47,12 @@ public interface SkullItemBuilder {
    */
   @NotNull
   ItemStack build();
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  default ItemStack get() {
+    return build();
+  }
 }

@@ -13,6 +13,7 @@ import com.mrivanplays.skins.core.AbstractSkinsApi;
 import com.mrivanplays.skins.core.InitializationData;
 import com.mrivanplays.skins.core.MojangDataProvider;
 import com.mrivanplays.skins.core.SkinStorage;
+import com.mrivanplays.skins.core.SkinsPlugin;
 import com.mrivanplays.skins.core.SkullItemBuilderImpl.SkullItemBuilderData;
 import com.mrivanplays.skins.paper.SkinsPaper;
 import com.mrivanplays.skins.protocolsupport.ProtocolSupportSkinSetter;
@@ -39,6 +40,32 @@ public class SkinsBukkitPlugin extends JavaPlugin {
   public void onLoad() {
     new MetricsLite(this);
     SkinSetter skinSetter = SkinSetterHandler.getSkinSetter();
+
+    if (!Platform.isPaper()) {
+      getLogger().warning("Skins works better if you run Paper!");
+    }
+    SkinsPlugin apiInitializer;
+    if (isProtocolSupport()) {
+      getLogger().warning("You are running ProtocolSupport! Applying modifications to skin sets");
+      apiInitializer = new SkinsProtocolSupport();
+    } else {
+      if (!Platform.isPaper()) {
+        apiInitializer = new SkinsBukkit();
+        if (skinSetter == null) {
+          getLogger().severe("You are running unsupported minecraft version, disabling...");
+          disabled = true;
+          return;
+        }
+      } else {
+        if (!SupportedVersions.isCurrentSupported()) {
+          getLogger().severe("You are running unsupported minecraft version, disabling...");
+          disabled = true;
+          return;
+        }
+        apiInitializer = new SkinsPaper();
+      }
+    }
+
     Function<SkullItemBuilderData, ItemStack> itemBuilderTransformer =
         data -> {
           MojangResponse response = data.getOwner();
@@ -61,36 +88,8 @@ public class SkinsBukkitPlugin extends JavaPlugin {
             skullOwnerTransformer,
             new MojangDataProvider(getLogger()),
             initializeVersionInfo());
-
-    if (!Platform.isPaper()) {
-      getLogger().warning("Skins works better if you run Paper!");
-    }
-    if (isProtocolSupport()) {
-      getLogger().warning("You are running ProtocolSupport! Applying modifications to skin sets");
-      SkinsProtocolSupport plugin = new SkinsProtocolSupport();
-      plugin.enable(initializationData);
-      api = plugin.getApi();
-    } else {
-      if (!Platform.isPaper()) {
-        SkinsBukkit skinsBukkit = new SkinsBukkit();
-        skinsBukkit.enable(initializationData);
-        if (skinSetter == null) {
-          getLogger().severe("You are running unsupported minecraft version, disabling...");
-          disabled = true;
-          return;
-        }
-        api = skinsBukkit.getApi();
-      } else {
-        if (!SupportedVersions.isCurrentSupported()) {
-          getLogger().severe("You are running unsupported minecraft version, disabling...");
-          disabled = true;
-          return;
-        }
-        SkinsPaper paper = new SkinsPaper();
-        paper.enable(initializationData);
-        api = paper.getApi();
-      }
-    }
+    apiInitializer.enable(initializationData);
+    api = apiInitializer.getApi();
     getServer().getServicesManager().register(SkinsApi.class, api, this, ServicePriority.Highest);
   }
 

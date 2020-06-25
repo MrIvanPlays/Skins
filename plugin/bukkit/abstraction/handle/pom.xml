@@ -66,6 +66,12 @@
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>com.mrivanplays</groupId>
+      <artifactId>skins-plugin-bukkit-abstraction-v1_16_R1</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
 
 

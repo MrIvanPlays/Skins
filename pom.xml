@@ -40,10 +40,17 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <spigot.version>1.15-R0.1-SNAPSHOT</spigot.version>
-    <plugin.version>1.1.6</plugin.version>
+    <spigot.version>1.16.1-R0.1-SNAPSHOT</spigot.version>
+    <plugin.version>1.1.7</plugin.version>
     <buildNumber>unknown</buildNumber>
   </properties>
+
+  <repositories>
+    <repository>
+      <id>spigot-repo</id>
+      <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+    </repository>
+  </repositories>
 
   <dependencies>
     <dependency>

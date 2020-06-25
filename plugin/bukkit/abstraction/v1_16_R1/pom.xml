@@ -9,12 +9,11 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>skins-plugin-bukkit-abstraction-v1_12_R1</artifactId>
+  <artifactId>skins-plugin-bukkit-abstraction-v1_16_R1</artifactId>
   <version>${plugin.version}</version>
-  <packaging>jar</packaging>
 
-  <name>Skins-Plugin-Bukkit-Abstraction-v1_12_R1</name>
-  <description>v1_12_R1 implementation of the abstraction</description>
+  <name>Skins-Plugin-Bukkit-Abstraction-v1_16_R1</name>
+  <description>v1_16_R1 implementation</description>
 
   <dependencies>
     <dependency>
@@ -23,11 +22,14 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
+    <!-- Currently maven local only, codemc hasn't deployed 1.16.1 yet -->
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot</artifactId>
-      <version>1.12.2-R0.1-SNAPSHOT</version>
+      <version>1.16.1-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
+
+
 </project>

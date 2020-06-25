@@ -1,7 +1,6 @@
 package com.mrivanplays.skins.api;
 
 import com.google.common.base.Preconditions;
-import java.util.Optional;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -11,20 +10,7 @@ import org.jetbrains.annotations.Nullable;
 public interface SkinsApi {
 
   /**
-   * Gets the player's server set skin. This could also return {@link #getOriginalSkin(Player)} due
-   * to how the plugin handles storing skins (to check that you can call {@link
-   * #isSetSkinOriginal(Player)})
-   *
-   * @param player the player you want to get the set skin of
-   * @return optional of skin if the player have changed their skin, empty optional otherwise
-   * @deprecated this method will always take from cache without updating the skin, use {@link
-   *     #getSetSkinResponse(Player)}
-   */
-  @Deprecated
-  Optional<Skin> getSetSkin(@NotNull Player player);
-
-  /**
-   * Gets the player's server set skin. This could also return {@link #getOriginalSkin(Player)} due
+   * Gets the player's server set skin. This could also return {@link #getOriginalSkinResponse(Player)} due
    * to how the plugin handles storing skins. The skin will be always updated if can.
    *
    * @param player the player you want to get the set skin of
@@ -32,20 +18,6 @@ public interface SkinsApi {
    */
   @NotNull
   MojangResponse getSetSkinResponse(@NotNull Player player);
-
-  /**
-   * Gets the player's skin, which is set on the premium account of this player. This might be null
-   * if the specified player's nickname has no premium account.
-   *
-   * @param player the player you want to get the original skin of
-   * @return optional of skin if this player is in the data provider's database, empty optional
-   *     otherwise
-   * @deprecated use {@link #getOriginalSkinResponse(Player)}
-   */
-  @Deprecated
-  default Optional<Skin> getOriginalSkin(@NotNull Player player) {
-    return getSkin(player.getName()).getSkin();
-  }
 
   /**
    * Gets the player's skin, which is set on the premium account of this player.
