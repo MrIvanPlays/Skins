@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>skins-bukkit-general</artifactId>
+    <groupId>com.mrivanplays</groupId>
+    <version>2.0.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>skins-bukkit-protocolsupport</artifactId>
+
+  <name>Skins-Bukkit-ProtocolSupport</name>
+  <description>Specialized module for supporting ProtocolSupport</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.mrivanplays</groupId>
+      <artifactId>skins-bukkit-core</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>protocolsupport</groupId>
+      <artifactId>protocolsupport</artifactId>
+      <version>4.29-dev</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/dependencies/ProtocolSupport.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>org.spigotmc</groupId>
+      <artifactId>spigot-api</artifactId>
+      <version>${spigot.version}</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+
+</project>

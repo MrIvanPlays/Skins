@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>skins-bukkit-general</artifactId>
+    <groupId>com.mrivanplays</groupId>
+    <version>2.0.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>skins-bukkit-bootstrap</artifactId>
+
+  <name>Skins-Bukkit-Bootstrap</name>
+  <description>Boot for the bukkit implementation of skins plugin</description>
+
+  <repositories>
+    <repository>
+      <id>ivan</id>
+      <url>https://repo.mrivanplays.com/repository/ivan/</url>
+    </repository>
+  </repositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.spigotmc</groupId>
+      <artifactId>spigot-api</artifactId>
+      <version>${spigot.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.mrivanplays</groupId>
+      <artifactId>skins-bukkit-core</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.mrivanplays</groupId>
+      <artifactId>skins-bukkit-protocolsupport</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.mrivanplays</groupId>
+      <artifactId>skins-bukkit-paper</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.mrivanplays</groupId>
+      <artifactId>annotationconfg-yaml</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.yaml</groupId>
+          <artifactId>snakeyaml</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+  </dependencies>
+
+
+</project>

@@ -5,11 +5,12 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /** Represents the main object of the skins api. */
 public interface SkinsApi {
 
-  CompletableFuture<Optional<Skin>> getSkin(String name);
+  CompletableFuture<Optional<Skin>> getSkin(@NotNull String name);
 
   /**
    * Sets a new data provider, for fetching skin and uuid information.
@@ -27,11 +28,11 @@ public interface SkinsApi {
   @NotNull
   SkinsInfo getInfo();
 
-  @NotNull
-  CompletableFuture<User> getUser(@NotNull String name);
+  @Nullable
+  User getUser(@NotNull String name);
 
-  @NotNull
-  CompletableFuture<User> getUser(@NotNull UUID uuid);
+  @Nullable
+  User getUser(@NotNull UUID uuid);
 
   @NotNull
   CompletableFuture<Collection<User>> getUsedBy(@NotNull Skin skin);

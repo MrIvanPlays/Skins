@@ -2,7 +2,6 @@ package com.mrivanplays.skins.core;
 
 import com.mrivanplays.skins.api.Skin;
 import com.mrivanplays.skins.api.SkinsApiProvider;
-import com.mrivanplays.skins.api.User;
 import com.mrivanplays.skins.core.storage.StoredSkin;
 import java.util.Objects;
 import java.util.Optional;
@@ -29,12 +28,7 @@ public abstract class AbstractSkinsUser implements SkinsUser {
   }
 
   @Override
-  public User toUser() {
-    return this;
-  }
-
-  @Override
-  public @Nullable CompletableFuture<Optional<Skin>> getSkin() {
+  public CompletableFuture<Optional<Skin>> getSkin() {
     if (currentStoredSkin != null) {
       return CompletableFuture.completedFuture(Optional.of(currentStoredSkin.getSkin()));
     }
@@ -44,7 +38,7 @@ public abstract class AbstractSkinsUser implements SkinsUser {
         .thenApplyAsync(
             storedSkin -> {
               if (storedSkin == null) {
-                return Optional.empty();
+                return getOriginalSkin().join();
               }
               updateCurrentStoredSkin(storedSkin);
               return Optional.of(storedSkin.getSkin());
@@ -88,10 +82,22 @@ public abstract class AbstractSkinsUser implements SkinsUser {
                         apiImpl.getSkinAccessor().getDataProvider().retrieveName(skin.getOwner()));
               }
               storedSkin.addAcquirer(getUniqueId());
+              Skin newSkin = apiImpl.getSkinAccessor().getSkin(skin.getOwner()).join();
+              if (newSkin != null) {
+                storedSkin.setSkin(newSkin);
+              }
+
               plugin.getStorage().storeSkin(storedSkin);
               updateCurrentStoredSkin(storedSkin);
+
+              Skin setSkin;
+              if (newSkin != null) {
+                setSkin = newSkin;
+              } else {
+                setSkin = skin;
+              }
+              setNPCSkin(setSkin);
             });
-    setNPCSkin(skin);
   }
 
   public abstract void setNPCSkin(@NotNull Skin skin);

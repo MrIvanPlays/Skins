@@ -9,14 +9,13 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
 public interface SkinsPlugin {
 
-  CompletableFuture<SkinsUser> obtainUser(String name);
+  SkinsUser obtainUser(String name);
 
-  CompletableFuture<SkinsUser> obtainUser(UUID uuid);
+  SkinsUser obtainUser(UUID uuid);
 
   SkinsInfo getInfo();
 

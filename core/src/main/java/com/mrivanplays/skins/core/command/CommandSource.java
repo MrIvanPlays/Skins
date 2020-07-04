@@ -15,7 +15,11 @@ public interface CommandSource {
     // hack!
     TextComponent comp = LegacyComponentSerializer.legacy('&').deserialize(message);
     MiniMessage miniMessage = MiniMessage.markdown();
-    sendMessage(miniMessage.deserialize(miniMessage.serialize(comp)));
+    sendMessage(miniMessage.deserialize(applyPlaceholders(miniMessage.serialize(comp))));
+  }
+
+  default String applyPlaceholders(String message) {
+    return message;
   }
 
   boolean hasPermission(String permission);

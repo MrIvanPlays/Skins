@@ -2,6 +2,7 @@ package com.mrivanplays.skins.core.command;
 
 import com.mrivanplays.skins.core.SkinsConfiguration;
 import com.mrivanplays.skins.core.SkinsPlugin;
+import com.mrivanplays.skins.core.SkinsUser;
 import com.mrivanplays.skins.core.UserCooldown;
 import java.util.Collections;
 import java.util.List;
@@ -21,25 +22,15 @@ public class CommandSkinMenu implements Command {
       source.sendMessage(messages.getNoConsole());
       return;
     }
-    plugin
-        .obtainUser(source.getName())
-        .exceptionally(
-            e -> {
-              e.printStackTrace();
-              return null;
-            })
-        .thenAccept(
-            user -> {
-              long cooldownRemaining =
-                  UserCooldown.getGlobalInstance().getTimeLeft(user.getUniqueId());
-              if (cooldownRemaining > 0) {
-                user.sendMessage(
-                    messages.getCooldown().replace("%timeLeft%", Long.toString(cooldownRemaining)));
-                return;
-              }
-              user.openSkinMenu();
-              UserCooldown.getGlobalInstance().cooldown(user.getUniqueId());
-            });
+    SkinsUser user = plugin.obtainUser(source.getName());
+    long cooldownRemaining = UserCooldown.getGlobalInstance().getTimeLeft(user.getUniqueId());
+    if (cooldownRemaining > 0) {
+      user.sendMessage(
+          messages.getCooldown().replace("%timeLeft%", Long.toString(cooldownRemaining)));
+      return;
+    }
+    user.openSkinMenu();
+    UserCooldown.getGlobalInstance().cooldown(user.getUniqueId());
   }
 
   @Override

@@ -1,5 +1,6 @@
 package com.mrivanplays.skins.core;
 
+import com.google.common.base.Preconditions;
 import com.mrivanplays.skins.api.DataProvider;
 import com.mrivanplays.skins.api.Skin;
 import com.mrivanplays.skins.api.SkinsApi;
@@ -25,7 +26,8 @@ public class SkinsApiImpl implements SkinsApi {
   }
 
   @Override
-  public CompletableFuture<Optional<Skin>> getSkin(String name) {
+  public CompletableFuture<Optional<Skin>> getSkin(@NotNull String name) {
+    Preconditions.checkNotNull(name, "name");
     return skinAccessor.getSkin(name).thenApplyAsync(Optional::ofNullable);
   }
 
@@ -40,13 +42,13 @@ public class SkinsApiImpl implements SkinsApi {
   }
 
   @Override
-  public @NotNull CompletableFuture<User> getUser(@NotNull String name) {
-    return plugin.obtainUser(name).thenApplyAsync(SkinsUser::toUser);
+  public @NotNull User getUser(@NotNull String name) {
+    return plugin.obtainUser(name);
   }
 
   @Override
-  public @NotNull CompletableFuture<User> getUser(@NotNull UUID uuid) {
-    return plugin.obtainUser(uuid).thenApplyAsync(SkinsUser::toUser);
+  public @NotNull User getUser(@NotNull UUID uuid) {
+    return plugin.obtainUser(uuid);
   }
 
   @Override
@@ -58,7 +60,7 @@ public class SkinsApiImpl implements SkinsApi {
             list ->
                 list.stream()
                     .filter(storedSkin -> storedSkin.getSkin().equals(skin))
-                    .map(storedSkin -> getUser(storedSkin.getSkin().getOwner()).join())
+                    .map(storedSkin -> getUser(storedSkin.getSkin().getOwner()))
                     .collect(Collectors.toList()),
             plugin.getScheduler().async());
   }
