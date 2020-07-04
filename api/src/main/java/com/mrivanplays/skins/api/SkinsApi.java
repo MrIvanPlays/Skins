@@ -17,8 +17,8 @@ public interface SkinsApi {
   /**
    * Returns the plugin's information.
    *
-   * @return detailed information object about the version of the plugin and the platform the plugin
-   *     is being ran on, implementing this api.
+   * @return detailed information object about the version of the plugin and the environment the
+   *     plugin is being ran on, implementing this api.
    */
   @NotNull
   SkinsInfo getInfo();

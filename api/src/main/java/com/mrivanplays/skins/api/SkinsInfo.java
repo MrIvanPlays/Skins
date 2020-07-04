@@ -11,13 +11,13 @@ public final class SkinsInfo {
   private final String version;
   private final String commit;
   private final int buildNumber;
-  private final Platform platform;
+  private final Environment environment;
 
-  public SkinsInfo(String version, String commit, int buildNumber, Platform platform) {
+  public SkinsInfo(String version, String commit, int buildNumber, Environment environment) {
     this.version = version;
     this.commit = commit;
     this.buildNumber = buildNumber;
-    this.platform = platform;
+    this.environment = environment;
   }
 
   /**
@@ -59,12 +59,12 @@ public final class SkinsInfo {
   }
 
   /**
-   * Returns the platform the plugin is being ran on.
+   * Returns the environment the plugin is being ran on.
    *
-   * @return platform
+   * @return environment
    */
   @NotNull
-  public Platform getPlatform() {
-    return platform;
+  public Environment getEnvironment() {
+    return environment;
   }
 }
