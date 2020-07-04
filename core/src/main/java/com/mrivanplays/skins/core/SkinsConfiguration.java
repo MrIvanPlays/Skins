@@ -1,4 +1,4 @@
-package com.mrivanplays.skins.core.config;
+package com.mrivanplays.skins.core;
 
 import com.mrivanplays.annotationconfig.core.Comment;
 import com.mrivanplays.annotationconfig.core.ConfigObject;
@@ -47,6 +47,9 @@ public final class SkinsConfiguration {
     private String skinSetSuccessfully =
         "&aSkin set successfully! If it didn't applied, try reconnecting to the server!";
 
+    @Key("skin-already-set")
+    private String skinAlreadySet = "&cThat skin is already set on you.";
+
     @Key("skin-menu-previous-page-label")
     private String skinMenuPreviousPageLabel = "&aPrevious page";
 
@@ -94,6 +97,10 @@ public final class SkinsConfiguration {
 
     public String getSkinSetSuccessfully() {
       return skinSetSuccessfully;
+    }
+
+    public String getSkinAlreadySet() {
+      return skinAlreadySet;
     }
 
     public String getSkinMenuPreviousPageLabel() {

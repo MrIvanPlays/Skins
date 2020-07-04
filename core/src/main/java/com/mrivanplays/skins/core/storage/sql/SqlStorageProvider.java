@@ -51,12 +51,7 @@ public class SqlStorageProvider implements StorageProvider {
     List<String> statements;
 
     String storageName =
-        plugin
-            .loadAndGetConfiguration()
-            .getStorageCredentials()
-            .getStorageType()
-            .name()
-            .toLowerCase();
+        plugin.getConfiguration().getStorageCredentials().getStorageType().name().toLowerCase();
     String schemaFileName = "com/mrivanplays/skins/schema/" + storageName + ".sql";
 
     try (InputStream is = plugin.getResourceStream(schemaFileName)) {
@@ -119,7 +114,7 @@ public class SqlStorageProvider implements StorageProvider {
               connectionFactory
                   .statementTickReplacer()
                   .apply("SELECT * FROM 'skins_storage' WHERE ownerUUID = ?"))) {
-        statement.setString(1, skin.getOwnerUUID().toString());
+        statement.setString(1, skin.getSkin().getOwner().toString());
         try (ResultSet result = statement.executeQuery()) {
           if (result.next()) {
             try (PreparedStatement update =
@@ -144,7 +139,7 @@ public class SqlStorageProvider implements StorageProvider {
                         .apply(
                             "INSERT INTO 'skins_storage' (ownerName, ownerUUID, texture, signature, acquirers) VALUES (?, ?, ?, ?, ?)"))) {
               insert.setString(1, skin.getOwnerName());
-              insert.setString(2, skin.getOwnerUUID().toString());
+              insert.setString(2, skin.getSkin().getOwner().toString());
               insert.setString(3, skin.getSkin().getTexture());
               insert.setString(4, skin.getSkin().getSignature());
 
@@ -213,9 +208,11 @@ public class SqlStorageProvider implements StorageProvider {
   private StoredSkin getFromResult(ResultSet result) throws SQLException {
     StoredSkin storedSkin =
         new StoredSkin(
-            new Skin(result.getString("texture"), result.getString("signature")),
-            result.getString("ownerName"),
-            UUID.fromString(result.getString("ownerUUID")));
+            new Skin(
+                UUID.fromString(result.getString("ownerUUID")),
+                result.getString("texture"),
+                result.getString("signature")),
+            result.getString("ownerName"));
     List<UUID> acquirers =
         Arrays.stream(result.getString("acquirers").split(","))
             .map(UUID::fromString)

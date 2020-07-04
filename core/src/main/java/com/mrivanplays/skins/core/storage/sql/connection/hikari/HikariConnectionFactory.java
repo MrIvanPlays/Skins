@@ -2,7 +2,7 @@ package com.mrivanplays.skins.core.storage.sql.connection.hikari;
 
 import com.google.common.collect.ImmutableList;
 import com.mrivanplays.skins.core.SkinsPlugin;
-import com.mrivanplays.skins.core.config.SkinsConfiguration;
+import com.mrivanplays.skins.core.SkinsConfiguration;
 import com.mrivanplays.skins.core.storage.sql.connection.SQLConnectionFactory;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -25,7 +25,7 @@ public abstract class HikariConnectionFactory implements SQLConnectionFactory {
   private HikariDataSource hikari;
 
   public HikariConnectionFactory(SkinsPlugin plugin) {
-    this.configuration = plugin.loadAndGetConfiguration();
+    this.configuration = plugin.getConfiguration();
     this.plugin = plugin;
   }
 

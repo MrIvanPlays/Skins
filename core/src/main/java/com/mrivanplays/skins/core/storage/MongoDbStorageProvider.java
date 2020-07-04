@@ -7,8 +7,8 @@ import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mrivanplays.skins.api.Skin;
-import com.mrivanplays.skins.core.config.SkinsConfiguration;
-import com.mrivanplays.skins.core.config.SkinsConfiguration.DatabaseCredentials;
+import com.mrivanplays.skins.core.SkinsConfiguration;
+import com.mrivanplays.skins.core.SkinsConfiguration.DatabaseCredentials;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -56,14 +56,14 @@ public class MongoDbStorageProvider implements StorageProvider {
     Document doc =
         new Document()
             .append("ownerName", skin.getOwnerName())
-            .append("ownerUUID", skin.getOwnerUUID().toString())
+            .append("ownerUUID", skin.getSkin().getOwner().toString())
             .append("texture", skin.getSkin().getTexture())
             .append("signature", skin.getSkin().getSignature())
             .append(
                 "acquirers",
                 skin.getAcquirers().stream().map(UUID::toString).collect(Collectors.toList()));
 
-    Document search = new Document("ownerUUID", skin.getOwnerUUID().toString());
+    Document search = new Document("ownerUUID", skin.getSkin().getOwner().toString());
     Document found = collection.find(search).first();
 
     if (found != null) {
@@ -92,9 +92,11 @@ public class MongoDbStorageProvider implements StorageProvider {
     if (found != null) {
       StoredSkin storedSkin =
           new StoredSkin(
-              new Skin(found.getString("texture"), found.getString("signature")),
-              found.getString("ownerName"),
-              UUID.fromString(found.getString("ownerUUID")));
+              new Skin(
+                  UUID.fromString(found.getString("ownerUUID")),
+                  found.getString("texture"),
+                  found.getString("signature")),
+              found.getString("ownerName"));
       found.getList("acquirers", String.class).stream()
           .map(UUID::fromString)
           .forEach(storedSkin::addAcquirer);
@@ -114,9 +116,11 @@ public class MongoDbStorageProvider implements StorageProvider {
       if (acquirerList.contains(uuid)) {
         StoredSkin storedSkin =
             new StoredSkin(
-                new Skin(next.getString("texture"), next.getString("signature")),
-                next.getString("ownerName"),
-                UUID.fromString(next.getString("ownerUUID")));
+                new Skin(
+                    UUID.fromString(next.getString("ownerUUID")),
+                    next.getString("texture"),
+                    next.getString("signature")),
+                next.getString("ownerName"));
         storedSkin.getAcquirers().addAll(acquirerList);
         return storedSkin;
       }
@@ -131,9 +135,11 @@ public class MongoDbStorageProvider implements StorageProvider {
     for (Document next : collection.find()) {
       StoredSkin storedSkin =
           new StoredSkin(
-              new Skin(next.getString("texture"), next.getString("signature")),
-              next.getString("ownerName"),
-              UUID.fromString(next.getString("ownerUUID")));
+              new Skin(
+                  UUID.fromString(next.getString("ownerUUID")),
+                  next.getString("texture"),
+                  next.getString("signature")),
+              next.getString("ownerName"));
       List<UUID> acquirerList =
           next.getList("acquirers", String.class).stream()
               .map(UUID::fromString)

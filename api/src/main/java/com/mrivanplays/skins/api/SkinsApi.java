@@ -1,11 +1,15 @@
 package com.mrivanplays.skins.api;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import org.jetbrains.annotations.NotNull;
 
 /** Represents the main object of the skins api. */
 public interface SkinsApi {
+
+  CompletableFuture<Optional<Skin>> getSkin(String name);
 
   /**
    * Sets a new data provider, for fetching skin and uuid information.
@@ -24,11 +28,11 @@ public interface SkinsApi {
   SkinsInfo getInfo();
 
   @NotNull
-  User getUser(@NotNull String name);
+  CompletableFuture<User> getUser(@NotNull String name);
 
   @NotNull
-  User getUser(@NotNull UUID uuid);
+  CompletableFuture<User> getUser(@NotNull UUID uuid);
 
   @NotNull
-  Collection<User> getUsedBy(@NotNull Skin skin);
+  CompletableFuture<Collection<User>> getUsedBy(@NotNull Skin skin);
 }

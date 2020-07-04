@@ -1,14 +1,14 @@
 package com.mrivanplays.skins.core.storage;
 
+import com.mrivanplays.skins.core.SkinsConfiguration;
 import com.mrivanplays.skins.core.SkinsPlugin;
-import com.mrivanplays.skins.core.config.SkinsConfiguration;
 import com.mrivanplays.skins.core.storage.sql.SqlStorageProvider;
 import com.mrivanplays.skins.core.storage.sql.connection.file.H2ConnectionFactory;
 import com.mrivanplays.skins.core.storage.sql.connection.file.SQLiteConnectionFactory;
 import com.mrivanplays.skins.core.storage.sql.connection.hikari.MariaDbConnectionFactory;
 import com.mrivanplays.skins.core.storage.sql.connection.hikari.MySqlConnectionFactory;
 import com.mrivanplays.skins.core.storage.sql.connection.hikari.PostgreConnectionFactory;
-import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -23,7 +23,7 @@ public class Storage {
   private StorageProvider storageProvider;
 
   public Storage(SkinsPlugin plugin) {
-    this.configuration = plugin.loadAndGetConfiguration();
+    this.configuration = plugin.getConfiguration();
     this.plugin = plugin;
   }
 
@@ -34,9 +34,7 @@ public class Storage {
 
   public void connect() {
     StorageType storageType = configuration.getStorageCredentials().getStorageType();
-    plugin
-        .loadAndGetDependencyManager()
-        .loadStorageDependencies(Collections.singleton(storageType));
+    plugin.getDependencyManager().loadStorageDependencies(EnumSet.of(storageType));
     switch (storageType) {
       case MONGODB:
         storageProvider = new MongoDbStorageProvider(configuration);

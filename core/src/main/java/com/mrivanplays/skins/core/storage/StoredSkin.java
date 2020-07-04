@@ -9,14 +9,12 @@ public class StoredSkin {
 
   private final Skin skin;
   private final String ownerName;
-  private final UUID ownerUUID;
 
   private Set<UUID> acquirers;
 
-  public StoredSkin(Skin skin, String ownerName, UUID ownerUUID) {
+  public StoredSkin(Skin skin, String ownerName) {
     this.skin = skin;
     this.ownerName = ownerName;
-    this.ownerUUID = ownerUUID;
     this.acquirers = new HashSet<>();
   }
 
@@ -38,9 +36,5 @@ public class StoredSkin {
 
   public String getOwnerName() {
     return ownerName;
-  }
-
-  public UUID getOwnerUUID() {
-    return ownerUUID;
   }
 }

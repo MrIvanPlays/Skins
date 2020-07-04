@@ -38,7 +38,7 @@ public class H2ConnectionFactory extends FlatfileConnectionFactory {
 
     IsolatedClassLoader classLoader =
         plugin
-            .loadAndGetDependencyManager()
+            .getDependencyManager()
             .obtainClassLoaderWith(EnumSet.of(Dependency.H2_DRIVER));
     try {
       Class<?> driverClass = classLoader.loadClass("org.h2.Driver");

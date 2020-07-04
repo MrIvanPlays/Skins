@@ -7,12 +7,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mrivanplays.skins.api.DataProvider;
 import com.mrivanplays.skins.api.Skin;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,11 +21,46 @@ import org.jetbrains.annotations.Nullable;
 public final class MojangDataProvider implements DataProvider {
 
   private Map<String, UUID> cachedUUIDs;
+  private Map<UUID, String> cachedNames;
   private final Logger logger;
 
+  private final JsonParser cachedJsonParser;
+
   public MojangDataProvider(Logger logger) {
-    this.cachedUUIDs = new HashMap<>();
+    this.cachedUUIDs = new ConcurrentHashMap<>();
+    this.cachedNames = new ConcurrentHashMap<>();
     this.logger = logger;
+    this.cachedJsonParser = new JsonParser();
+  }
+
+  @Override
+  public @Nullable String retrieveName(@NotNull UUID uuid) {
+    Preconditions.checkNotNull(uuid, "uuid");
+    if (cachedNames.containsKey(uuid)) {
+      return cachedNames.get(uuid);
+    }
+    try {
+      URL url =
+          new URL(
+              "https://api.mojang.com/user/profiles/"
+                  + uuid.toString().replace("-", "")
+                  + "/names");
+      HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+      connection.addRequestProperty("User-Agent", "skins-name-fetcher");
+
+      String name =
+          cachedJsonParser
+              .parse(new InputStreamReader(connection.getInputStream()))
+              .getAsJsonArray()
+              .get(0)
+              .getAsJsonObject()
+              .get("name")
+              .getAsString();
+      cachedNames.put(uuid, name);
+      return name;
+    } catch (IOException e) {
+      return null;
+    }
   }
 
   @Override
@@ -39,7 +75,7 @@ public final class MojangDataProvider implements DataProvider {
       connection.addRequestProperty("User-Agent", "skins-uuid-fetcher");
 
       JsonObject object =
-          new JsonParser()
+          cachedJsonParser
               .parse(new InputStreamReader(connection.getInputStream()))
               .getAsJsonObject();
       UUID uuid = getUuid(object.get("id").getAsString());
@@ -51,8 +87,7 @@ public final class MojangDataProvider implements DataProvider {
   }
 
   @Override
-  public @Nullable Skin retrieveSkin(@NotNull String name, @NotNull UUID uuid) {
-    Preconditions.checkNotNull(name, "name");
+  public @Nullable Skin retrieveSkin(@NotNull UUID uuid) {
     Preconditions.checkNotNull(uuid, "uuid");
     try {
       URL checkUrl =
@@ -62,7 +97,7 @@ public final class MojangDataProvider implements DataProvider {
                   uuid.toString().replace("-", "")));
       HttpURLConnection connection = (HttpURLConnection) checkUrl.openConnection();
       JsonObject object =
-          new JsonParser()
+          cachedJsonParser
               .parse(new InputStreamReader(connection.getInputStream()))
               .getAsJsonObject();
       if (object.has("error")) {
@@ -82,7 +117,7 @@ public final class MojangDataProvider implements DataProvider {
         }
         String texture = propertyObject.get("value").getAsString();
         String signature = propertyObject.get("signature").getAsString();
-        return new Skin(texture, signature);
+        return new Skin(uuid, texture, signature);
       }
     } catch (Exception e) {
       return null;

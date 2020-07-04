@@ -23,7 +23,7 @@ public class SQLiteConnectionFactory extends FlatfileConnectionFactory {
 
     IsolatedClassLoader classLoader =
         plugin
-            .loadAndGetDependencyManager()
+            .getDependencyManager()
             .obtainClassLoaderWith(EnumSet.of(Dependency.SQLITE_DRIVER));
     try {
       Class<?> jdbcClass = classLoader.loadClass("org.sqlite.JDBC");

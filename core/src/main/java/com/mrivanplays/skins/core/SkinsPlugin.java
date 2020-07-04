@@ -1,24 +1,24 @@
 package com.mrivanplays.skins.core;
 
-import com.mrivanplays.skins.api.Environment;
+import com.mrivanplays.skins.api.SkinsInfo;
 import com.mrivanplays.skins.core.command.Command;
-import com.mrivanplays.skins.core.config.SkinsConfiguration;
 import com.mrivanplays.skins.core.dependency.DependencyManager;
 import com.mrivanplays.skins.core.dependency.classloader.PluginClassLoader;
-import com.mrivanplays.skins.core.scheduler.Scheduler;
 import com.mrivanplays.skins.core.storage.Storage;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
 public interface SkinsPlugin {
 
-  SkinsUser obtainUser(String name);
+  CompletableFuture<SkinsUser> obtainUser(String name);
 
-  SkinsUser obtainUser(UUID uuid);
+  CompletableFuture<SkinsUser> obtainUser(UUID uuid);
 
-  Environment getEnvironment();
+  SkinsInfo getInfo();
 
   void registerCommand(String name, Command command);
 
@@ -30,13 +30,15 @@ public interface SkinsPlugin {
 
   Scheduler getScheduler();
 
-  SkinsConfiguration loadAndGetConfiguration();
+  SkinsConfiguration getConfiguration();
 
-  Storage loadAndGetStorage();
+  Storage getStorage();
 
-  DependencyManager loadAndGetDependencyManager();
+  DependencyManager getDependencyManager();
 
   String identifyClassLoader(ClassLoader classLoader);
 
   InputStream getResourceStream(String name);
+
+  List<String> allPlayersForCompletions();
 }

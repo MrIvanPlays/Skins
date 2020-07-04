@@ -7,6 +7,8 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 public interface CommandSource {
 
+  String getName();
+
   void sendMessage(Component message);
 
   default void sendMessage(String message) {
@@ -17,4 +19,6 @@ public interface CommandSource {
   }
 
   boolean hasPermission(String permission);
+
+  boolean isPlayer();
 }

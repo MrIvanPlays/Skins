@@ -1,6 +1,8 @@
 package com.mrivanplays.skins.api;
 
+import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,11 +17,9 @@ public interface User {
   @Nullable
   UUID getOriginalUniqueId();
 
-  @Nullable
-  Skin getSkin();
+  CompletableFuture<Optional<Skin>> getSkin();
 
-  @Nullable
-  Skin getOriginalSkin();
+  CompletableFuture<Optional<Skin>> getOriginalSkin();
 
   void setSkin(@NotNull Skin skin);
 }

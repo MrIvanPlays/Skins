@@ -1,21 +1,36 @@
 package com.mrivanplays.skins.api;
 
 import java.util.Objects;
+import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
 
 /** Represents a skin object */
 public final class Skin {
 
-  private final String texture, signature;
+  private final UUID owner;
+  private final String texture;
+  private final String signature;
 
-  public Skin(@NotNull String texture, @NotNull String signature) {
+  public Skin(@NotNull UUID owner, @NotNull String texture, @NotNull String signature) {
+    this.owner = owner;
     this.texture = texture;
     this.signature = signature;
   }
 
   /**
+   * Returns the owner of this skin by data from the {@link DataProvider} set in the {@link
+   * SkinsApi}
+   *
+   * @return owner
+   */
+  @NotNull
+  public UUID getOwner() {
+    return owner;
+  }
+
+  /**
    * Returns a base64 encoded {@link String}, representing the skin and (if have) the cape of of the
-   * skin owner by data from the {@link DataProvider} set in the {@link SkinsApi}
+   * {@link #getOwner()} by data from the {@link DataProvider} set in the {@link SkinsApi}
    *
    * @return texture
    */
@@ -46,11 +61,13 @@ public final class Skin {
     // signature not included as it may differ
     // the default provider used after 2-3 requests it gives different signature.
     Skin skin = (Skin) o;
-    return Objects.equals(getTexture(), skin.getTexture());
+    return Objects.equals(getOwner(), skin.getOwner())
+        && Objects.equals(getTexture(), skin.getTexture());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getTexture(), getSignature());
+    // signature not included as it may differ
+    return Objects.hash(getOwner(), getTexture());
   }
 }

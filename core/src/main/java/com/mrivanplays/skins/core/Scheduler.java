@@ -1,4 +1,4 @@
-package com.mrivanplays.skins.core.scheduler;
+package com.mrivanplays.skins.core;
 
 import java.util.concurrent.Executor;
 
