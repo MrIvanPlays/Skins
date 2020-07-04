@@ -9,6 +9,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mrivanplays.skins.api.Skin;
 import com.mrivanplays.skins.core.config.SkinsConfiguration;
 import com.mrivanplays.skins.core.config.SkinsConfiguration.DatabaseCredentials;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -121,6 +122,26 @@ public class MongoDbStorageProvider implements StorageProvider {
       }
     }
     return null;
+  }
+
+  @Override
+  public List<StoredSkin> all() {
+    MongoCollection<Document> collection = mongoDatabase.getCollection("skins_storage");
+    List<StoredSkin> list = new ArrayList<>();
+    for (Document next : collection.find()) {
+      StoredSkin storedSkin =
+          new StoredSkin(
+              new Skin(next.getString("texture"), next.getString("signature")),
+              next.getString("ownerName"),
+              UUID.fromString(next.getString("ownerUUID")));
+      List<UUID> acquirerList =
+          next.getList("acquirers", String.class).stream()
+              .map(UUID::fromString)
+              .collect(Collectors.toList());
+      storedSkin.getAcquirers().addAll(acquirerList);
+      list.add(storedSkin);
+    }
+    return list;
   }
 
   @Override

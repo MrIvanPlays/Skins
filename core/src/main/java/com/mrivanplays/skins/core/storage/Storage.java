@@ -3,6 +3,7 @@ package com.mrivanplays.skins.core.storage;
 import com.mrivanplays.skins.core.SkinsPlugin;
 import com.mrivanplays.skins.core.config.SkinsConfiguration;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
@@ -52,7 +53,7 @@ public class Storage {
     plugin.getScheduler().async().execute(() -> storageProvider.closeConnection());
   }
 
-  private CompletableFuture<StoredSkin> makeSkinFuture(Supplier<StoredSkin> supplier) {
+  private <T> CompletableFuture<T> makeFuture(Supplier<T> supplier) {
     return CompletableFuture.supplyAsync(supplier, plugin.getScheduler().async());
   }
 
@@ -70,15 +71,19 @@ public class Storage {
   }
 
   public CompletableFuture<StoredSkin> findByName(String name) {
-    return makeSkinFuture(() -> storageProvider.findByName(name));
+    return makeFuture(() -> storageProvider.findByName(name));
   }
 
   public CompletableFuture<StoredSkin> find(UUID uuid) {
-    return makeSkinFuture(() -> storageProvider.find(uuid));
+    return makeFuture(() -> storageProvider.find(uuid));
   }
 
   public CompletableFuture<StoredSkin> acquired(UUID uuid) {
-    return makeSkinFuture(() -> storageProvider.acquired(uuid));
+    return makeFuture(() -> storageProvider.acquired(uuid));
+  }
+
+  public CompletableFuture<List<StoredSkin>> all() {
+    return makeFuture(() -> storageProvider.all());
   }
 
   public CompletableFuture<Void> storeSkin(StoredSkin storedSkin) {

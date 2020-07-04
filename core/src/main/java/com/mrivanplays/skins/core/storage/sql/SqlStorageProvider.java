@@ -13,6 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -245,6 +246,25 @@ public class SqlStorageProvider implements StorageProvider {
       e.printStackTrace();
     }
     return null;
+  }
+
+  @Override
+  public List<StoredSkin> all() {
+    List<StoredSkin> list = new ArrayList<>();
+    try (Connection connection = connectionFactory.getConnection()) {
+      try (PreparedStatement statement =
+          connection.prepareStatement(
+              connectionFactory.statementTickReplacer().apply("SELECT * FROM 'skins_storage'"))) {
+        try (ResultSet result = statement.executeQuery()) {
+          while (result.next()) {
+            list.add(getFromResult(result));
+          }
+        }
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return list;
   }
 
   @Override

@@ -1,5 +1,6 @@
 package com.mrivanplays.skins.core.storage;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface StorageProvider {
@@ -13,6 +14,8 @@ public interface StorageProvider {
   StoredSkin find(UUID uuid);
 
   StoredSkin acquired(UUID uuid);
+
+  List<StoredSkin> all();
 
   void closeConnection();
 }
