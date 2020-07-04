@@ -10,7 +10,6 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>skins-skull-skinner-handle</artifactId>
-  <version>${plugin.version}</version>
 
   <name>Skins-Skull-Skinner-Handle</name>
   <description>Handles all skull skinners</description>

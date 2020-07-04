@@ -10,7 +10,6 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>skins-skull-skinner-implemented</artifactId>
-  <version>${plugin.version}</version>
 
   <name>Skins-Skull-Skinner-Implemented</name>
   <description>Holder of the implemented class</description>

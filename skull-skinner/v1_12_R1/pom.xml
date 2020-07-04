@@ -10,7 +10,6 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>skins-skull-skinner-v1_12_R1</artifactId>
-  <version>${plugin.version}</version>
 
   <name>Skins-Skull-Skinner-v1_12_R1</name>
   <description>nms version 1_12_R1 implementation of the skull skinner</description>

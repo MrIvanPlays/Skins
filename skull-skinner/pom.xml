@@ -5,13 +5,12 @@
   <parent>
     <artifactId>skins-parent</artifactId>
     <groupId>com.mrivanplays</groupId>
-    <version>dev</version>
+    <version>2.0.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>skins-skull-skinner</artifactId>
   <packaging>pom</packaging>
-  <version>${plugin.version}</version>
   <modules>
     <module>implemented</module>
     <module>v1_12_R1</module>
