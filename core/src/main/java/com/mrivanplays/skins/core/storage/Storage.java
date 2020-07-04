@@ -2,6 +2,12 @@ package com.mrivanplays.skins.core.storage;
 
 import com.mrivanplays.skins.core.SkinsPlugin;
 import com.mrivanplays.skins.core.config.SkinsConfiguration;
+import com.mrivanplays.skins.core.storage.sql.SqlStorageProvider;
+import com.mrivanplays.skins.core.storage.sql.connection.file.H2ConnectionFactory;
+import com.mrivanplays.skins.core.storage.sql.connection.file.SQLiteConnectionFactory;
+import com.mrivanplays.skins.core.storage.sql.connection.hikari.MariaDbConnectionFactory;
+import com.mrivanplays.skins.core.storage.sql.connection.hikari.MySqlConnectionFactory;
+import com.mrivanplays.skins.core.storage.sql.connection.hikari.PostgreConnectionFactory;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -34,6 +40,28 @@ public class Storage {
     switch (storageType) {
       case MONGODB:
         storageProvider = new MongoDbStorageProvider(configuration);
+        break;
+      case MYSQL:
+        storageProvider = new SqlStorageProvider(plugin, new MySqlConnectionFactory(plugin));
+        break;
+      case MARIADB:
+        storageProvider = new SqlStorageProvider(plugin, new MariaDbConnectionFactory(plugin));
+        break;
+      case POSTGRESQL:
+        storageProvider = new SqlStorageProvider(plugin, new PostgreConnectionFactory(plugin));
+        break;
+      case H2:
+        storageProvider =
+            new SqlStorageProvider(
+                plugin,
+                new H2ConnectionFactory(plugin, plugin.getDataDirectory().resolve("skins-h2")));
+        break;
+      case SQLITE:
+        storageProvider =
+            new SqlStorageProvider(
+                plugin,
+                new SQLiteConnectionFactory(
+                    plugin, plugin.getDataDirectory().resolve("skins-sqlite.db")));
         break;
     }
 
