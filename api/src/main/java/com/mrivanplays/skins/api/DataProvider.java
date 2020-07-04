@@ -25,6 +25,6 @@ public interface DataProvider {
    * @param uuid uuid of the player we want the skin of
    * @return response
    */
-  @NotNull
+  @Nullable
   Skin retrieveSkin(@NotNull String name, @NotNull UUID uuid);
 }
