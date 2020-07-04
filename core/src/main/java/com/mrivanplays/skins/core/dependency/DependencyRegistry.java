@@ -34,8 +34,8 @@ public class DependencyRegistry {
               Dependency.SLF4J_API,
               Dependency.SLF4J_SIMPLE,
               Dependency.HIKARI)
-          .putAll(StorageType.SQLITE, Dependency.SQLITE_DRIVER)
-          .putAll(StorageType.H2, Dependency.H2_DRIVER)
+          .putAll(StorageType.SQLITE, Dependency.SQLITE_DRIVER, Dependency.BYTEBUDDY)
+          .putAll(StorageType.H2, Dependency.H2_DRIVER, Dependency.BYTEBUDDY)
           .build();
 
   public Set<Dependency> resolveStorageDependencies(Set<StorageType> storageTypes) {

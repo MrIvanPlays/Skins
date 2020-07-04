@@ -5,9 +5,11 @@ import com.mrivanplays.skins.core.command.CommandSkinInfo;
 import com.mrivanplays.skins.core.command.CommandSkinMenu;
 import com.mrivanplays.skins.core.command.CommandSkinReload;
 import com.mrivanplays.skins.core.command.CommandSkinSet;
+import com.mrivanplays.skins.core.dependency.Dependency;
 import com.mrivanplays.skins.core.dependency.DependencyManager;
 import com.mrivanplays.skins.core.storage.Storage;
 import com.mrivanplays.skins.core.storage.StorageMigration;
+import java.util.EnumSet;
 
 public abstract class AbstractSkinsPlugin implements SkinsPlugin {
 
@@ -18,6 +20,7 @@ public abstract class AbstractSkinsPlugin implements SkinsPlugin {
 
   public void enable() {
     dependencyManager = new DependencyManager(this);
+    dependencyManager.loadDependencies(EnumSet.of(Dependency.CAFFEINE));
     configuration = new SkinsConfiguration();
     generateConfig(configuration);
     storage = new Storage(this, storageMigration());
