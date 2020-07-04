@@ -2,7 +2,7 @@ package com.mrivanplays.skins.core;
 
 import com.mrivanplays.skins.api.DataProvider;
 import com.mrivanplays.skins.api.MojangResponse;
-import com.mrivanplays.skins.api.SkinsVersionInfo;
+import com.mrivanplays.skins.api.SkinsInfo;
 import com.mrivanplays.skins.core.SkullItemBuilderImpl.SkullItemBuilderData;
 import java.io.File;
 import java.util.function.Function;
@@ -14,14 +14,14 @@ public class InitializationData {
   private final Function<SkullItemBuilderData, ItemStack> itemBuilderTransformer;
   private final Function<ItemStack, MojangResponse> skullOwnerTransformer;
   private DataProvider dataProvider;
-  private SkinsVersionInfo versionInfo;
+  private SkinsInfo versionInfo;
 
   public InitializationData(
       File dataFolder,
       Function<SkullItemBuilderData, ItemStack> itemBuilderTransformer,
       Function<ItemStack, MojangResponse> skullOwnerTransformer,
       DataProvider dataProvider,
-      SkinsVersionInfo versionInfo) {
+      SkinsInfo versionInfo) {
     this.dataFolder = dataFolder;
     this.itemBuilderTransformer = itemBuilderTransformer;
     this.skullOwnerTransformer = skullOwnerTransformer;
@@ -45,7 +45,7 @@ public class InitializationData {
     return dataProvider;
   }
 
-  public SkinsVersionInfo getVersionInfo() {
+  public SkinsInfo getVersionInfo() {
     return versionInfo;
   }
 }

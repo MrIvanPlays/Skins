@@ -3,7 +3,7 @@ package com.mrivanplays.skins;
 import com.mrivanplays.skins.api.MojangResponse;
 import com.mrivanplays.skins.api.Skin;
 import com.mrivanplays.skins.api.SkinsApi;
-import com.mrivanplays.skins.api.SkinsVersionInfo;
+import com.mrivanplays.skins.api.SkinsInfo;
 import com.mrivanplays.skins.bukkit.SkinsBukkit;
 import com.mrivanplays.skins.bukkit.abstraction.SkinSetter;
 import com.mrivanplays.skins.bukkit.abstraction.SkinSetter.SkullItemOwnerResponse;
@@ -155,7 +155,7 @@ public class SkinsBukkitPlugin extends JavaPlugin {
     this.skinsMenu = new SkinsMenu(this);
   }
 
-  private SkinsVersionInfo initializeVersionInfo() {
+  private SkinsInfo initializeVersionInfo() {
     String version = getDescription().getVersion();
     // example of implementation version
     // git:Skins:1.1.6-SNAPSHOT:a5f217d:11
@@ -170,6 +170,6 @@ public class SkinsBukkitPlugin extends JavaPlugin {
     } else {
       buildNumber = Integer.parseInt(buildNumberPart);
     }
-    return new SkinsVersionInfo(version, commit, buildNumber);
+    return new SkinsInfo(version, commit, buildNumber);
   }
 }

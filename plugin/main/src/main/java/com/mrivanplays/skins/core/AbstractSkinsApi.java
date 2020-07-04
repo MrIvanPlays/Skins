@@ -5,7 +5,7 @@ import com.mrivanplays.skins.api.DataProvider;
 import com.mrivanplays.skins.api.MojangResponse;
 import com.mrivanplays.skins.api.Skin;
 import com.mrivanplays.skins.api.SkinsApi;
-import com.mrivanplays.skins.api.SkinsVersionInfo;
+import com.mrivanplays.skins.api.SkinsInfo;
 import com.mrivanplays.skins.api.SkullItemBuilder;
 import com.mrivanplays.skins.core.SkullItemBuilderImpl.SkullItemBuilderData;
 import java.util.Objects;
@@ -23,7 +23,7 @@ public abstract class AbstractSkinsApi implements SkinsApi {
   private final SkinStorage skinStorage;
   private final Function<SkullItemBuilderData, ItemStack> itemBuilderTransformer;
   private final Function<ItemStack, MojangResponse> skullOwnerTransformer;
-  private final SkinsVersionInfo versionInfo;
+  private final SkinsInfo versionInfo;
 
   public AbstractSkinsApi(InitializationData initializationData) {
     skinStorage = new SkinStorage(initializationData.getDataFolder());
@@ -91,7 +91,7 @@ public abstract class AbstractSkinsApi implements SkinsApi {
 
   @Override
   @NotNull
-  public SkinsVersionInfo getVersionInfo() {
+  public SkinsInfo getVersionInfo() {
     return versionInfo;
   }
 

@@ -26,5 +26,5 @@ public interface DataProvider {
    * @return response
    */
   @NotNull
-  MojangResponse retrieveSkinResponse(@NotNull String name, @NotNull UUID uuid);
+  Skin retrieveSkin(@NotNull String name, @NotNull UUID uuid);
 }
