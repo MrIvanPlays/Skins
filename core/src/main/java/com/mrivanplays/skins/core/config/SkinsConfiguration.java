@@ -2,7 +2,11 @@ package com.mrivanplays.skins.core.config;
 
 import com.mrivanplays.annotationconfig.core.Comment;
 import com.mrivanplays.annotationconfig.core.ConfigObject;
+import com.mrivanplays.annotationconfig.core.FieldTypeResolver;
 import com.mrivanplays.annotationconfig.core.Key;
+import com.mrivanplays.annotationconfig.core.TypeResolver;
+import com.mrivanplays.skins.core.storage.StorageType;
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,6 +20,10 @@ public final class SkinsConfiguration {
   private boolean updateCheck = true;
 
   @ConfigObject private Messages messages = new Messages();
+
+  @Key("storage-credentials")
+  @ConfigObject
+  private DatabaseCredentials storageCredentials = new DatabaseCredentials();
 
   @Comment("All configurable messages")
   public static final class Messages {
@@ -117,11 +125,76 @@ public final class SkinsConfiguration {
     }
   }
 
+  @Comment("Storage credentials")
+  @Comment("Used to connect to database.")
+  @Comment("Supported storage types: H2, SQLITE, MARIADB, MYSQL, POSTGRESQL, MONGODB")
+  public static final class DatabaseCredentials {
+
+    @Key("storage-type")
+    @TypeResolver(StorageTypeResolver.class)
+    private StorageType storageType = StorageType.H2;
+
+    private String address = "localhost";
+    private int port = 3306;
+    private String database = "minecraft";
+    private String username = "root";
+    private String password = "1234";
+
+    public StorageType getStorageType() {
+      return storageType;
+    }
+
+    public String getAddress() {
+      return address;
+    }
+
+    public int getPort() {
+      return port;
+    }
+
+    public String getDatabase() {
+      return database;
+    }
+
+    public String getUsername() {
+      return username;
+    }
+
+    public String getPassword() {
+      return password;
+    }
+
+    public static final class StorageTypeResolver implements FieldTypeResolver {
+
+      @Override
+      public Object toType(Object value, Field field) throws Exception {
+        try {
+          return StorageType.valueOf(String.valueOf(value).toUpperCase());
+        } catch (IllegalArgumentException e) {
+          return null;
+        }
+      }
+
+      @Override
+      public boolean shouldResolve(Class<?> fieldType) {
+        return StorageType.class.isAssignableFrom(fieldType);
+      }
+    }
+  }
+
   public boolean shouldUpdateCheck() {
     return updateCheck;
   }
 
   public Messages getMessages() {
     return messages;
+  }
+
+  public boolean isUpdateCheck() {
+    return updateCheck;
+  }
+
+  public DatabaseCredentials getStorageCredentials() {
+    return storageCredentials;
   }
 }

@@ -7,4 +7,8 @@ public interface Command {
   void execute(CommandSource source, String[] args);
 
   List<String> complete(CommandSource source, String[] args);
+
+  default boolean hasPermission(CommandSource source) {
+    return true;
+  }
 }

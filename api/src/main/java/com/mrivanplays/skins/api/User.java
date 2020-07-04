@@ -18,5 +18,8 @@ public interface User {
   @Nullable
   Skin getSkin();
 
+  @Nullable
+  Skin getOriginalSkin();
+
   void setSkin(@NotNull Skin skin);
 }

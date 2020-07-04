@@ -15,4 +15,6 @@ public interface CommandSource {
     MiniMessage miniMessage = MiniMessage.markdown();
     sendMessage(miniMessage.deserialize(miniMessage.serialize(comp)));
   }
+
+  boolean hasPermission(String permission);
 }
