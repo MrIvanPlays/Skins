@@ -14,6 +14,77 @@
   <name>Skins-Bukkit-Bootstrap</name>
   <description>Boot for the bukkit implementation of skins plugin</description>
 
+  <build>
+    <defaultGoal>clean package</defaultGoal>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <createDependencyReducedPom>true</createDependencyReducedPom>
+              <relocations>
+                <relocation>
+                  <pattern>com.zaxxer.hikari</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.hikari</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.mariadb.jdbc</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.mariadb</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>com.mysql</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.mysql</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.postgresql</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.postgresql</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>com.mongodb</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.mongodb</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.bson</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.bson</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>net.bytebuddy</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.bytebuddy</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>com.github.benmanes.caffeine</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.caffeine</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>net.kyori.adventure</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.adventure</shadedPattern>
+                </relocation>
+                <relocation>
+                  <!-- yes that's right we also need to relocate our own libraries -->
+                  <pattern>com.mrivanplays.annotationconfig</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.annotationconfig</shadedPattern>
+                </relocation>
+              </relocations>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+  </build>
+
   <repositories>
     <repository>
       <id>ivan</id>

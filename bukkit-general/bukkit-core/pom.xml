@@ -14,33 +14,6 @@
   <name>Skins-Bukkit-Core</name>
   <description>Bukkit core</description>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <version>3.1.0</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-            <configuration>
-              <createDependencyReducedPom>true</createDependencyReducedPom>
-              <relocations>
-                <relocation>
-                  <pattern>net.kyori.adventure</pattern>
-                  <shadedPattern>com.mrivanplays.skins.lib.adventure</shadedPattern>
-                </relocation>
-              </relocations>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
-
   <repositories>
     <repository>
       <id>sonatype-snapshots</id>
