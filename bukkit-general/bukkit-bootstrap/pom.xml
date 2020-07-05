@@ -67,9 +67,17 @@
                   <shadedPattern>com.mrivanplays.skins.lib.adventure</shadedPattern>
                 </relocation>
                 <relocation>
-                  <!-- yes that's right we also need to relocate our own libraries -->
+                  <pattern>net.kyori.examination</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.examination</shadedPattern>
+                </relocation>
+                <!-- yes that's right we also need to relocate our own libraries -->
+                <relocation>
                   <pattern>com.mrivanplays.annotationconfig</pattern>
                   <shadedPattern>com.mrivanplays.skins.lib.annotationconfig</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>com.mrivanplays.pagedinventory</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.pagedinventory</shadedPattern>
                 </relocation>
               </relocations>
             </configuration>
@@ -97,7 +105,7 @@
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
       <version>${spigot.version}</version>
-      <scope>compile</scope>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.mrivanplays</groupId>

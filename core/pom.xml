@@ -96,6 +96,12 @@
       <artifactId>adventure-text-serializer-gson</artifactId>
       <version>4.0.0-SNAPSHOT</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.google.code.gson</groupId>
+          <artifactId>gson</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>net.kyori</groupId>
