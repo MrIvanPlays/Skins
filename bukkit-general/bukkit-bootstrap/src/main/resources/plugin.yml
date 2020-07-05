@@ -1,0 +1,33 @@
+name: Skins
+description: Skins plugin
+main: com.mrivanplays.skins.SkinsBukkitPlugin
+version: ${project.version}
+api-version: 1.13
+authors:
+  - MrIvanPlays
+softdepend:
+  - ProtocolSupport
+
+commands:
+  skinset:
+    description: Set ySkour skin to another skin!
+  skinreload:
+    description: Reloads the plugin
+  skinmenu:
+    description: Shows all cached skins
+  skininfo:
+    description: Shows info about the plugin
+
+permissions:
+  skins.menu:
+    description: Permission to use the skin' menu command
+  skins.info:
+    description: Permission to use the skins' info command
+  skins.reload:
+    description: Permission to use the skins' reload command
+  skins.*:
+    description: All permissions combined
+    children:
+      skins.menu: true
+      skins.info: true
+      skins.reload: true

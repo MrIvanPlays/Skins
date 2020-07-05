@@ -2,6 +2,7 @@ package com.mrivanplays.skins.bukkit.core;
 
 import com.mrivanplays.skins.core.AbstractSkinsPlugin;
 import com.mrivanplays.skins.core.Scheduler;
+import com.mrivanplays.skins.core.storage.StorageMigration;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,11 +15,21 @@ import org.bukkit.plugin.Plugin;
 public abstract class GeneralSkinsPlugin extends AbstractSkinsPlugin {
 
   private Scheduler scheduler;
+  private Plugin bukkitPlugin;
+
+  public GeneralSkinsPlugin(Plugin bukkitPlugin) {
+    this.bukkitPlugin = bukkitPlugin;
+  }
 
   @Override
   public void enable() {
     scheduler = new Scheduler.Default();
     super.enable();
+  }
+
+  @Override
+  public StorageMigration storageMigration() {
+    return new BukkitLegacyStorageMigration(bukkitPlugin);
   }
 
   @Override

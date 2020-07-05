@@ -1,5 +1,6 @@
 package com.mrivanplays.skins.core;
 
+import com.mrivanplays.skins.api.Skin;
 import com.mrivanplays.skins.api.SkinsApiProvider;
 import com.mrivanplays.skins.core.command.CommandSkinInfo;
 import com.mrivanplays.skins.core.command.CommandSkinMenu;
@@ -10,6 +11,7 @@ import com.mrivanplays.skins.core.dependency.DependencyManager;
 import com.mrivanplays.skins.core.storage.Storage;
 import com.mrivanplays.skins.core.storage.StorageMigration;
 import java.util.EnumSet;
+import java.util.Optional;
 
 public abstract class AbstractSkinsPlugin implements SkinsPlugin {
 
@@ -17,6 +19,8 @@ public abstract class AbstractSkinsPlugin implements SkinsPlugin {
   private SkinsConfiguration configuration;
   private Storage storage;
   private SkinsApiImpl apiImpl;
+
+  private CommandSkinSet skinSetCommand;
 
   public void enable() {
     dependencyManager = new DependencyManager(this);
@@ -27,7 +31,8 @@ public abstract class AbstractSkinsPlugin implements SkinsPlugin {
     storage.connect();
     apiImpl = new SkinsApiImpl(this);
     SkinsApiProvider.set(apiImpl);
-    registerCommand("skinset", new CommandSkinSet(this));
+    skinSetCommand = new CommandSkinSet(this);
+    registerCommand("skinset", skinSetCommand);
     registerCommand("skinmenu", new CommandSkinMenu(this));
     registerCommand("skininfo", new CommandSkinInfo(this));
     registerCommand("skinreload", new CommandSkinReload());
@@ -60,5 +65,10 @@ public abstract class AbstractSkinsPlugin implements SkinsPlugin {
   @Override
   public DependencyManager getDependencyManager() {
     return dependencyManager;
+  }
+
+  @Override
+  public void dispatchSkinSet(AbstractSkinsUser user, Optional<Skin> skinOpt, String name) {
+    skinSetCommand.dispatchSkinSet(user, skinOpt, name);
   }
 }

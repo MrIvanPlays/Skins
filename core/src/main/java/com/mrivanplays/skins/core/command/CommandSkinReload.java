@@ -19,4 +19,9 @@ public class CommandSkinReload implements Command {
   public List<String> complete(CommandSource source, String[] args) {
     return Collections.emptyList();
   }
+
+  @Override
+  public boolean hasPermission(CommandSource source) {
+    return source.hasPermission("skins.reload");
+  }
 }

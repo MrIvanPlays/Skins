@@ -3,14 +3,15 @@ package com.mrivanplays.skins.core.command;
 import com.mrivanplays.skins.api.Skin;
 import com.mrivanplays.skins.api.SkinsApi;
 import com.mrivanplays.skins.api.SkinsApiProvider;
+import com.mrivanplays.skins.core.AbstractSkinsUser;
 import com.mrivanplays.skins.core.SkinsConfiguration;
 import com.mrivanplays.skins.core.SkinsPlugin;
-import com.mrivanplays.skins.core.SkinsUser;
 import com.mrivanplays.skins.core.UserCooldown;
 import com.mrivanplays.skins.core.storage.StoredSkin;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CommandSkinSet implements Command {
@@ -28,39 +29,40 @@ public class CommandSkinSet implements Command {
       source.sendMessage(messages.getNoConsole());
       return;
     }
-    SkinsUser user = plugin.obtainUser(source.getName());
+    AbstractSkinsUser user = (AbstractSkinsUser) plugin.obtainUser(source.getName());
     if (args.length == 0) {
       user.sendMessage(messages.getCommandUsage());
       return;
     }
+    SkinsApi api = SkinsApiProvider.get();
+    api.getSkin(args[0]).thenAccept(skinOpt -> dispatchSkinSet(user, skinOpt, args[0]));
+  }
+
+  public void dispatchSkinSet(AbstractSkinsUser user, Optional<Skin> skinOpt, String name) {
+    SkinsConfiguration.Messages messages = plugin.getConfiguration().getMessages();
     long cooldownedLeft = UserCooldown.getGlobalInstance().getTimeLeft(user.getUniqueId());
     if (cooldownedLeft > 0) {
       user.sendMessage(messages.getCooldown().replace("%timeLeft%", Long.toString(cooldownedLeft)));
       return;
     }
-    SkinsApi api = SkinsApiProvider.get();
-    api.getSkin(args[0])
+    if (!skinOpt.isPresent()) {
+      user.sendMessage(messages.getNotPremium());
+      return;
+    }
+    Skin skin = skinOpt.get();
+    user.getSkin()
         .thenAccept(
-            skinOpt -> {
-              if (!skinOpt.isPresent()) {
-                user.sendMessage(messages.getNotPremium());
-                return;
+            currentSkinOpt -> {
+              if (currentSkinOpt.isPresent()) {
+                Skin current = currentSkinOpt.get();
+                if (skin.equals(current)) {
+                  user.sendMessage(messages.getSkinAlreadySet());
+                  return;
+                }
               }
-              Skin skin = skinOpt.get();
-              user.getSkin()
-                  .thenAccept(
-                      currentSkinOpt -> {
-                        if (currentSkinOpt.isPresent()) {
-                          Skin current = currentSkinOpt.get();
-                          if (skin.equals(current)) {
-                            user.sendMessage(messages.getSkinAlreadySet());
-                            return;
-                          }
-                        }
-                        user.setSkin(skin);
-                        user.sendMessage(messages.getSkinSetSuccessfully());
-                        UserCooldown.getGlobalInstance().cooldown(user.getUniqueId());
-                      });
+              user.setSkin(skin, name);
+              user.sendMessage(messages.getSkinSetSuccessfully());
+              UserCooldown.getGlobalInstance().cooldown(user.getUniqueId());
             });
   }
 

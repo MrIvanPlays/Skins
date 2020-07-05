@@ -5,17 +5,21 @@ import com.mrivanplays.pagedinventory.api.PageClick;
 import com.mrivanplays.pagedinventory.api.PagedInventory;
 import com.mrivanplays.pagedinventory.api.PagedInventoryBuilder;
 import com.mrivanplays.skins.bukkit_general.skull_skinner.SkullOwner;
+import com.mrivanplays.skins.bukkit_general.skull_skinner.SkullSkinner;
 import com.mrivanplays.skins.bukkit_general.skull_skinner.SkullSkinnerHandler;
-import com.mrivanplays.skins.core.SkinsPlugin;
-import com.mrivanplays.skins.core.SkinsUser;
+import com.mrivanplays.skins.core.AbstractSkinsPlugin;
+import com.mrivanplays.skins.core.AbstractSkinsUser;
 import com.mrivanplays.skins.core.storage.StoredSkin;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -26,15 +30,17 @@ import org.bukkit.plugin.Plugin;
 
 public class SkinsMenu {
 
-  private SkinsPlugin plugin;
+  private final AbstractSkinsPlugin plugin;
+  private final Plugin base;
 
   private final Consumer<PageClick> clickListener;
   private final ItemStack previousItem;
   private final ItemStack nextItem;
   private final ItemStack closeItem;
 
-  public SkinsMenu(SkinsPlugin plugin) {
+  public SkinsMenu(AbstractSkinsPlugin plugin, Plugin base) {
     this.plugin = plugin;
+    this.base = base;
 
     previousItem =
         createItem(
@@ -58,32 +64,43 @@ public class SkinsMenu {
           if (item == null) {
             return;
           }
-          SkullOwner owner = SkullSkinnerHandler.getSkinSetter().getSkullOwner(item);
-          SkinsUser user = plugin.obtainUser(player.getName());
+          SkullOwner owner = SkullSkinnerHandler.getSkullSkinner().getSkullOwner(item);
+          AbstractSkinsUser user = (AbstractSkinsUser) plugin.obtainUser(player.getName());
           if (owner == null) {
             user.sendMessage(plugin.getConfiguration().getMessages().getSkinMenuCannotFetchData());
             return;
           }
-          Bukkit.dispatchCommand(player, "skinset " + owner.getOwnerName());
+          plugin
+              .getApiImpl()
+              .getSkinAccessor()
+              .getSkin(owner.getOwnerUUID())
+              .thenAccept(
+                  skin ->
+                      plugin.dispatchSkinSet(
+                          user, Optional.ofNullable(skin), owner.getOwnerName()));
           player.closeInventory();
         };
   }
 
-  public void openMenu(Player player, Plugin base) {
+  public void openMenu(Player player) {
     Map<Integer, ItemStack> itemCache = new HashMap<>();
-    // todo: populate
-//    List<StoredSkin> skins = plugin.getSkinStorage().deserialize();
-//    SkinSetter itemSetter = SkinSetterHandler.getSkinSetter();
-//    for (int i = 0; i < skins.size(); i++) {
-//      StoredSkin storedSkin = skins.get(i);
-//      ItemStack item =
-//          itemSetter.getMenuItem(
-//              storedSkin.getSkin(),
-//              storedSkin.getName(),
-//              plugin.color(plugin.getConfig().getString("messages.skin-menu-head-name")),
-//              colorList(plugin.getConfig().getStringList("messages.skin-menu-lore")));
-//      itemCache.put(i, item);
-//    }
+    plugin
+        .getStorage()
+        .all()
+        .thenAccept(
+            skins -> {
+              SkullSkinner itemSetter = SkullSkinnerHandler.getSkullSkinner();
+              for (int i = 0; i < skins.size(); i++) {
+                StoredSkin storedSkin = skins.get(i);
+                ItemStack item =
+                    itemSetter.buildItem(
+                        storedSkin.getSkin(),
+                        storedSkin.getOwnerName(),
+                        color(plugin.getConfiguration().getMessages().getSkinMenuHeadName()),
+                        colorList(plugin.getConfiguration().getMessages().getSkinMenuLore()));
+                itemCache.put(i, item);
+              }
+            });
 
     List<Inventory> pages = getPages(getPagesRaw(itemCache));
     PagedInventoryBuilder pagedInventoryBuilder = PagedInventoryBuilder.createBuilder(base);
@@ -162,6 +179,9 @@ public class SkinsMenu {
   }
 
   private String color(String message) {
-    return ChatColor.translateAlternateColorCodes('&', message);
+    TextComponent comp = LegacyComponentSerializer.legacy('&').deserialize(message);
+    MiniMessage miniMessage = MiniMessage.markdown();
+    return miniMessage.serialize(
+        miniMessage.deserialize(LegacyComponentSerializer.legacy('&').serialize(comp)));
   }
 }

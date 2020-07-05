@@ -6,6 +6,7 @@ import com.mrivanplays.skins.api.SkinsInfo;
 import com.mrivanplays.skins.bukkit.core.GeneralSkinsPlugin;
 import com.mrivanplays.skins.bukkit.paper.PaperUser;
 import com.mrivanplays.skins.bukkit.protocolsupport.ProtocolSupportUser;
+import com.mrivanplays.skins.bukkit_general.SkinsMenu;
 import com.mrivanplays.skins.core.SkinsConfiguration;
 import com.mrivanplays.skins.core.SkinsUser;
 import com.mrivanplays.skins.core.command.Command;
@@ -27,11 +28,14 @@ public class BukkitSkinsPlugin extends GeneralSkinsPlugin {
   private SkinsInfo info;
 
   private Map<String, SkinsUser> userMap = new HashMap<>();
-  private CommandSourceManager sourceManager;
+  private final CommandSourceManager sourceManager;
+  private final SkinsMenu skinsMenu;
 
   public BukkitSkinsPlugin(SkinsBukkitPlugin parent) {
+    super(parent);
     this.parent = parent;
     this.sourceManager = new CommandSourceManager(this);
+    this.skinsMenu = new SkinsMenu(this, parent);
   }
 
   @Override
@@ -70,11 +74,11 @@ public class BukkitSkinsPlugin extends GeneralSkinsPlugin {
     SkinsUser user;
     Environment env = info.getEnvironment();
     if (env.paper()) {
-      user = new PaperUser(this, player);
+      user = new PaperUser(this, skinsMenu, player);
     } else if (env.protocolSupport()) {
-      user = new ProtocolSupportUser(this, player);
+      user = new ProtocolSupportUser(this, skinsMenu, player);
     } else {
-      user = new CraftBukkitUser(this, player);
+      user = new CraftBukkitUser(this, skinsMenu, player);
     }
     userMap.put(name, user);
     return user;

@@ -1,5 +1,6 @@
 package com.mrivanplays.skins.bukkit.core;
 
+import com.mrivanplays.skins.bukkit_general.SkinsMenu;
 import com.mrivanplays.skins.core.AbstractSkinsUser;
 import com.mrivanplays.skins.core.SkinsPlugin;
 import java.util.UUID;
@@ -11,14 +12,18 @@ import org.jetbrains.annotations.NotNull;
 public abstract class GeneralBukkitUser extends AbstractSkinsUser {
 
   protected final Player player;
+  protected final SkinsMenu menuInstance;
 
-  public GeneralBukkitUser(SkinsPlugin plugin, Player player) {
+  public GeneralBukkitUser(SkinsPlugin plugin, SkinsMenu menuInstance, Player player) {
     super(plugin);
     this.player = player;
+    this.menuInstance = menuInstance;
   }
 
   @Override
-  public void openSkinMenu() {}
+  public void openSkinMenu() {
+    menuInstance.openMenu(player);
+  }
 
   @Override
   public @NotNull String getName() {

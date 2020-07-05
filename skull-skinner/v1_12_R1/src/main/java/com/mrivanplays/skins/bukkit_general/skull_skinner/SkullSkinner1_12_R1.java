@@ -18,7 +18,7 @@ public class SkullSkinner1_12_R1 implements SkullSkinner {
 
   @Override
   public ItemStack buildItem(
-      Skin skin, String ownerName, UUID ownerUUID, String headNameFormat, List<String> lore) {
+      Skin skin, String ownerName, String headNameFormat, List<String> lore) {
     ItemStack item = new ItemStack(Material.SKULL_ITEM, 1, (byte) SkullType.PLAYER.ordinal());
     if (skin != null) {
       net.minecraft.server.v1_12_R1.ItemStack nms = CraftItemStack.asNMSCopy(item);
@@ -26,7 +26,7 @@ public class SkullSkinner1_12_R1 implements SkullSkinner {
       NBTTagCompound skins = new NBTTagCompound();
       NBTTagCompound owner = new NBTTagCompound();
       owner.set("name", new NBTTagString(ownerName));
-      owner.set("uuid", new NBTTagString(ownerUUID.toString()));
+      owner.set("uuid", new NBTTagString(skin.getOwner().toString()));
       skins.set("skullOwner", owner);
       tag.set("skins", skins);
       nms.setTag(tag);
@@ -34,7 +34,7 @@ public class SkullSkinner1_12_R1 implements SkullSkinner {
     }
     SkullMeta meta = (SkullMeta) item.getItemMeta();
     if (skin != null) {
-      GameProfile profile = new GameProfile(ownerUUID, ownerName);
+      GameProfile profile = new GameProfile(skin.getOwner(), ownerName);
       profile
           .getProperties()
           .put("textures", new Property("textures", skin.getTexture(), skin.getSignature()));

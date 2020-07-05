@@ -1,6 +1,8 @@
 package com.mrivanplays.skins.bukkit;
 
 import com.mrivanplays.skins.api.Environment;
+import com.mrivanplays.skins.bukkit.protocolsupport.ProtocolSupportSkinSetter;
+import com.mrivanplays.skins.bukkit_general.skull_skinner.SupportedVersions;
 import com.mrivanplays.skins.core.AbstractSkinsPlugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -11,7 +13,11 @@ public class SkinsBukkitPlugin extends JavaPlugin {
 
   @Override
   public void onLoad() {
-    // todo: check if supported version, disable if not supported
+    if (!SupportedVersions.isCurrentSupported()) {
+      getLogger().severe("Detected unsupported version, disabling...");
+      disabled = true;
+      return;
+    }
     plugin = new BukkitSkinsPlugin(this);
     plugin.enable();
   }
@@ -32,8 +38,11 @@ public class SkinsBukkitPlugin extends JavaPlugin {
       getLogger().severe("Skins works better if ran on paper.");
     }
     if (env.protocolSupport()) {
-
+      getServer().getPluginManager().registerEvents(new ProtocolSupportSkinSetter(plugin), this);
+    } else {
+      getServer().getPluginManager().registerEvents(new DefaultSkinSetListener(plugin), this);
     }
+
     getLogger().info("Running on " + env.capitalizedName());
   }
 }

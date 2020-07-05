@@ -4,14 +4,15 @@ import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
 import com.mrivanplays.skins.api.Skin;
 import com.mrivanplays.skins.bukkit.core.GeneralBukkitUser;
+import com.mrivanplays.skins.bukkit_general.SkinsMenu;
 import com.mrivanplays.skins.core.SkinsPlugin;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class PaperUser extends GeneralBukkitUser {
 
-  public PaperUser(SkinsPlugin plugin, Player player) {
-    super(plugin, player);
+  public PaperUser(SkinsPlugin plugin, SkinsMenu menuInstance, Player player) {
+    super(plugin, menuInstance, player);
   }
 
   @Override

@@ -15,11 +15,11 @@ public class SkullSkinner1_15_R1 implements SkullSkinner {
 
   @Override
   public ItemStack buildItem(
-      Skin skin, String ownerName, UUID ownerUUID, String headNameFormat, List<String> lore) {
+      Skin skin, String ownerName, String headNameFormat, List<String> lore) {
     ItemStack item = new ItemStack(Material.PLAYER_HEAD);
     SkullMeta meta = (SkullMeta) item.getItemMeta();
     if (skin != null) {
-      GameProfile profile = new GameProfile(ownerUUID, ownerName);
+      GameProfile profile = new GameProfile(skin.getOwner(), ownerName);
       profile
           .getProperties()
           .put("textures", new Property("textures", skin.getTexture(), skin.getSignature()));
@@ -33,7 +33,7 @@ public class SkullSkinner1_15_R1 implements SkullSkinner {
       meta.getPersistentDataContainer()
           .set(SKULL_OWNER_NAME_KEY, PersistentDataType.STRING, ownerName);
       meta.getPersistentDataContainer()
-          .set(SKULL_OWNER_UUID_KEY, PersistentDataType.STRING, ownerUUID.toString());
+          .set(SKULL_OWNER_UUID_KEY, PersistentDataType.STRING, skin.getOwner().toString());
     }
     if (headNameFormat != null) {
       meta.setDisplayName(headNameFormat.replace("%name%", ownerName));

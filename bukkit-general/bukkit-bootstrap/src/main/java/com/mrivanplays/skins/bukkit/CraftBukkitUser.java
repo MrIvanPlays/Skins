@@ -2,6 +2,7 @@ package com.mrivanplays.skins.bukkit;
 
 import com.mrivanplays.skins.api.Skin;
 import com.mrivanplays.skins.bukkit.core.GeneralBukkitUser;
+import com.mrivanplays.skins.bukkit_general.SkinsMenu;
 import com.mrivanplays.skins.core.SkinsPlugin;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -11,8 +12,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class CraftBukkitUser extends GeneralBukkitUser {
 
-  public CraftBukkitUser(SkinsPlugin plugin, Player player) {
-    super(plugin, player);
+  public CraftBukkitUser(SkinsPlugin plugin, SkinsMenu menuInstance, Player player) {
+    super(plugin, menuInstance, player);
   }
 
   @Override

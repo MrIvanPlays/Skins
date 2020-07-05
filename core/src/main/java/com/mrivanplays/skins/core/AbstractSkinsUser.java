@@ -65,7 +65,12 @@ public abstract class AbstractSkinsUser implements SkinsUser {
 
   @Override
   public void setSkin(@NotNull Skin skin) {
+    setSkin(skin, apiImpl.getSkinAccessor().getDataProvider().retrieveName(skin.getOwner()));
+  }
+
+  public void setSkin(Skin skin, String name) {
     Objects.requireNonNull(skin, "skin");
+    Objects.requireNonNull(name, "name");
     if (currentStoredSkin != null) {
       currentStoredSkin.removeAcquirer(getUniqueId());
       plugin.getStorage().storeSkin(currentStoredSkin);
@@ -76,10 +81,7 @@ public abstract class AbstractSkinsUser implements SkinsUser {
         .thenAccept(
             storedSkin -> {
               if (storedSkin == null) {
-                storedSkin =
-                    new StoredSkin(
-                        skin,
-                        apiImpl.getSkinAccessor().getDataProvider().retrieveName(skin.getOwner()));
+                storedSkin = new StoredSkin(skin, name);
               }
               storedSkin.addAcquirer(getUniqueId());
               Skin newSkin = apiImpl.getSkinAccessor().getSkin(skin.getOwner()).join();

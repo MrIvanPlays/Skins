@@ -4,7 +4,7 @@ public class SkullSkinnerHandler {
 
   private static SkullSkinner instance = null;
 
-  public static SkullSkinner getSkinSetter() {
+  public static SkullSkinner getSkullSkinner() {
     if (instance != null) {
       return instance;
     }
