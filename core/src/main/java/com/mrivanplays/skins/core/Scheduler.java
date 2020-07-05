@@ -1,5 +1,6 @@
 package com.mrivanplays.skins.core;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -12,12 +13,14 @@ public interface Scheduler {
 
   final class Default implements Scheduler {
 
-    private final ExecutorService sync;
+    private final Executor sync;
     private final ExecutorService async;
 
-    public Default() {
-      this.sync = Executors.newSingleThreadExecutor();
-      this.async = Executors.newScheduledThreadPool(6);
+    public Default(Executor sync) {
+      this.sync = sync;
+      this.async =
+          Executors.newCachedThreadPool(
+              new ThreadFactoryBuilder().setNameFormat("skins-async-#%1$d").build());
     }
 
     @Override

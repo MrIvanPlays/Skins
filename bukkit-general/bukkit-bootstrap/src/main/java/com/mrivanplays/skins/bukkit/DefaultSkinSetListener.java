@@ -19,6 +19,7 @@ public class DefaultSkinSetListener implements Listener {
   public void onJoin(PlayerJoinEvent event) {
     Player player = event.getPlayer();
     SkinsUser user = plugin.obtainUser(player.getName());
-    user.getSkin().join().ifPresent(user::setSkin);
+    user.getSkin()
+        .thenAcceptAsync(skin -> skin.ifPresent(user::setSkin), plugin.getScheduler().async());
   }
 }

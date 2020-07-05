@@ -22,6 +22,7 @@ public class CraftBukkitUser extends GeneralBukkitUser {
     if (!isOnline()) {
       return;
     }
+    // todo: fix for 1.16
     try {
       Player p = getOnlineVariant();
       Method getProfileMethod = p.getClass().getDeclaredMethod("getProfile");
@@ -33,7 +34,7 @@ public class CraftBukkitUser extends GeneralBukkitUser {
       Class<?> propertyClass = Class.forName("com.mojang.authlib.properties.Property");
 
       Method putMethod =
-          properties.getClass().getDeclaredMethod("put", String.class, propertyClass);
+          properties.getClass().getSuperclass().getDeclaredMethod("put", Object.class, Object.class);
       putMethod.setAccessible(true);
 
       Constructor propertyConstructor =

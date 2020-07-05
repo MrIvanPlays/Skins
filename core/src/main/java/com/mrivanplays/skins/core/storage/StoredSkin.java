@@ -2,6 +2,7 @@ package com.mrivanplays.skins.core.storage;
 
 import com.mrivanplays.skins.api.Skin;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -40,5 +41,32 @@ public class StoredSkin {
 
   public String getOwnerName() {
     return ownerName;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    StoredSkin that = (StoredSkin) o;
+    return getSkin().equals(that.getSkin()) &&
+        getOwnerName().equals(that.getOwnerName());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(getSkin(), getOwnerName());
+  }
+
+  @Override
+  public String toString() {
+    return "StoredSkin{" +
+        "skin=" + skin +
+        ", ownerName='" + ownerName + '\'' +
+        ", acquirers=" + acquirers +
+        '}';
   }
 }

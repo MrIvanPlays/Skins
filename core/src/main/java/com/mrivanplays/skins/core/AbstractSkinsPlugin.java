@@ -27,6 +27,7 @@ public abstract class AbstractSkinsPlugin implements SkinsPlugin {
     dependencyManager.loadDependencies(EnumSet.of(Dependency.CAFFEINE));
     configuration = new SkinsConfiguration();
     generateConfig(configuration);
+    afterConfigGeneration();
     storage = new Storage(this, storageMigration());
     storage.connect();
     apiImpl = new SkinsApiImpl(this);
@@ -37,6 +38,8 @@ public abstract class AbstractSkinsPlugin implements SkinsPlugin {
     registerCommand("skininfo", new CommandSkinInfo(this));
     registerCommand("skinreload", new CommandSkinReload());
   }
+
+  public void afterConfigGeneration() {}
 
   public void disable() {
     storage.closeConnection();

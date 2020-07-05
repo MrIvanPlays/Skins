@@ -39,25 +39,9 @@ public class SkinsMenu {
   private final ItemStack closeItem;
 
   public SkinsMenu(AbstractSkinsPlugin plugin, Plugin base) {
-    this.plugin = plugin;
-    this.base = base;
-
-    previousItem =
-        createItem(
-            color(plugin.getConfiguration().getMessages().getSkinMenuPreviousPageLabel()),
-            Material.PAPER);
-
-    nextItem =
-        createItem(
-            color(plugin.getConfiguration().getMessages().getSkinMenuNextPageLabel()),
-            Material.BOOK);
-
-    closeItem =
-        createItem(
-            color(plugin.getConfiguration().getMessages().getSkinMenuClosePageLabel()),
-            Material.BARRIER);
-
-    clickListener =
+    this(
+        plugin,
+        base,
         click -> {
           Player player = click.getClicker();
           ItemStack item = click.getClickedItem();
@@ -79,7 +63,29 @@ public class SkinsMenu {
                       plugin.dispatchSkinSet(
                           user, Optional.ofNullable(skin), owner.getOwnerName()));
           player.closeInventory();
-        };
+        });
+  }
+
+  public SkinsMenu(AbstractSkinsPlugin plugin, Plugin base, Consumer<PageClick> clickListener) {
+    this.plugin = plugin;
+    this.base = base;
+
+    previousItem =
+        createItem(
+            color(plugin.getConfiguration().getMessages().getSkinMenuPreviousPageLabel()),
+            Material.PAPER);
+
+    nextItem =
+        createItem(
+            color(plugin.getConfiguration().getMessages().getSkinMenuNextPageLabel()),
+            Material.BOOK);
+
+    closeItem =
+        createItem(
+            color(plugin.getConfiguration().getMessages().getSkinMenuClosePageLabel()),
+            Material.BARRIER);
+
+    this.clickListener = clickListener;
   }
 
   public void openMenu(Player player) {

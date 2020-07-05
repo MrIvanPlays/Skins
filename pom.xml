@@ -45,10 +45,8 @@
 
   <modules>
     <module>api</module>
-    <module>skull-skinner</module>
     <module>core</module>
     <module>bukkit-general</module>
-    <module>menu</module>
   </modules>
 
   <build>

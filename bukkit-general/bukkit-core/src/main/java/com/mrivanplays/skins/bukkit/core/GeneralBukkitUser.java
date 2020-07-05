@@ -23,7 +23,7 @@ public abstract class GeneralBukkitUser extends AbstractSkinsUser {
 
   @Override
   public void openSkinMenu() {
-    if (player.isOnline()) {
+    if (isOnline()) {
       menuInstance.openMenu(getOnlineVariant());
     }
   }
@@ -35,7 +35,7 @@ public abstract class GeneralBukkitUser extends AbstractSkinsUser {
 
   @Override
   public boolean isOnline() {
-    return player.isOnline();
+    return getOnlineVariant() != null;
   }
 
   public Player getOnlineVariant() {
@@ -44,7 +44,7 @@ public abstract class GeneralBukkitUser extends AbstractSkinsUser {
 
   @Override
   public void sendMessage(Component message) {
-    if (player.isOnline()) {
+    if (isOnline()) {
       getOnlineVariant()
           .spigot()
           .sendMessage(BungeeCordComponentSerializer.get().serialize(message));
@@ -53,7 +53,7 @@ public abstract class GeneralBukkitUser extends AbstractSkinsUser {
 
   @Override
   public boolean hasPermission(String permission) {
-    if (player.isOnline()) {
+    if (isOnline()) {
       return getOnlineVariant().hasPermission(permission);
     } else {
       return false;

@@ -9,19 +9,29 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>skins-bukkit-core</artifactId>
+  <artifactId>skins-bukkit-menu</artifactId>
 
-  <name>Skins-Bukkit-Core</name>
-  <description>Bukkit core</description>
+  <name>Skins-Bukkit-Menu</name>
+  <description>Menu part of the skins plugin</description>
 
   <repositories>
     <repository>
-      <id>sonatype-snapshots</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      <id>ivan</id>
+      <url>https://repo.mrivanplays.com/repository/ivan/</url>
+    </repository>
+    <repository>
+      <id>spigot-repo</id>
+      <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
     </repository>
   </repositories>
 
   <dependencies>
+    <dependency>
+      <groupId>com.mrivanplays</groupId>
+      <artifactId>PagedInventoryAPI</artifactId>
+      <version>1.0.2</version>
+      <scope>compile</scope>
+    </dependency>
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
@@ -30,21 +40,15 @@
     </dependency>
     <dependency>
       <groupId>com.mrivanplays</groupId>
-      <artifactId>skins-core</artifactId>
+      <artifactId>skins-bukkit-skull-skinner-handle</artifactId>
       <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>net.kyori</groupId>
-      <artifactId>adventure-text-serializer-bungeecord</artifactId>
-      <version>4.0.0-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.mrivanplays</groupId>
-      <artifactId>skins-bukkit-menu</artifactId>
+      <artifactId>skins-core</artifactId>
       <version>${project.version}</version>
-      <scope>compile</scope>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 

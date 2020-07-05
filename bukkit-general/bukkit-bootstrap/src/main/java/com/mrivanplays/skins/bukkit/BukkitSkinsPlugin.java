@@ -3,7 +3,9 @@ package com.mrivanplays.skins.bukkit;
 import com.mrivanplays.annotationconfig.yaml.YamlConfig;
 import com.mrivanplays.skins.api.Environment;
 import com.mrivanplays.skins.api.SkinsInfo;
+import com.mrivanplays.skins.bukkit.core.CommandMapRetriever;
 import com.mrivanplays.skins.bukkit.core.GeneralSkinsPlugin;
+import com.mrivanplays.skins.bukkit.paper.PaperCommandMapRetriever;
 import com.mrivanplays.skins.bukkit.paper.PaperUser;
 import com.mrivanplays.skins.bukkit.protocolsupport.ProtocolSupportUser;
 import com.mrivanplays.skins.bukkit_general.SkinsMenu;
@@ -21,6 +23,7 @@ import java.util.UUID;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandMap;
 import org.bukkit.entity.Player;
 
 public class BukkitSkinsPlugin extends GeneralSkinsPlugin {
@@ -30,13 +33,15 @@ public class BukkitSkinsPlugin extends GeneralSkinsPlugin {
 
   private Map<String, SkinsUser> userMap = new HashMap<>();
   private final CommandSourceManager sourceManager;
-  private final SkinsMenu skinsMenu;
+  private SkinsMenu skinsMenu;
+  private CommandMap commandMap;
+  private String noPermissionMessage;
+  private PluginClassLoader classLoader;
 
   public BukkitSkinsPlugin(SkinsBukkitPlugin parent) {
     super(parent);
     this.parent = parent;
     this.sourceManager = new CommandSourceManager(this);
-    this.skinsMenu = new SkinsMenu(this, parent);
   }
 
   @Override
@@ -54,7 +59,21 @@ public class BukkitSkinsPlugin extends GeneralSkinsPlugin {
       buildNumber = Integer.parseInt(buildNumberPart);
     }
     info = new SkinsInfo(version, commit, buildNumber, EnvironmentInitializer.get());
+    CommandMapRetriever commandMapRetriever;
+    if (info.getEnvironment().paper()) {
+      commandMapRetriever = new PaperCommandMapRetriever();
+    } else {
+      commandMapRetriever = new CommandMapRetriever();
+    }
+    this.commandMap = commandMapRetriever.retrieveCommandMap();
+    this.classLoader = new ReflectionClassLoader(parent, parent.getLogger());
     super.enable();
+    this.skinsMenu = new SkinsMenu(this, parent);
+  }
+
+  @Override
+  public void afterConfigGeneration() {
+    this.noPermissionMessage = getConfiguration().getMessages().getNoPermission();
   }
 
   @Override
@@ -109,7 +128,10 @@ public class BukkitSkinsPlugin extends GeneralSkinsPlugin {
 
   @Override
   public void registerCommand(String name, Command command) {
-    parent.getCommand(name).setExecutor(new CommandWrapper(command, sourceManager, this));
+    commandMap.register(
+        name,
+        parent.getName(),
+        new CommandRegistration(name, command, sourceManager, noPermissionMessage));
   }
 
   @Override
@@ -119,12 +141,12 @@ public class BukkitSkinsPlugin extends GeneralSkinsPlugin {
 
   @Override
   public PluginClassLoader getPluginClassLoader() {
-    return new ReflectionClassLoader(parent, parent.getLogger());
+    return classLoader;
   }
 
   @Override
   public Path getDataDirectory() {
-    return parent.getDataFolder().toPath();
+    return parent.getDataFolder().toPath().toAbsolutePath();
   }
 
   @Override

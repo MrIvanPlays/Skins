@@ -23,7 +23,9 @@ public abstract class GeneralSkinsPlugin extends AbstractSkinsPlugin {
 
   @Override
   public void enable() {
-    scheduler = new Scheduler.Default();
+    scheduler =
+        new Scheduler.Default(
+            (t) -> bukkitPlugin.getServer().getScheduler().runTask(bukkitPlugin, t));
     super.enable();
   }
 

@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 /**
@@ -94,6 +95,11 @@ public class DependencyManager {
   }
 
   public void loadDependencies(Set<Dependency> dependencies) {
+    plugin
+        .getLogger()
+        .info(
+            "Loading dependencies: "
+                + dependencies.stream().map(Dependency::name).collect(Collectors.joining(", ")));
     CountDownLatch latch = new CountDownLatch(dependencies.size());
 
     for (Dependency dependency : dependencies) {

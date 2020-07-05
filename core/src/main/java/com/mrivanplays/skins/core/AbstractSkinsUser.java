@@ -40,7 +40,7 @@ public abstract class AbstractSkinsUser implements SkinsUser {
               if (storedSkin == null) {
                 return getOriginalSkin().join();
               }
-              updateCurrentStoredSkin(storedSkin);
+              plugin.getScheduler().sync().execute(() -> updateCurrentStoredSkin(storedSkin));
               return Optional.of(storedSkin.getSkin());
             },
             plugin.getScheduler().async());
@@ -71,17 +71,29 @@ public abstract class AbstractSkinsUser implements SkinsUser {
   public void setSkin(Skin skin, String name) {
     Objects.requireNonNull(skin, "skin");
     Objects.requireNonNull(name, "name");
-    if (currentStoredSkin != null) {
-      currentStoredSkin.removeAcquirer(getUniqueId());
-      plugin.getStorage().storeSkin(currentStoredSkin);
-    }
     plugin
         .getStorage()
         .find(skin.getOwner())
-        .thenAccept(
+        .thenAcceptAsync(
             storedSkin -> {
               if (storedSkin == null) {
                 storedSkin = new StoredSkin(skin, name);
+              }
+
+              // todo: acquirers doesn't get removed from old skin, fix it
+              if (currentStoredSkin != null) {
+                currentStoredSkin.removeAcquirer(getUniqueId());
+                plugin.getStorage().storeSkin(currentStoredSkin);
+              } else {
+                plugin
+                    .getStorage()
+                    .acquired(getUniqueId())
+                    .thenAcceptAsync(
+                        (otherStored) -> {
+                          otherStored.removeAcquirer(getUniqueId());
+                          plugin.getStorage().storeSkin(otherStored);
+                        },
+                        plugin.getScheduler().async());
               }
               storedSkin.addAcquirer(getUniqueId());
               Skin newSkin = apiImpl.getSkinAccessor().getSkin(skin.getOwner()).join();
@@ -89,8 +101,9 @@ public abstract class AbstractSkinsUser implements SkinsUser {
                 storedSkin.setSkin(newSkin);
               }
 
+              StoredSkin finalStoredSkin = storedSkin;
               plugin.getStorage().storeSkin(storedSkin);
-              updateCurrentStoredSkin(storedSkin);
+              plugin.getScheduler().sync().execute(() -> updateCurrentStoredSkin(finalStoredSkin));
 
               Skin setSkin;
               if (newSkin != null) {
@@ -98,8 +111,9 @@ public abstract class AbstractSkinsUser implements SkinsUser {
               } else {
                 setSkin = skin;
               }
-              setNPCSkin(setSkin);
-            });
+              plugin.getScheduler().sync().execute(() -> setNPCSkin(setSkin));
+            },
+            plugin.getScheduler().async());
   }
 
   public abstract void setNPCSkin(@NotNull Skin skin);

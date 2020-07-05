@@ -19,6 +19,8 @@
     <module>bukkit-bootstrap</module>
     <module>paper</module>
     <module>protocolsupport</module>
+    <module>bukkit-skull-skinner</module>
+    <module>bukkit-menu</module>
   </modules>
 
   <repositories>

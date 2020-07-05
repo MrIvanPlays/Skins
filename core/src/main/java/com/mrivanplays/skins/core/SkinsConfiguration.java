@@ -4,6 +4,7 @@ import com.mrivanplays.annotationconfig.core.Comment;
 import com.mrivanplays.annotationconfig.core.ConfigObject;
 import com.mrivanplays.annotationconfig.core.FieldTypeResolver;
 import com.mrivanplays.annotationconfig.core.Key;
+import com.mrivanplays.annotationconfig.core.Retrieve;
 import com.mrivanplays.annotationconfig.core.TypeResolver;
 import com.mrivanplays.skins.core.storage.StorageType;
 import java.lang.reflect.Field;
@@ -141,10 +142,19 @@ public final class SkinsConfiguration {
     @TypeResolver(StorageTypeResolver.class)
     private StorageType storageType = StorageType.H2;
 
+    @Retrieve
     private String address = "localhost";
+
+    @Retrieve
     private int port = 3306;
+
+    @Retrieve
     private String database = "minecraft";
+
+    @Retrieve
     private String username = "root";
+
+    @Retrieve
     private String password = "1234";
 
     public StorageType getStorageType() {

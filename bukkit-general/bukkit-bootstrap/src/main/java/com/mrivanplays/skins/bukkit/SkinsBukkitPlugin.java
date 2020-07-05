@@ -35,7 +35,7 @@ public class SkinsBukkitPlugin extends JavaPlugin {
     }
     Environment env = plugin.getInfo().getEnvironment();
     if (!env.paper()) {
-      getLogger().severe("Skins works better if ran on paper.");
+      getLogger().severe("Skins works better if ran on Paper.");
     }
     if (env.protocolSupport()) {
       getServer().getPluginManager().registerEvents(new ProtocolSupportSkinSetter(plugin), this);

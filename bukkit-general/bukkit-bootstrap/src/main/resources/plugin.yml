@@ -1,22 +1,12 @@
 name: Skins
 description: Skins plugin
-main: com.mrivanplays.skins.SkinsBukkitPlugin
+main: com.mrivanplays.skins.bukkit.SkinsBukkitPlugin
 version: ${project.version}
 api-version: 1.13
 authors:
   - MrIvanPlays
 softdepend:
   - ProtocolSupport
-
-commands:
-  skinset:
-    description: Set your skin to another skin!
-  skinreload:
-    description: Reloads the plugin
-  skinmenu:
-    description: Shows all cached skins
-  skininfo:
-    description: Shows info about the plugin
 
 permissions:
   skins.menu:

@@ -61,6 +61,11 @@ public final class SkinAccessor {
               }
 
               Skin fetched = dataProvider.retrieveSkin(uuid);
+              if (fetched == null) {
+                if (storedSkin != null) {
+                  fetched = storedSkin.getSkin();
+                }
+              }
               if (fetched != null) {
                 SKIN_CACHE.put(uuid, fetched);
               }
@@ -79,6 +84,12 @@ public final class SkinAccessor {
           }
 
           Skin fetched = dataProvider.retrieveSkin(uuid);
+          if (fetched == null) {
+            StoredSkin storedSkin = storage.find(uuid).join();
+            if (storedSkin != null) {
+              fetched = storedSkin.getSkin();
+            }
+          }
           if (fetched != null) {
             SKIN_CACHE.put(uuid, fetched);
           }

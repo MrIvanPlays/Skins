@@ -48,14 +48,12 @@ public final class MojangDataProvider implements DataProvider {
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.addRequestProperty("User-Agent", "skins-name-fetcher");
 
-      String name =
+      JsonArray names =
           cachedJsonParser
               .parse(new InputStreamReader(connection.getInputStream()))
-              .getAsJsonArray()
-              .get(0)
-              .getAsJsonObject()
-              .get("name")
-              .getAsString();
+              .getAsJsonArray();
+
+      String name = names.get(names.size() - 1).getAsJsonObject().get("name").getAsString();
       cachedNames.put(uuid, name);
       return name;
     } catch (IOException e) {
