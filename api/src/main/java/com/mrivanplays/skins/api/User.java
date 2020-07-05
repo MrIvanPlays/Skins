@@ -17,6 +17,8 @@ public interface User {
   @Nullable
   UUID getOriginalUniqueId();
 
+  boolean isOnline();
+
   CompletableFuture<Optional<Skin>> getSkin();
 
   CompletableFuture<Optional<Skin>> getOriginalSkin();

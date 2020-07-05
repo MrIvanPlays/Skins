@@ -6,15 +6,16 @@ import com.mrivanplays.skins.core.SkinsPlugin;
 import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeCordComponentSerializer;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class GeneralBukkitUser extends AbstractSkinsUser {
 
-  protected final Player player;
+  protected final OfflinePlayer player;
   protected final SkinsMenu menuInstance;
 
-  public GeneralBukkitUser(SkinsPlugin plugin, SkinsMenu menuInstance, Player player) {
+  public GeneralBukkitUser(SkinsPlugin plugin, SkinsMenu menuInstance, OfflinePlayer player) {
     super(plugin);
     this.player = player;
     this.menuInstance = menuInstance;
@@ -22,7 +23,9 @@ public abstract class GeneralBukkitUser extends AbstractSkinsUser {
 
   @Override
   public void openSkinMenu() {
-    menuInstance.openMenu(player);
+    if (player.isOnline()) {
+      menuInstance.openMenu(getOnlineVariant());
+    }
   }
 
   @Override
@@ -31,13 +34,30 @@ public abstract class GeneralBukkitUser extends AbstractSkinsUser {
   }
 
   @Override
+  public boolean isOnline() {
+    return player.isOnline();
+  }
+
+  public Player getOnlineVariant() {
+    return player.getPlayer();
+  }
+
+  @Override
   public void sendMessage(Component message) {
-    player.spigot().sendMessage(BungeeCordComponentSerializer.get().serialize(message));
+    if (player.isOnline()) {
+      getOnlineVariant()
+          .spigot()
+          .sendMessage(BungeeCordComponentSerializer.get().serialize(message));
+    }
   }
 
   @Override
   public boolean hasPermission(String permission) {
-    return player.hasPermission(permission);
+    if (player.isOnline()) {
+      return getOnlineVariant().hasPermission(permission);
+    } else {
+      return false;
+    }
   }
 
   @Override

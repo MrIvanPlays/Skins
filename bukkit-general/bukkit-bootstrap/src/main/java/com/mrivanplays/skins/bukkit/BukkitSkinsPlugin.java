@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 public class BukkitSkinsPlugin extends GeneralSkinsPlugin {
@@ -67,18 +68,23 @@ public class BukkitSkinsPlugin extends GeneralSkinsPlugin {
     if (userMap.containsKey(name)) {
       return userMap.get(name);
     }
+    OfflinePlayer initializer;
     Player player = Bukkit.getPlayer(name);
     if (player == null) {
-      return null;
+      // fuck you bukkit
+      //noinspection deprecation
+      initializer = Bukkit.getOfflinePlayer(name);
+    } else {
+      initializer = player;
     }
     SkinsUser user;
     Environment env = info.getEnvironment();
     if (env.paper()) {
-      user = new PaperUser(this, skinsMenu, player);
+      user = new PaperUser(this, skinsMenu, initializer);
     } else if (env.protocolSupport()) {
-      user = new ProtocolSupportUser(this, skinsMenu, player);
+      user = new ProtocolSupportUser(this, skinsMenu, initializer);
     } else {
-      user = new CraftBukkitUser(this, skinsMenu, player);
+      user = new CraftBukkitUser(this, skinsMenu, initializer);
     }
     userMap.put(name, user);
     return user;
@@ -86,11 +92,14 @@ public class BukkitSkinsPlugin extends GeneralSkinsPlugin {
 
   @Override
   public SkinsUser obtainUser(UUID uuid) {
+    OfflinePlayer initializer;
     Player player = Bukkit.getPlayer(uuid);
     if (player == null) {
-      return null;
+      initializer = Bukkit.getOfflinePlayer(uuid);
+    } else {
+      initializer = player;
     }
-    return obtainUser(player.getName());
+    return obtainUser(initializer.getName());
   }
 
   @Override

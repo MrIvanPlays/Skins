@@ -7,21 +7,26 @@ import com.mrivanplays.skins.core.SkinsPlugin;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class CraftBukkitUser extends GeneralBukkitUser {
 
-  public CraftBukkitUser(SkinsPlugin plugin, SkinsMenu menuInstance, Player player) {
+  public CraftBukkitUser(SkinsPlugin plugin, SkinsMenu menuInstance, OfflinePlayer player) {
     super(plugin, menuInstance, player);
   }
 
   @Override
   public void setNPCSkin(@NotNull Skin skin) {
+    if (!isOnline()) {
+      return;
+    }
     try {
-      Method getProfileMethod = player.getClass().getDeclaredMethod("getProfile");
+      Player p = getOnlineVariant();
+      Method getProfileMethod = p.getClass().getDeclaredMethod("getProfile");
       getProfileMethod.setAccessible(true);
-      Object profile = getProfileMethod.invoke(player, null);
+      Object profile = getProfileMethod.invoke(p, null);
       Method getPropertiesMethod = profile.getClass().getDeclaredMethod("getProperties");
       getProfileMethod.setAccessible(true);
       Object properties = getPropertiesMethod.invoke(profile, null);
