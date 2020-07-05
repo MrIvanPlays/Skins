@@ -10,7 +10,7 @@ softdepend:
 
 commands:
   skinset:
-    description: Set ySkour skin to another skin!
+    description: Set your skin to another skin!
   skinreload:
     description: Reloads the plugin
   skinmenu:
