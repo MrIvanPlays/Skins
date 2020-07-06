@@ -18,6 +18,7 @@ public class SkinSetter1_16_R1 implements SkinSetter {
   @Override
   public void setSkin(Player player, Skin skin) {
     ((CraftPlayer) player)
+        .getHandle()
         .getProfile()
         .getProperties()
         .put("textures", new Property("textures", skin.getTexture(), skin.getSignature()));
