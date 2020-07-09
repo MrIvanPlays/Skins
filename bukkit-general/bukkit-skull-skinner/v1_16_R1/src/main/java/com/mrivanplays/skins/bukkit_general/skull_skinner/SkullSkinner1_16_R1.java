@@ -14,7 +14,20 @@ import org.bukkit.persistence.PersistentDataType;
 public class SkullSkinner1_16_R1 implements SkullSkinner {
 
   @Override
+<<<<<<< HEAD:bukkit-general/bukkit-skull-skinner/v1_16_R1/src/main/java/com/mrivanplays/skins/bukkit_general/skull_skinner/SkullSkinner1_16_R1.java
   public ItemStack buildItem(
+=======
+  public void setSkin(Player player, Skin skin) {
+    ((CraftPlayer) player)
+        .getHandle()
+        .getProfile()
+        .getProperties()
+        .put("textures", new Property("textures", skin.getTexture(), skin.getSignature()));
+  }
+
+  @Override
+  public ItemStack getMenuItem(
+>>>>>>> 4353ee91caff373d96e432fe03c19df401ef40db:plugin/bukkit/abstraction/v1_16_R1/src/main/java/com/mrivanplays/skins/bukkit/abstraction/SkinSetter1_16_R1.java
       Skin skin, String ownerName, String headNameFormat, List<String> lore) {
     ItemStack item = new ItemStack(Material.PLAYER_HEAD);
     SkullMeta meta = (SkullMeta) item.getItemMeta();
