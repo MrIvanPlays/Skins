@@ -23,10 +23,6 @@ public class StoredSkin {
     acquirers.add(acquirer);
   }
 
-  public void removeAcquirer(UUID acquirer) {
-    acquirers.remove(acquirer);
-  }
-
   public Set<UUID> getAcquirers() {
     return acquirers;
   }
@@ -52,8 +48,13 @@ public class StoredSkin {
       return false;
     }
     StoredSkin that = (StoredSkin) o;
-    return getSkin().equals(that.getSkin()) &&
-        getOwnerName().equals(that.getOwnerName());
+    return getSkin().equals(that.getSkin())
+        && getOwnerName().equals(that.getOwnerName())
+        && getAcquirers().containsAll(that.getAcquirers());
+  }
+
+  public boolean equalsNoSkin(StoredSkin o) {
+    return getOwnerName().equalsIgnoreCase(o.getOwnerName());
   }
 
   @Override
@@ -63,10 +64,14 @@ public class StoredSkin {
 
   @Override
   public String toString() {
-    return "StoredSkin{" +
-        "skin=" + skin +
-        ", ownerName='" + ownerName + '\'' +
-        ", acquirers=" + acquirers +
-        '}';
+    return "StoredSkin{"
+        + "skin="
+        + skin
+        + ", ownerName='"
+        + ownerName
+        + '\''
+        + ", acquirers="
+        + acquirers
+        + '}';
   }
 }

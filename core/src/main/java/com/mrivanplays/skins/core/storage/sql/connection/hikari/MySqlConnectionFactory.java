@@ -7,6 +7,7 @@ import java.util.function.Function;
 
 /**
  * Credits: lucko/LuckPerms
+ *
  * @author lucko
  */
 public class MySqlConnectionFactory extends HikariConnectionFactory {
@@ -42,6 +43,6 @@ public class MySqlConnectionFactory extends HikariConnectionFactory {
 
   @Override
   public Function<String, String> statementTickReplacer() {
-    return null;
+    return s -> s.replace("'", "`");
   }
 }

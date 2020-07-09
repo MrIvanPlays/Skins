@@ -1,6 +1,5 @@
 package com.mrivanplays.skins.bukkit;
 
-import com.mrivanplays.annotationconfig.yaml.YamlConfig;
 import com.mrivanplays.skins.api.Environment;
 import com.mrivanplays.skins.api.SkinsInfo;
 import com.mrivanplays.skins.bukkit.core.CommandMapRetriever;
@@ -9,12 +8,12 @@ import com.mrivanplays.skins.bukkit.paper.PaperCommandMapRetriever;
 import com.mrivanplays.skins.bukkit.paper.PaperUser;
 import com.mrivanplays.skins.bukkit.protocolsupport.ProtocolSupportUser;
 import com.mrivanplays.skins.bukkit_general.SkinsMenu;
+import com.mrivanplays.skins.core.AbstractSkinsUser;
 import com.mrivanplays.skins.core.SkinsConfiguration;
 import com.mrivanplays.skins.core.SkinsUser;
 import com.mrivanplays.skins.core.command.Command;
 import com.mrivanplays.skins.core.dependency.classloader.PluginClassLoader;
 import com.mrivanplays.skins.core.dependency.classloader.ReflectionClassLoader;
-import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -35,7 +34,6 @@ public class BukkitSkinsPlugin extends GeneralSkinsPlugin {
   private final CommandSourceManager sourceManager;
   private SkinsMenu skinsMenu;
   private CommandMap commandMap;
-  private String noPermissionMessage;
   private PluginClassLoader classLoader;
 
   public BukkitSkinsPlugin(SkinsBukkitPlugin parent) {
@@ -72,17 +70,6 @@ public class BukkitSkinsPlugin extends GeneralSkinsPlugin {
   }
 
   @Override
-  public void afterConfigGeneration() {
-    this.noPermissionMessage = getConfiguration().getMessages().getNoPermission();
-  }
-
-  @Override
-  public void generateConfig(SkinsConfiguration config) {
-    File configFile = new File(parent.getDataFolder(), "config.yml");
-    YamlConfig.load(config, configFile);
-  }
-
-  @Override
   public SkinsUser obtainUser(String name) {
     if (userMap.containsKey(name)) {
       return userMap.get(name);
@@ -109,6 +96,23 @@ public class BukkitSkinsPlugin extends GeneralSkinsPlugin {
     return user;
   }
 
+  public AbstractSkinsUser obtainUser(Player player) {
+    if (userMap.containsKey(player.getName())) {
+      return (AbstractSkinsUser) userMap.get(player.getName());
+    }
+    AbstractSkinsUser user;
+    Environment env = info.getEnvironment();
+    if (env.paper()) {
+      user = new PaperUser(this, skinsMenu, player);
+    } else if (env.protocolSupport()) {
+      user = new ProtocolSupportUser(this, skinsMenu, player);
+    } else {
+      user = new CraftBukkitUser(this, skinsMenu, player);
+    }
+    userMap.put(player.getName(), user);
+    return user;
+  }
+
   @Override
   public SkinsUser obtainUser(UUID uuid) {
     OfflinePlayer initializer;
@@ -131,7 +135,8 @@ public class BukkitSkinsPlugin extends GeneralSkinsPlugin {
     commandMap.register(
         name,
         parent.getName(),
-        new CommandRegistration(name, command, sourceManager, noPermissionMessage));
+        new CommandRegistration(
+            name, command, sourceManager, getConfiguration().getMessages().getNoPermission()));
   }
 
   @Override
@@ -142,15 +147,5 @@ public class BukkitSkinsPlugin extends GeneralSkinsPlugin {
   @Override
   public PluginClassLoader getPluginClassLoader() {
     return classLoader;
-  }
-
-  @Override
-  public Path getDataDirectory() {
-    return parent.getDataFolder().toPath().toAbsolutePath();
-  }
-
-  @Override
-  public InputStream getResourceStream(String name) {
-    return parent.getResource(name);
   }
 }

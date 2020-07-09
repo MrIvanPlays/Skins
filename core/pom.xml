@@ -29,10 +29,6 @@
       <id>sonatype-snapshots</id>
       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
     </repository>
-    <repository>
-      <id>ivan</id>
-      <url>https://repo.mrivanplays.com/repository/ivan/</url>
-    </repository>
   </repositories>
 
   <dependencies>
@@ -77,12 +73,6 @@
       <artifactId>byte-buddy</artifactId>
       <version>1.10.9</version>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.mrivanplays</groupId>
-      <artifactId>annotationconfig-core</artifactId>
-      <version>1.0-SNAPSHOT</version>
-      <scope>compile</scope>
     </dependency>
     <!-- todo: no compile after release -->
     <dependency>

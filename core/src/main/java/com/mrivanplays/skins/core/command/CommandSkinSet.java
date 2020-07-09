@@ -60,7 +60,7 @@ public class CommandSkinSet implements Command {
                   return;
                 }
               }
-              user.setSkin(skin, name);
+              user.setSkin(skin, name, false);
               user.sendMessage(messages.getSkinSetSuccessfully());
               UserCooldown.getGlobalInstance().cooldown(user.getUniqueId());
             });

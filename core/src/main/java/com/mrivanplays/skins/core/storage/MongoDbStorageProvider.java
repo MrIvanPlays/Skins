@@ -5,6 +5,7 @@ import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mrivanplays.skins.api.Skin;
 import com.mrivanplays.skins.core.SkinsConfiguration;
@@ -12,7 +13,6 @@ import com.mrivanplays.skins.core.SkinsConfiguration.DatabaseCredentials;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import org.bson.Document;
 
 public class MongoDbStorageProvider implements StorageProvider {
@@ -58,10 +58,7 @@ public class MongoDbStorageProvider implements StorageProvider {
             .append("ownerName", skin.getOwnerName())
             .append("ownerUUID", skin.getSkin().getOwner().toString())
             .append("texture", skin.getSkin().getTexture())
-            .append("signature", skin.getSkin().getSignature())
-            .append(
-                "acquirers",
-                skin.getAcquirers().stream().map(UUID::toString).collect(Collectors.toList()));
+            .append("signature", skin.getSkin().getSignature());
 
     Document search = new Document("ownerUUID", skin.getSkin().getOwner().toString());
     Document found = collection.find(search).first();
@@ -74,21 +71,40 @@ public class MongoDbStorageProvider implements StorageProvider {
   }
 
   @Override
+  public void setAcquirer(UUID uuid, UUID skinAcquired) {
+    MongoCollection<Document> collection = mongoDatabase.getCollection("skins_acquired");
+
+    Document doc =
+        new Document()
+            .append("acquirer_uuid", uuid.toString())
+            .append("acquired_uuid", skinAcquired.toString());
+
+    Document search = new Document("acquirer_uuid", uuid.toString());
+    Document found = collection.find(search).first();
+
+    if (found != null) {
+      collection.replaceOne(found, doc);
+    } else {
+      collection.insertOne(doc);
+    }
+  }
+
+  @Override
   public StoredSkin findByName(String name) {
-    MongoCollection<Document> collection = mongoDatabase.getCollection("skins_storage");
-    Document search = new Document().append("ownerName", name);
-    return getStoredSkin(collection, search);
+    return getSkin(new Document().append("ownerName", name));
   }
 
   @Override
   public StoredSkin find(UUID uuid) {
-    MongoCollection<Document> collection = mongoDatabase.getCollection("skins_storage");
-    Document search = new Document().append("ownerUUID", uuid.toString());
-    return getStoredSkin(collection, search);
+    return getSkin(new Document().append("ownerUUID", uuid.toString()));
   }
 
-  private StoredSkin getStoredSkin(MongoCollection<Document> collection, Document search) {
-    Document found = collection.find(search).first();
+  private StoredSkin getSkin(Document search) {
+    MongoCollection<Document> collection = mongoDatabase.getCollection("skins_storage");
+    return getSkinByFound(collection.find(search).first());
+  }
+
+  private StoredSkin getSkinByFound(Document found) {
     if (found != null) {
       StoredSkin storedSkin =
           new StoredSkin(
@@ -97,9 +113,14 @@ public class MongoDbStorageProvider implements StorageProvider {
                   found.getString("texture"),
                   found.getString("signature")),
               found.getString("ownerName"));
-      found.getList("acquirers", String.class).stream()
-          .map(UUID::fromString)
-          .forEach(storedSkin::addAcquirer);
+      MongoCollection<Document> acquired = mongoDatabase.getCollection("skins_acquired");
+      Document acquiredSearch =
+          new Document().append("acquired_uuid", found.getString("ownerUUID"));
+      MongoCursor<Document> iterator = acquired.find(acquiredSearch).cursor();
+      while (iterator.hasNext()) {
+        Document foundAcquirer = iterator.next();
+        storedSkin.addAcquirer(UUID.fromString(foundAcquirer.getString("acquirer_uuid")));
+      }
       return storedSkin;
     }
     return null;
@@ -107,23 +128,11 @@ public class MongoDbStorageProvider implements StorageProvider {
 
   @Override
   public StoredSkin acquired(UUID uuid) {
-    MongoCollection<Document> collection = mongoDatabase.getCollection("skins_storage");
-    for (Document next : collection.find()) {
-      List<UUID> acquirerList =
-          next.getList("acquirers", String.class).stream()
-              .map(UUID::fromString)
-              .collect(Collectors.toList());
-      if (acquirerList.contains(uuid)) {
-        StoredSkin storedSkin =
-            new StoredSkin(
-                new Skin(
-                    UUID.fromString(next.getString("ownerUUID")),
-                    next.getString("texture"),
-                    next.getString("signature")),
-                next.getString("ownerName"));
-        storedSkin.getAcquirers().addAll(acquirerList);
-        return storedSkin;
-      }
+    MongoCollection<Document> acquired = mongoDatabase.getCollection("skins_acquired");
+    Document search = new Document().append("acquirer_uuid", uuid.toString());
+    Document found = acquired.find(search).first();
+    if (found != null) {
+      return find(UUID.fromString(found.getString("acquired_uuid")));
     }
     return null;
   }
@@ -133,19 +142,7 @@ public class MongoDbStorageProvider implements StorageProvider {
     MongoCollection<Document> collection = mongoDatabase.getCollection("skins_storage");
     List<StoredSkin> list = new ArrayList<>();
     for (Document next : collection.find()) {
-      StoredSkin storedSkin =
-          new StoredSkin(
-              new Skin(
-                  UUID.fromString(next.getString("ownerUUID")),
-                  next.getString("texture"),
-                  next.getString("signature")),
-              next.getString("ownerName"));
-      List<UUID> acquirerList =
-          next.getList("acquirers", String.class).stream()
-              .map(UUID::fromString)
-              .collect(Collectors.toList());
-      storedSkin.getAcquirers().addAll(acquirerList);
-      list.add(storedSkin);
+      list.add(getSkinByFound(next));
     }
     return list;
   }

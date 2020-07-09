@@ -70,4 +70,13 @@ public final class Skin {
     // signature not included as it may differ
     return Objects.hash(getOwner(), getTexture());
   }
+
+  @Override
+  public String toString() {
+    return "Skin{" +
+        "owner=" + owner +
+        ", texture='" + texture + '\'' +
+        ", signature='" + signature + '\'' +
+        '}';
+  }
 }

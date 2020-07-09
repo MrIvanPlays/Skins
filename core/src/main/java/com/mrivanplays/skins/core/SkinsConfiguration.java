@@ -1,80 +1,67 @@
 package com.mrivanplays.skins.core;
 
-import com.mrivanplays.annotationconfig.core.Comment;
-import com.mrivanplays.annotationconfig.core.ConfigObject;
-import com.mrivanplays.annotationconfig.core.FieldTypeResolver;
-import com.mrivanplays.annotationconfig.core.Key;
-import com.mrivanplays.annotationconfig.core.Retrieve;
-import com.mrivanplays.annotationconfig.core.TypeResolver;
 import com.mrivanplays.skins.core.storage.StorageType;
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
-@Comment("     Skins      #")
-@Comment("by: MrIvanPlays #")
 public final class SkinsConfiguration {
 
-  @Comment("Check for updates")
-  @Comment("Recommended leaving true")
-  @Key("update-check")
   private boolean updateCheck = true;
 
-  @ConfigObject private Messages messages = new Messages();
+  private final Messages messages;
 
-  @Key("storage-credentials")
-  @ConfigObject
-  private DatabaseCredentials storageCredentials = new DatabaseCredentials();
+  private final DatabaseCredentials storageCredentials;
 
-  @Comment("All configurable messages")
+  public SkinsConfiguration(ConfigurationAdapter adapter) {
+    this.updateCheck = adapter.getBoolean("update-check", updateCheck);
+    this.messages = new Messages(adapter);
+    this.storageCredentials = new DatabaseCredentials(adapter);
+  }
+
   public static final class Messages {
 
-    @Key("no-permission")
     private String noPermission = "&cYou don't have permission to perform this command.";
-
-    @Key("no-console")
     private String noConsole = "&cNo console.";
-
-    @Key("command-usage")
     private String commandUsage = "&cUsage: /skinset <premium player name>";
-
     private String cooldown =
         "&cYou have to wait %timeLeft% more second(s) before using that command";
-
-    @Key("not-premium")
     private String notPremium = "&cThis player isn't premium.";
-
-    @Key("skin-set-successfully")
     private String skinSetSuccessfully =
         "&aSkin set successfully! If it didn't applied, try reconnecting to the server!";
-
-    @Key("skin-already-set")
     private String skinAlreadySet = "&cThat skin is already set on you.";
-
-    @Key("skin-menu-previous-page-label")
     private String skinMenuPreviousPageLabel = "&aPrevious page";
-
-    @Key("skin-menu-next-page-label")
     private String skinMenuNextPageLabel = "&aNext page";
-
-    @Key("skin-menu-close-page-label")
     private String skinMenuClosePageLabel = "Close inventory";
-
-    @Key("skin-menu-head-name")
     private String skinMenuHeadName = "%name% 's skin";
-
-    @Key("skin-menu-inventory")
     private String skinMenuInventory = "List of skins (Page #%pageNum%)";
-
-    @Key("skin-menu-cannot-fetch-data")
     private String skinMenuCannotFetchData =
         "We're sorry, we weren't able to retrieve data about the owner of the skin. :( ";
-
-    @Key("skin-menu-lore")
     private List<String> skinMenuLore =
         Arrays.asList(
             "Left click to set the skin",
             "(Keep in mind this skin is being cached and may not be up to date)");
+
+    public Messages(ConfigurationAdapter adapter) {
+      this.noPermission = adapter.getString("messages.no-permission", noPermission);
+      this.noConsole = adapter.getString("messages.no-console", noConsole);
+      this.commandUsage = adapter.getString("messages.command-usage", commandUsage);
+      this.cooldown = adapter.getString("messages.cooldown", cooldown);
+      this.notPremium = adapter.getString("messages.not-premium", notPremium);
+      this.skinSetSuccessfully =
+          adapter.getString("messages.skin-set-successfully", skinSetSuccessfully);
+      this.skinAlreadySet = adapter.getString("messages.skin-already-set", skinAlreadySet);
+      this.skinMenuPreviousPageLabel =
+          adapter.getString("messages.skin-menu-previous-page-label", skinMenuPreviousPageLabel);
+      this.skinMenuNextPageLabel =
+          adapter.getString("messages.skin-menu-next-page-label", skinMenuNextPageLabel);
+      this.skinMenuClosePageLabel =
+          adapter.getString("messages.skin-menu-close-page-label", skinMenuClosePageLabel);
+      this.skinMenuHeadName = adapter.getString("messages.skin-menu-head-name", skinMenuHeadName);
+      this.skinMenuInventory = adapter.getString("messages.skin-menu-inventory", skinMenuInventory);
+      this.skinMenuCannotFetchData =
+          adapter.getString("messages.skin-menu-cannot-fetch-data", skinMenuCannotFetchData);
+      this.skinMenuLore = adapter.getStringList("messages.skin-menu-lore", skinMenuLore);
+    }
 
     public String getNoPermission() {
       return noPermission;
@@ -133,29 +120,28 @@ public final class SkinsConfiguration {
     }
   }
 
-  @Comment("Storage credentials")
-  @Comment("Used to connect to database.")
-  @Comment("Supported storage types: H2, SQLITE, MARIADB, MYSQL, POSTGRESQL, MONGODB")
   public static final class DatabaseCredentials {
 
-    @Key("storage-type")
-    @TypeResolver(StorageTypeResolver.class)
     private StorageType storageType = StorageType.H2;
-
-    @Retrieve
     private String address = "localhost";
-
-    @Retrieve
     private int port = 3306;
-
-    @Retrieve
     private String database = "minecraft";
-
-    @Retrieve
     private String username = "root";
-
-    @Retrieve
     private String password = "1234";
+
+    public DatabaseCredentials(ConfigurationAdapter adapter) {
+      try {
+        this.storageType =
+            StorageType.valueOf(
+                adapter.getString("storage-credentials.storage-type", storageType.name()));
+      } catch (IllegalArgumentException ignored) {
+      }
+      this.address = adapter.getString("storage-credentials.address", address);
+      this.port = adapter.getInt("storage-credentials.port", port);
+      this.database = adapter.getString("storage-credentials.database", database);
+      this.username = adapter.getString("storage-credentials.username", username);
+      this.password = adapter.getString("storage-credentials.password", password);
+    }
 
     public StorageType getStorageType() {
       return storageType;
@@ -180,23 +166,6 @@ public final class SkinsConfiguration {
     public String getPassword() {
       return password;
     }
-
-    public static final class StorageTypeResolver implements FieldTypeResolver {
-
-      @Override
-      public Object toType(Object value, Field field) throws Exception {
-        try {
-          return StorageType.valueOf(String.valueOf(value).toUpperCase());
-        } catch (IllegalArgumentException e) {
-          return null;
-        }
-      }
-
-      @Override
-      public boolean shouldResolve(Class<?> fieldType) {
-        return StorageType.class.isAssignableFrom(fieldType);
-      }
-    }
   }
 
   public boolean shouldUpdateCheck() {
@@ -205,10 +174,6 @@ public final class SkinsConfiguration {
 
   public Messages getMessages() {
     return messages;
-  }
-
-  public boolean isUpdateCheck() {
-    return updateCheck;
   }
 
   public DatabaseCredentials getStorageCredentials() {

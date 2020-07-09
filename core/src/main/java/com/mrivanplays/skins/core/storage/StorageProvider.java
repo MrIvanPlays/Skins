@@ -9,6 +9,8 @@ public interface StorageProvider {
 
   void storeSkin(StoredSkin skin);
 
+  void setAcquirer(UUID uuid, UUID skinAcquired);
+
   StoredSkin findByName(String name);
 
   StoredSkin find(UUID uuid);

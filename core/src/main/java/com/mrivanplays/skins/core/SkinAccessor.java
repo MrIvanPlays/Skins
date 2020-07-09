@@ -74,7 +74,7 @@ public final class SkinAccessor {
     return future;
   }
 
-  public CompletableFuture<Skin> getSkin(UUID uuid) {
+  public CompletableFuture<Skin> getSkin(UUID uuid, boolean checkStorage) {
     Preconditions.checkNotNull(uuid, "uuid");
     return CompletableFuture.supplyAsync(
         () -> {
@@ -84,10 +84,12 @@ public final class SkinAccessor {
           }
 
           Skin fetched = dataProvider.retrieveSkin(uuid);
-          if (fetched == null) {
-            StoredSkin storedSkin = storage.find(uuid).join();
-            if (storedSkin != null) {
-              fetched = storedSkin.getSkin();
+          if (checkStorage) {
+            if (fetched == null) {
+              StoredSkin storedSkin = storage.find(uuid).join();
+              if (storedSkin != null) {
+                fetched = storedSkin.getSkin();
+              }
             }
           }
           if (fetched != null) {

@@ -115,4 +115,8 @@ public class Storage {
   public CompletableFuture<Void> storeSkin(StoredSkin storedSkin) {
     return makeVoidFuture(() -> storageProvider.storeSkin(storedSkin));
   }
+
+  public CompletableFuture<Void> setAcquired(UUID uuid, UUID skinAcquired) {
+    return makeVoidFuture(() -> storageProvider.setAcquirer(uuid, skinAcquired));
+  }
 }

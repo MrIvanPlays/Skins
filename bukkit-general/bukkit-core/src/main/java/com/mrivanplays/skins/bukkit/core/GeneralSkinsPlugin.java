@@ -2,20 +2,30 @@ package com.mrivanplays.skins.bukkit.core;
 
 import com.mrivanplays.skins.core.AbstractSkinsPlugin;
 import com.mrivanplays.skins.core.Scheduler;
+import com.mrivanplays.skins.core.SkinsConfiguration;
 import com.mrivanplays.skins.core.storage.StorageMigration;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
 public abstract class GeneralSkinsPlugin extends AbstractSkinsPlugin {
 
   private Scheduler scheduler;
   private Plugin bukkitPlugin;
+
+  private SkinsConfiguration config;
 
   public GeneralSkinsPlugin(Plugin bukkitPlugin) {
     this.bukkitPlugin = bukkitPlugin;
@@ -26,6 +36,16 @@ public abstract class GeneralSkinsPlugin extends AbstractSkinsPlugin {
     scheduler =
         new Scheduler.Default(
             (t) -> bukkitPlugin.getServer().getScheduler().runTask(bukkitPlugin, t));
+    File file = new File(getDataDirectory().toFile(), "config.yml");
+    if (!file.exists()) {
+      try (InputStream in = getResourceStream("config.yml")) {
+        Files.copy(in, file.toPath());
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
+    FileConfiguration konfig = YamlConfiguration.loadConfiguration(file);
+    config = new SkinsConfiguration(new BukkitConfigurationAdapter(konfig));
     super.enable();
   }
 
@@ -63,5 +83,23 @@ public abstract class GeneralSkinsPlugin extends AbstractSkinsPlugin {
     combined.addAll(Arrays.asList(Bukkit.getOfflinePlayers()));
     combined.addAll(Bukkit.getOnlinePlayers());
     return combined.stream().map(OfflinePlayer::getName).collect(Collectors.toList());
+  }
+
+  @Override
+  public SkinsConfiguration getConfiguration() {
+    return config;
+  }
+
+  @Override
+  public Path getDataDirectory() {
+    if (!bukkitPlugin.getDataFolder().exists()) {
+      bukkitPlugin.getDataFolder().mkdirs();
+    }
+    return bukkitPlugin.getDataFolder().toPath().toAbsolutePath();
+  }
+
+  @Override
+  public InputStream getResourceStream(String name) {
+    return bukkitPlugin.getResource(name);
   }
 }

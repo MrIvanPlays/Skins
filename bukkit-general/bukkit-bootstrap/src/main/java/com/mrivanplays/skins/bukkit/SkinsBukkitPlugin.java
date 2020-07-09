@@ -8,7 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class SkinsBukkitPlugin extends JavaPlugin {
 
-  private AbstractSkinsPlugin plugin;
+  private BukkitSkinsPlugin plugin;
   private boolean disabled = false;
 
   @Override

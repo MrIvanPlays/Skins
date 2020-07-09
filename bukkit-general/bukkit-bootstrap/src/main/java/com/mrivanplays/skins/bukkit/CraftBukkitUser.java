@@ -22,19 +22,33 @@ public class CraftBukkitUser extends GeneralBukkitUser {
     if (!isOnline()) {
       return;
     }
-    // todo: fix for 1.16
+    // todo: this is very cocky behaviour of java
+    // this is the reflection equivalent of
+    // https://github.com/MrIvanPlays/Skins/blob/master/plugin/bukkit/abstraction/v1_16_R1/src/main/java/com/mrivanplays/skins/bukkit/abstraction/SkinSetter1_16_R1.java#L20
+    // however that ^ works on 1.16.1
+    // but this doesn't!
+    // you can see my listener is pretty much the same (only skin set method changed but it
+    // shouldn't actually matter)
+    // also doesn't work with the other versions, have to check that too
     try {
       Player p = getOnlineVariant();
-      Method getProfileMethod = p.getClass().getDeclaredMethod("getProfile");
+      Method getHandleMethod = p.getClass().getDeclaredMethod("getHandle");
+      getHandleMethod.setAccessible(true);
+      Object nmsPlayer = getHandleMethod.invoke(p, null);
+      Method getProfileMethod =
+          nmsPlayer.getClass().getSuperclass().getDeclaredMethod("getProfile");
       getProfileMethod.setAccessible(true);
-      Object profile = getProfileMethod.invoke(p, null);
+      Object profile = getProfileMethod.invoke(nmsPlayer, null);
       Method getPropertiesMethod = profile.getClass().getDeclaredMethod("getProperties");
       getProfileMethod.setAccessible(true);
       Object properties = getPropertiesMethod.invoke(profile, null);
       Class<?> propertyClass = Class.forName("com.mojang.authlib.properties.Property");
 
       Method putMethod =
-          properties.getClass().getSuperclass().getDeclaredMethod("put", Object.class, Object.class);
+          properties
+              .getClass()
+              .getSuperclass()
+              .getDeclaredMethod("put", Object.class, Object.class);
       putMethod.setAccessible(true);
 
       Constructor propertyConstructor =

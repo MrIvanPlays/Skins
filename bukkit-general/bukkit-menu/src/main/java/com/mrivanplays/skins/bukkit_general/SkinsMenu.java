@@ -57,7 +57,7 @@ public class SkinsMenu {
           plugin
               .getApiImpl()
               .getSkinAccessor()
-              .getSkin(owner.getOwnerUUID())
+              .getSkin(owner.getOwnerUUID(), true)
               .thenAccept(
                   skin ->
                       plugin.dispatchSkinSet(

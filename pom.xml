@@ -49,6 +49,13 @@
     <module>bukkit-general</module>
   </modules>
 
+  <repositories>
+    <repository>
+      <id>ivan</id>
+      <url>https://repo.mrivanplays.com/repository/ivan/</url>
+    </repository>
+  </repositories>
+
   <build>
     <defaultGoal>clean package</defaultGoal>
     <plugins>
