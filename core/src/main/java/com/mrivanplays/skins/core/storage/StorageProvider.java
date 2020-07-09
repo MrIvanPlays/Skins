@@ -1,5 +1,6 @@
 package com.mrivanplays.skins.core.storage;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,6 +17,8 @@ public interface StorageProvider {
   StoredSkin find(UUID uuid);
 
   StoredSkin acquired(UUID uuid);
+
+  Collection<UUID> getUsedBy(UUID uuid);
 
   List<StoredSkin> all();
 

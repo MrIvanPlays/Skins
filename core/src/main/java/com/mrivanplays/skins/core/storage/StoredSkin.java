@@ -1,30 +1,16 @@
 package com.mrivanplays.skins.core.storage;
 
 import com.mrivanplays.skins.api.Skin;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
 
 public class StoredSkin {
 
   private Skin skin;
   private final String ownerName;
 
-  private Set<UUID> acquirers;
-
   public StoredSkin(Skin skin, String ownerName) {
     this.skin = skin;
     this.ownerName = ownerName;
-    this.acquirers = new HashSet<>();
-  }
-
-  public void addAcquirer(UUID acquirer) {
-    acquirers.add(acquirer);
-  }
-
-  public Set<UUID> getAcquirers() {
-    return acquirers;
   }
 
   public Skin getSkin() {
@@ -48,9 +34,7 @@ public class StoredSkin {
       return false;
     }
     StoredSkin that = (StoredSkin) o;
-    return getSkin().equals(that.getSkin())
-        && getOwnerName().equals(that.getOwnerName())
-        && getAcquirers().containsAll(that.getAcquirers());
+    return getSkin().equals(that.getSkin()) && getOwnerName().equals(that.getOwnerName());
   }
 
   public boolean equalsNoSkin(StoredSkin o) {
@@ -64,14 +48,6 @@ public class StoredSkin {
 
   @Override
   public String toString() {
-    return "StoredSkin{"
-        + "skin="
-        + skin
-        + ", ownerName='"
-        + ownerName
-        + '\''
-        + ", acquirers="
-        + acquirers
-        + '}';
+    return "StoredSkin{" + "skin=" + skin + ", ownerName='" + ownerName + '\'' + '}';
   }
 }

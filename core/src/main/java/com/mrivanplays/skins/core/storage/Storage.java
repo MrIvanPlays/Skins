@@ -8,6 +8,7 @@ import com.mrivanplays.skins.core.storage.sql.connection.file.SQLiteConnectionFa
 import com.mrivanplays.skins.core.storage.sql.connection.hikari.MariaDbConnectionFactory;
 import com.mrivanplays.skins.core.storage.sql.connection.hikari.MySqlConnectionFactory;
 import com.mrivanplays.skins.core.storage.sql.connection.hikari.PostgreConnectionFactory;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
@@ -114,6 +115,10 @@ public class Storage {
 
   public CompletableFuture<Void> storeSkin(StoredSkin storedSkin) {
     return makeVoidFuture(() -> storageProvider.storeSkin(storedSkin));
+  }
+
+  public CompletableFuture<Collection<UUID>> getUsedBy(UUID uuid) {
+    return makeFuture(() -> storageProvider.getUsedBy(uuid));
   }
 
   public CompletableFuture<Void> setAcquired(UUID uuid, UUID skinAcquired) {

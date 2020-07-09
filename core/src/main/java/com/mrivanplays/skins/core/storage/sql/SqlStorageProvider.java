@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -203,28 +204,12 @@ public class SqlStorageProvider implements StorageProvider {
         statement.setString(1, name);
         try (ResultSet result = statement.executeQuery()) {
           if (result.next()) {
-            StoredSkin storedSkin =
-                new StoredSkin(
-                    new Skin(
-                        UUID.fromString(result.getString("ownerUUID")),
-                        result.getString("texture"),
-                        result.getString("signature")),
-                    result.getString("ownerName"));
-
-            try (PreparedStatement acquirers =
-                connection.prepareStatement(
-                    connectionFactory
-                        .statementTickReplacer()
-                        .apply("SELECT * FROM 'skins_acquired' WHERE 'acquired_uuid' = ?"))) {
-              acquirers.setString(1, storedSkin.getSkin().getOwner().toString());
-              try (ResultSet acquirersSet = acquirers.executeQuery()) {
-                while (acquirersSet.next()) {
-                  storedSkin.addAcquirer(UUID.fromString(acquirersSet.getString("acquirer_uuid")));
-                }
-              }
-            }
-
-            return storedSkin;
+            return new StoredSkin(
+                new Skin(
+                    UUID.fromString(result.getString("ownerUUID")),
+                    result.getString("texture"),
+                    result.getString("signature")),
+                result.getString("ownerName"));
           }
         }
       }
@@ -252,28 +237,12 @@ public class SqlStorageProvider implements StorageProvider {
       statement.setString(1, uuid.toString());
       try (ResultSet result = statement.executeQuery()) {
         if (result.next()) {
-          StoredSkin storedSkin =
-              new StoredSkin(
-                  new Skin(
-                      UUID.fromString(result.getString("ownerUUID")),
-                      result.getString("texture"),
-                      result.getString("signature")),
-                  result.getString("ownerName"));
-
-          try (PreparedStatement acquirers =
-              connection.prepareStatement(
-                  connectionFactory
-                      .statementTickReplacer()
-                      .apply("SELECT * FROM 'skins_acquired' WHERE 'acquired_uuid' = ?"))) {
-            acquirers.setString(1, uuid.toString());
-            try (ResultSet acquirersSet = acquirers.executeQuery()) {
-              while (acquirersSet.next()) {
-                storedSkin.addAcquirer(UUID.fromString(acquirersSet.getString("acquirer_uuid")));
-              }
-            }
-          }
-
-          return storedSkin;
+          return new StoredSkin(
+              new Skin(
+                  UUID.fromString(result.getString("ownerUUID")),
+                  result.getString("texture"),
+                  result.getString("signature")),
+              result.getString("ownerName"));
         } else {
           return null;
         }
@@ -305,6 +274,28 @@ public class SqlStorageProvider implements StorageProvider {
   }
 
   @Override
+  public Collection<UUID> getUsedBy(UUID uuid) {
+    Collection<UUID> uuids = new ArrayList<>();
+    try (Connection connection = connectionFactory.getConnection()) {
+      try (PreparedStatement statement =
+          connection.prepareStatement(
+              connectionFactory
+                  .statementTickReplacer()
+                  .apply("SELECT * FROM 'skins_acquired' WHERE 'acquired_uuid' = ?"))) {
+        statement.setString(1, uuid.toString());
+        try (ResultSet result = statement.executeQuery()) {
+          while (result.next()) {
+            uuids.add(UUID.fromString(result.getString("acquirer_uuid")));
+          }
+        }
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return uuids;
+  }
+
+  @Override
   public List<StoredSkin> all() {
     List<StoredSkin> list = new ArrayList<>();
     try (Connection connection = connectionFactory.getConnection()) {
@@ -313,28 +304,13 @@ public class SqlStorageProvider implements StorageProvider {
               connectionFactory.statementTickReplacer().apply("SELECT * FROM 'skins_storage'"))) {
         try (ResultSet result = statement.executeQuery()) {
           while (result.next()) {
-            StoredSkin storedSkin =
+            list.add(
                 new StoredSkin(
                     new Skin(
                         UUID.fromString(result.getString("ownerUUID")),
                         result.getString("texture"),
                         result.getString("signature")),
-                    result.getString("ownerName"));
-
-            try (PreparedStatement acquirers =
-                connection.prepareStatement(
-                    connectionFactory
-                        .statementTickReplacer()
-                        .apply("SELECT * FROM 'skins_acquired' WHERE 'acquired_uuid' = ?"))) {
-              acquirers.setString(1, storedSkin.getSkin().getOwner().toString());
-              try (ResultSet acquirersSet = acquirers.executeQuery()) {
-                while (acquirersSet.next()) {
-                  storedSkin.addAcquirer(UUID.fromString(acquirersSet.getString("acquirer_uuid")));
-                }
-              }
-            }
-
-            list.add(storedSkin);
+                    result.getString("ownerName")));
           }
         }
       }

@@ -55,13 +55,9 @@ public class SkinsApiImpl implements SkinsApi {
   public @NotNull CompletableFuture<Collection<User>> getUsedBy(@NotNull Skin skin) {
     return plugin
         .getStorage()
-        .all()
+        .getUsedBy(skin.getOwner())
         .thenApplyAsync(
-            list ->
-                list.stream()
-                    .filter(storedSkin -> storedSkin.getSkin().equals(skin))
-                    .map(storedSkin -> getUser(storedSkin.getSkin().getOwner()))
-                    .collect(Collectors.toList()),
+            list -> list.stream().map(this::getUser).collect(Collectors.toList()),
             plugin.getScheduler().async());
   }
 

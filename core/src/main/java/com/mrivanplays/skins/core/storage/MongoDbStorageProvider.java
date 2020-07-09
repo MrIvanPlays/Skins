@@ -5,12 +5,12 @@ import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mrivanplays.skins.api.Skin;
 import com.mrivanplays.skins.core.SkinsConfiguration;
 import com.mrivanplays.skins.core.SkinsConfiguration.DatabaseCredentials;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import org.bson.Document;
@@ -106,22 +106,12 @@ public class MongoDbStorageProvider implements StorageProvider {
 
   private StoredSkin getSkinByFound(Document found) {
     if (found != null) {
-      StoredSkin storedSkin =
-          new StoredSkin(
-              new Skin(
-                  UUID.fromString(found.getString("ownerUUID")),
-                  found.getString("texture"),
-                  found.getString("signature")),
-              found.getString("ownerName"));
-      MongoCollection<Document> acquired = mongoDatabase.getCollection("skins_acquired");
-      Document acquiredSearch =
-          new Document().append("acquired_uuid", found.getString("ownerUUID"));
-      MongoCursor<Document> iterator = acquired.find(acquiredSearch).cursor();
-      while (iterator.hasNext()) {
-        Document foundAcquirer = iterator.next();
-        storedSkin.addAcquirer(UUID.fromString(foundAcquirer.getString("acquirer_uuid")));
-      }
-      return storedSkin;
+      return new StoredSkin(
+          new Skin(
+              UUID.fromString(found.getString("ownerUUID")),
+              found.getString("texture"),
+              found.getString("signature")),
+          found.getString("ownerName"));
     }
     return null;
   }
@@ -135,6 +125,17 @@ public class MongoDbStorageProvider implements StorageProvider {
       return find(UUID.fromString(found.getString("acquired_uuid")));
     }
     return null;
+  }
+
+  @Override
+  public Collection<UUID> getUsedBy(UUID uuid) {
+    MongoCollection<Document> acquired = mongoDatabase.getCollection("skins_acquired");
+    Document search = new Document().append("acquired_uuid", uuid.toString());
+    Collection<UUID> collection = new ArrayList<>();
+    for (Document next : acquired.find(search)) {
+      collection.add(UUID.fromString(next.getString("acquirer_uuid")));
+    }
+    return collection;
   }
 
   @Override

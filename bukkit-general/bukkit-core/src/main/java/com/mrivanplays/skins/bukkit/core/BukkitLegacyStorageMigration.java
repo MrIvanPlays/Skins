@@ -8,7 +8,6 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -41,10 +40,10 @@ public class BukkitLegacyStorageMigration implements StorageMigration {
       String signature = data.getString(section + "." + key + ".signature");
       List<String> acquirers = data.getStringList(section + "." + key + ".acquirers");
       StoredSkin storedSkin = new StoredSkin(new Skin(skinOwner, texture, signature), ownerName);
-      storedSkin
-          .getAcquirers()
-          .addAll(acquirers.stream().map(UUID::fromString).collect(Collectors.toList()));
       provider.storeSkin(storedSkin);
+      acquirers.stream()
+          .map(UUID::fromString)
+          .forEach(acquirer -> provider.setAcquirer(acquirer, skinOwner));
     }
 
     file.delete();

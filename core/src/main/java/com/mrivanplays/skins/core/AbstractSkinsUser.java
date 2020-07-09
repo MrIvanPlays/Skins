@@ -109,7 +109,6 @@ public abstract class AbstractSkinsUser implements SkinsUser {
         plugin.getStorage().setAcquired(getUniqueId(), skin.getOwner());
       }
     }
-    storedSkin.addAcquirer(getUniqueId());
     Skin newSkin = apiImpl.getSkinAccessor().getSkin(skin.getOwner(), false).join();
     // uh oh spaghettio
     // im a pasta master :P
