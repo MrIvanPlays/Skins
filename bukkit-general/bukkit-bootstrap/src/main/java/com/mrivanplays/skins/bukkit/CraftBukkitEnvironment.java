@@ -1,6 +1,7 @@
 package com.mrivanplays.skins.bukkit;
 
 import com.mrivanplays.skins.api.Environment;
+import org.bukkit.Bukkit;
 
 public class CraftBukkitEnvironment extends Environment {
 
@@ -26,6 +27,15 @@ public class CraftBukkitEnvironment extends Environment {
 
   @Override
   protected String getCapitalizedName() {
-    return "CraftBukkit";
+    return "Bukkit - " + (isSpigot() ? "Spigot" : Bukkit.getName());
+  }
+
+  private boolean isSpigot() {
+    try {
+      Class.forName("org.spigotmc.SpigotConfig");
+      return true;
+    } catch (ClassNotFoundException e) {
+      return false;
+    }
   }
 }

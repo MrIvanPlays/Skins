@@ -38,7 +38,7 @@ public abstract class GeneralSkinsPlugin extends AbstractSkinsPlugin {
             (t) -> bukkitPlugin.getServer().getScheduler().runTask(bukkitPlugin, t));
     File file = new File(getDataDirectory().toFile(), "config.yml");
     if (!file.exists()) {
-      try (InputStream in = getResourceStream("config.yml")) {
+      try (InputStream in = getResourceStream("bukkit-config.yml")) {
         Files.copy(in, file.toPath());
       } catch (IOException e) {
         throw new RuntimeException(e);

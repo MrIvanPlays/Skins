@@ -21,14 +21,14 @@ public class DefaultSkinSetListener implements Listener {
     this.current = SupportedVersions.getCurrent();
   }
 
-  @EventHandler(priority = EventPriority.HIGHEST)
+  @EventHandler(priority = EventPriority.LOWEST)
   public void onJoin(PlayerJoinEvent event) {
     if (current.getProtocolVersion() < SupportedVersions.v1_16_R1.getProtocolVersion()) {
       setSkin(event.getPlayer());
     }
   }
 
-  @EventHandler(priority = EventPriority.HIGHEST)
+  @EventHandler(priority = EventPriority.LOWEST)
   public void onPlayerLogin(PlayerLoginEvent event) {
     if (current.getProtocolVersion() >= SupportedVersions.v1_16_R1.getProtocolVersion()) {
       setSkin(event.getPlayer());

@@ -1,18 +1,17 @@
-package com.mrivanplays.skins.bukkit.paper;
+package com.mrivanplays.skins.velocity;
 
 import com.mrivanplays.skins.api.Environment;
-import org.bukkit.Bukkit;
 
-public class PaperEnvironment extends Environment {
+public class VelocityEnvironment extends Environment {
 
   @Override
   public boolean proxy() {
-    return false;
+    return true;
   }
 
   @Override
   public boolean dynamicSkinSetSupported() {
-    return true;
+    return false;
   }
 
   @Override
@@ -22,11 +21,11 @@ public class PaperEnvironment extends Environment {
 
   @Override
   public boolean paper() {
-    return true;
+    return false;
   }
 
   @Override
   protected String getCapitalizedName() {
-    return "Bukkit - " + Bukkit.getName();
+    return "Velocity";
   }
 }

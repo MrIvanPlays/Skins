@@ -6,11 +6,11 @@ import com.mrivanplays.skins.api.Skin;
 import com.mrivanplays.skins.api.SkinsApi;
 import com.mrivanplays.skins.api.SkinsInfo;
 import com.mrivanplays.skins.api.User;
+import com.mrivanplays.skins.core.util.Utils;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
 public class SkinsApiImpl implements SkinsApi {
@@ -56,9 +56,7 @@ public class SkinsApiImpl implements SkinsApi {
     return plugin
         .getStorage()
         .getUsedBy(skin.getOwner())
-        .thenApplyAsync(
-            list -> list.stream().map(this::getUser).collect(Collectors.toList()),
-            plugin.getScheduler().async());
+        .thenApplyAsync(list -> Utils.map(list, this::getUser), plugin.getScheduler().async());
   }
 
   public SkinAccessor getSkinAccessor() {

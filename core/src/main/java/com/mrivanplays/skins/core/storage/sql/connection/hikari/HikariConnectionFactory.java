@@ -1,8 +1,9 @@
 package com.mrivanplays.skins.core.storage.sql.connection.hikari;
 
 import com.google.common.collect.ImmutableList;
-import com.mrivanplays.skins.core.SkinsPlugin;
+import com.mrivanplays.skins.core.Logger;
 import com.mrivanplays.skins.core.SkinsConfiguration;
+import com.mrivanplays.skins.core.SkinsPlugin;
 import com.mrivanplays.skins.core.storage.sql.connection.SQLConnectionFactory;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -12,10 +13,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 /**
  * Credits: lucko/LuckPerms
+ *
  * @author lucko
  */
 public abstract class HikariConnectionFactory implements SQLConnectionFactory {
@@ -82,7 +83,8 @@ public abstract class HikariConnectionFactory implements SQLConnectionFactory {
     }
     Connection connection = hikari.getConnection();
     if (connection == null) {
-      throw new SQLException("Unable to get a connection from the pool. (getConnection returned null)");
+      throw new SQLException(
+          "Unable to get a connection from the pool. (getConnection returned null)");
     }
     return connection;
   }
@@ -123,7 +125,11 @@ public abstract class HikariConnectionFactory implements SQLConnectionFactory {
       ClassLoader loader = clazz.getClassLoader();
       String loaderName;
       try {
-        loaderName = plugin.identifyClassLoader(loader) + " (" + loader.toString() + ")";
+        String identification = plugin.identifyClassLoader(loader);
+        loaderName =
+            identification == null
+                ? loader.toString()
+                : identification + " (" + loader.toString() + ")";
       } catch (Exception e) {
         loaderName = loader.toString();
       }

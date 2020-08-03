@@ -8,6 +8,7 @@ import com.mrivanplays.skins.core.SkinsConfiguration;
 import com.mrivanplays.skins.core.SkinsPlugin;
 import com.mrivanplays.skins.core.UserCooldown;
 import com.mrivanplays.skins.core.storage.StoredSkin;
+import com.mrivanplays.skins.core.util.Utils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -70,13 +71,8 @@ public class CommandSkinSet implements Command {
   public List<String> complete(CommandSource source, String[] args) {
     if (args.length == 1) {
       List<String> matches = new ArrayList<>();
-      plugin
-          .getStorage()
-          .all()
-          .thenAccept(
-              skins ->
-                  matches.addAll(
-                      skins.stream().map(StoredSkin::getOwnerName).collect(Collectors.toList())));
+      List<StoredSkin> skins = plugin.getStorage().all().join();
+      matches.addAll(Utils.map(skins, StoredSkin::getOwnerName));
 
       matches.addAll(plugin.allPlayersForCompletions());
       return matches.stream()

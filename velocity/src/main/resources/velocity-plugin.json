@@ -1,0 +1,1 @@
+{"id":"skins","name":"Skins","version":"${project.version}","authors":["MrIvanPlays"],"dependencies":[],"main":"com.mrivanplays.skins.velocity.VelocityPlugin"}

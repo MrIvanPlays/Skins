@@ -21,11 +21,10 @@ public class ProtocolSupportSkinSetter implements Listener {
     Connection connection = event.getConnection();
     SkinsUser user = plugin.obtainUser(connection.getProfile().getName());
     user.getSkin()
-        .thenApplyAsync(skin -> skin.orElse(null), plugin.getScheduler().async())
-        .thenAcceptAsync(skin -> {
-          if (skin != null) {
-            event.addProperty(new ProfileProperty("textures", skin.getTexture(), skin.getSignature()));
-          }
-        }, plugin.getScheduler().sync());
+        .join()
+        .ifPresent(
+            skin ->
+                event.addProperty(
+                    new ProfileProperty("textures", skin.getTexture(), skin.getSignature())));
   }
 }

@@ -18,35 +18,6 @@ public enum Dependency {
   ASM("org.ow2.asm", "asm", "7.1", "SrL6K20sycyx6qBeoynEB7R7E+0pFfYvjEuMyWJY1N4="),
   ASM_COMMONS("org.ow2.asm", "asm-commons", "7.1", "5VkEidjxmE2Fv+q9Oxc3TFnCiuCdSOxKDrvQGVns01g="),
   JAR_RELOCATOR("me.lucko", "jar-relocator", "1.4", "1RsiF3BiVztjlfTA+svDCuoDSGFuSpTZYHvUK8yBx8I="),
-
-  // todo: waiting for release (checksums are wrong too so will need to run that other method bellow)
-  //       also add mini message here
-  /*
-  ADVENTURE(
-      "net{}kyori",
-      "adventure-api",
-      "4.0.0-SNAPSHOT",
-      "qJCoD0fTnRhI0EpqdiLAT9QH5gIyY8aNw4Exe/gTWm0=",
-      Relocation.of("adventure", "net{}kyori{}adventure")),
-  ADVENTURE_SERIALIZER_GSON(
-      "net{}kyori",
-      "adventure-text-serializer-gson",
-      "4.0.0-SNAPSHOT",
-      "pes03k1/XKS9OpiK+xqVmk+lXSJIsCEkkg3g36PV65A=",
-      Relocation.of("adventure", "net{}kyori{}adventure")),
-  ADVENTURE_SERIALIZER_LEGACY(
-      "net{}kyori",
-      "adventure-text-serializer-legacy",
-      "4.0.0-SNAPSHOT",
-      "1ZYqzZ7zhnN2AyU/n/NeRQv0A9R01j/gX1Uq/nE02SI=",
-      Relocation.of("adventure", "net{}kyori{}adventure")),
-  ADVENTURE_ADAPTER_BUKKIT(
-      "net{}kyori",
-      "adventure-text-adapter-bukkit",
-      "4.0.0-SNAPSHOT",
-      "cXA/7PDtnWpd8l7H4AEhP/3Z/WRNiFhDSqKbqO/1+ig=",
-      Relocation.of("adventure", "net{}kyori{}adventure")),
-   */
   CAFFEINE(
       "com{}github{}ben-manes{}caffeine",
       "caffeine",

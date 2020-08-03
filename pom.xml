@@ -47,6 +47,7 @@
     <module>api</module>
     <module>core</module>
     <module>bukkit-general</module>
+    <module>velocity</module>
   </modules>
 
   <repositories>
@@ -87,6 +88,19 @@
           </archive>
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>auto-clean</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
@@ -95,6 +109,9 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <spigot.version>1.16.1-R0.1-SNAPSHOT</spigot.version>
+    <velocity.version>1.1.0-SNAPSHOT</velocity.version>
+    <adventure.version>4.0.0-SNAPSHOT</adventure.version>
+    <minimessage.version>3.0.0-SNAPSHOT</minimessage.version>
     <buildNumber>unknown</buildNumber>
   </properties>
 

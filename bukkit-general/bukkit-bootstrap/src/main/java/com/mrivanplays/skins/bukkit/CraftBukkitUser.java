@@ -25,11 +25,8 @@ public class CraftBukkitUser extends GeneralBukkitUser {
     // todo: this is very cocky behaviour of java
     // this is the reflection equivalent of
     // https://github.com/MrIvanPlays/Skins/blob/master/plugin/bukkit/abstraction/v1_16_R1/src/main/java/com/mrivanplays/skins/bukkit/abstraction/SkinSetter1_16_R1.java#L20
-    // however that ^ works on 1.16.1
-    // but this doesn't!
-    // you can see my listener is pretty much the same (only skin set method changed but it
-    // shouldn't actually matter)
-    // also doesn't work with the other versions, have to check that too
+    // however that ^ works on 1.16.1, but this works only on initial join and not after
+    // also it doesn't work on 1.15, and probably doesn't work on lower (fix that too)
     try {
       Player p = getOnlineVariant();
       Method getHandleMethod = p.getClass().getDeclaredMethod("getHandle");

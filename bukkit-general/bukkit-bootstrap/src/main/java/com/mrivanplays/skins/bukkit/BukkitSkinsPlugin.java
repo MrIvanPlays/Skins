@@ -9,17 +9,14 @@ import com.mrivanplays.skins.bukkit.paper.PaperUser;
 import com.mrivanplays.skins.bukkit.protocolsupport.ProtocolSupportUser;
 import com.mrivanplays.skins.bukkit_general.SkinsMenu;
 import com.mrivanplays.skins.core.AbstractSkinsUser;
-import com.mrivanplays.skins.core.SkinsConfiguration;
+import com.mrivanplays.skins.core.Logger;
 import com.mrivanplays.skins.core.SkinsUser;
 import com.mrivanplays.skins.core.command.Command;
 import com.mrivanplays.skins.core.dependency.classloader.PluginClassLoader;
 import com.mrivanplays.skins.core.dependency.classloader.ReflectionClassLoader;
-import java.io.InputStream;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandMap;
@@ -30,16 +27,18 @@ public class BukkitSkinsPlugin extends GeneralSkinsPlugin {
   private final SkinsBukkitPlugin parent;
   private SkinsInfo info;
 
-  private Map<String, SkinsUser> userMap = new HashMap<>();
+  private Map<UUID, SkinsUser> userMap = new HashMap<>();
   private final CommandSourceManager sourceManager;
   private SkinsMenu skinsMenu;
   private CommandMap commandMap;
   private PluginClassLoader classLoader;
+  private final Logger logger;
 
   public BukkitSkinsPlugin(SkinsBukkitPlugin parent) {
     super(parent);
     this.parent = parent;
     this.sourceManager = new CommandSourceManager(this);
+    this.logger = new BukkitLogger(parent.getLogger());
   }
 
   @Override
@@ -71,9 +70,6 @@ public class BukkitSkinsPlugin extends GeneralSkinsPlugin {
 
   @Override
   public SkinsUser obtainUser(String name) {
-    if (userMap.containsKey(name)) {
-      return userMap.get(name);
-    }
     OfflinePlayer initializer;
     Player player = Bukkit.getPlayer(name);
     if (player == null) {
@@ -82,6 +78,9 @@ public class BukkitSkinsPlugin extends GeneralSkinsPlugin {
       initializer = Bukkit.getOfflinePlayer(name);
     } else {
       initializer = player;
+    }
+    if (userMap.containsKey(initializer.getUniqueId())) {
+      return userMap.get(initializer.getUniqueId());
     }
     SkinsUser user;
     Environment env = info.getEnvironment();
@@ -92,13 +91,13 @@ public class BukkitSkinsPlugin extends GeneralSkinsPlugin {
     } else {
       user = new CraftBukkitUser(this, skinsMenu, initializer);
     }
-    userMap.put(name, user);
+    userMap.put(initializer.getUniqueId(), user);
     return user;
   }
 
   public AbstractSkinsUser obtainUser(Player player) {
-    if (userMap.containsKey(player.getName())) {
-      return (AbstractSkinsUser) userMap.get(player.getName());
+    if (userMap.containsKey(player.getUniqueId())) {
+      return (AbstractSkinsUser) userMap.get(player.getUniqueId());
     }
     AbstractSkinsUser user;
     Environment env = info.getEnvironment();
@@ -109,7 +108,7 @@ public class BukkitSkinsPlugin extends GeneralSkinsPlugin {
     } else {
       user = new CraftBukkitUser(this, skinsMenu, player);
     }
-    userMap.put(player.getName(), user);
+    userMap.put(player.getUniqueId(), user);
     return user;
   }
 
@@ -122,7 +121,24 @@ public class BukkitSkinsPlugin extends GeneralSkinsPlugin {
     } else {
       initializer = player;
     }
-    return obtainUser(initializer.getName());
+    if (userMap.containsKey(uuid)) {
+      return userMap.get(uuid);
+    }
+    SkinsUser user;
+    Environment env = info.getEnvironment();
+    if (env.paper()) {
+      user = new PaperUser(this, skinsMenu, player);
+    } else if (env.protocolSupport()) {
+      user = new ProtocolSupportUser(this, skinsMenu, player);
+    } else {
+      user = new CraftBukkitUser(this, skinsMenu, player);
+    }
+    userMap.put(initializer.getUniqueId(), user);
+    return user;
+  }
+
+  public void removeFromUserMap(UUID uuid) {
+    userMap.remove(uuid);
   }
 
   @Override
@@ -141,7 +157,7 @@ public class BukkitSkinsPlugin extends GeneralSkinsPlugin {
 
   @Override
   public Logger getLogger() {
-    return parent.getLogger();
+    return logger;
   }
 
   @Override

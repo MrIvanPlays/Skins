@@ -123,11 +123,15 @@ public abstract class AbstractSkinsUser implements SkinsUser {
     } else if (newSkin == null && storedSkin.getSkin() == null) {
       storedSkin.setSkin(skin);
       callScheduler(storedSkin, skin);
-    } else if (storedSkin.getSkin() != null && storedSkin.getSkin().equals(newSkin)) {
-      callScheduler(storedSkin, skin);
+    } else if (newSkin != null
+        && storedSkin.getSkin() != null
+        && storedSkin.getSkin().equals(newSkin)) {
+      callScheduler(storedSkin, newSkin);
     } else if (newSkin != null && storedSkin.getSkin() == null) {
       storedSkin.setSkin(newSkin);
       callScheduler(storedSkin, newSkin);
+    } else if (newSkin == null && storedSkin.getSkin() != null) {
+      callScheduler(storedSkin, skin);
     }
 
     if (justCreated) {

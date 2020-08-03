@@ -3,7 +3,6 @@ package com.mrivanplays.skins.bukkit;
 import com.mrivanplays.skins.api.Environment;
 import com.mrivanplays.skins.bukkit.protocolsupport.ProtocolSupportSkinSetter;
 import com.mrivanplays.skins.bukkit_general.skull_skinner.SupportedVersions;
-import com.mrivanplays.skins.core.AbstractSkinsPlugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class SkinsBukkitPlugin extends JavaPlugin {
@@ -35,13 +34,14 @@ public class SkinsBukkitPlugin extends JavaPlugin {
     }
     Environment env = plugin.getInfo().getEnvironment();
     if (!env.paper()) {
-      getLogger().severe("Skins works better if ran on Paper.");
+      getLogger().severe("Skins works better if ran atleast on Paper.");
     }
     if (env.protocolSupport()) {
       getServer().getPluginManager().registerEvents(new ProtocolSupportSkinSetter(plugin), this);
     } else {
       getServer().getPluginManager().registerEvents(new DefaultSkinSetListener(plugin), this);
     }
+    getServer().getPluginManager().registerEvents(new PlayerQuitListener(plugin), this);
 
     getLogger().info("Running on " + env.capitalizedName());
   }

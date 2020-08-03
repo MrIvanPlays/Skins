@@ -3,20 +3,20 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <artifactId>skins-bukkit-general</artifactId>
+    <artifactId>skins-parent</artifactId>
     <groupId>com.mrivanplays</groupId>
     <version>2.0.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>skins-bukkit-bootstrap</artifactId>
+  <artifactId>skins-velocity</artifactId>
 
-  <name>Skins-Bukkit-Bootstrap</name>
-  <description>Boot for the bukkit implementation of skins plugin</description>
+  <name>Skins-Velocity</name>
+  <description>Velocity implementation of Skins</description>
 
   <build>
     <defaultGoal>clean package</defaultGoal>
-    <finalName>Skins-Bukkit-${buildNumber}</finalName>
+    <finalName>Skins-Velocity-${buildNumber}</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -31,6 +31,10 @@
             <configuration>
               <createDependencyReducedPom>true</createDependencyReducedPom>
               <relocations>
+                <relocation>
+                  <pattern>net.kyori.adventure.text.minimessage</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.minimessage</shadedPattern>
+                </relocation>
                 <relocation>
                   <pattern>com.zaxxer.hikari</pattern>
                   <shadedPattern>com.mrivanplays.skins.lib.hikari</shadedPattern>
@@ -63,14 +67,6 @@
                   <pattern>com.github.benmanes.caffeine</pattern>
                   <shadedPattern>com.mrivanplays.skins.lib.caffeine</shadedPattern>
                 </relocation>
-                <relocation>
-                  <pattern>net.kyori.adventure</pattern>
-                  <shadedPattern>com.mrivanplays.skins.lib.adventure</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>net.kyori.examination</pattern>
-                  <shadedPattern>com.mrivanplays.skins.lib.examination</shadedPattern>
-                </relocation>
                 <!-- yes that's right we also need to relocate our own libraries -->
                 <relocation>
                   <pattern>com.mrivanplays.annotationconfig</pattern>
@@ -94,30 +90,49 @@
     </resources>
   </build>
 
+  <repositories>
+    <repository>
+      <id>velocity</id>
+      <url>https://nexus.velocitypowered.com/repository/maven-public/</url>
+    </repository>
+  </repositories>
+
   <dependencies>
     <dependency>
-      <groupId>org.spigotmc</groupId>
-      <artifactId>spigot-api</artifactId>
-      <version>${spigot.version}</version>
+      <groupId>com.velocitypowered</groupId>
+      <artifactId>velocity-api</artifactId>
+      <version>${velocity.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.mrivanplays</groupId>
-      <artifactId>skins-bukkit-core</artifactId>
+      <artifactId>skins-core</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>com.mrivanplays</groupId>
-      <artifactId>skins-bukkit-protocolsupport</artifactId>
-      <version>${project.version}</version>
+      <groupId>net.kyori</groupId>
+      <artifactId>adventure-text-minimessage</artifactId>
+      <version>${minimessage.version}</version>
       <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.mrivanplays</groupId>
-      <artifactId>skins-bukkit-paper</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>net.kyori</groupId>
+          <artifactId>adventure-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>net.kyori</groupId>
+          <artifactId>examination-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>net.kyori</groupId>
+          <artifactId>examination-string</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.code.gson</groupId>
+          <artifactId>gson</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 
