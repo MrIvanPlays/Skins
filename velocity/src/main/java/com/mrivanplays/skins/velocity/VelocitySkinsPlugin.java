@@ -1,12 +1,14 @@
 package com.mrivanplays.skins.velocity;
 
+import com.mrivanplays.commandworker.core.Command;
+import com.mrivanplays.commandworker.velocity.VelocityCommandManager;
 import com.mrivanplays.skins.api.SkinsInfo;
 import com.mrivanplays.skins.core.AbstractSkinsPlugin;
 import com.mrivanplays.skins.core.Logger;
 import com.mrivanplays.skins.core.Scheduler;
 import com.mrivanplays.skins.core.SkinsConfiguration;
 import com.mrivanplays.skins.core.SkinsUser;
-import com.mrivanplays.skins.core.command.Command;
+import com.mrivanplays.skins.core.command.CommandSource;
 import com.mrivanplays.skins.core.dependency.classloader.PluginClassLoader;
 import com.mrivanplays.skins.core.util.SkinsInfoParser;
 import com.velocitypowered.api.proxy.Player;
@@ -17,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class VelocitySkinsPlugin extends AbstractSkinsPlugin {
@@ -31,6 +34,7 @@ public class VelocitySkinsPlugin extends AbstractSkinsPlugin {
   private final VelocityCommandSourceManager sourceManager;
 
   private Map<UUID, SkinsUser> userCache = new HashMap<>();
+  private VelocityCommandManager commandManager;
 
   public VelocitySkinsPlugin(VelocityPlugin plugin) {
     this.plugin = plugin;
@@ -58,6 +62,7 @@ public class VelocitySkinsPlugin extends AbstractSkinsPlugin {
         SkinsInfoParser.parseInfo(
             version, implementationVersion, getLogger(), new VelocityEnvironment());
     pluginClassLoader = new VelocityPluginClassLoader(plugin);
+    commandManager = new VelocityCommandManager(plugin.getProxy());
 
     super.enable();
   }
@@ -117,13 +122,12 @@ public class VelocitySkinsPlugin extends AbstractSkinsPlugin {
   }
 
   @Override
-  public void registerCommand(String name, Command command) {
-    plugin
-        .getProxy()
-        .getCommandManager()
-        .register(
-            plugin.getProxy().getCommandManager().metaBuilder(name).build(),
-            new VelocitySkinsCommandWrapper(command, sourceManager));
+  public void registerCommand(
+      String name, Predicate<CommandSource> permissionCheck, Command<CommandSource> command) {
+    commandManager.register(
+        new VelocityCommandWrapper(command, sourceManager),
+        (sender) -> permissionCheck.test(sourceManager.obtainSource(sender)),
+        name);
   }
 
   @Override

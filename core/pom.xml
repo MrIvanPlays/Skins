@@ -110,6 +110,12 @@
       <version>${adventure.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>com.mrivanplays</groupId>
+      <artifactId>commandworker-core</artifactId>
+      <version>${commandworker.version}</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
 

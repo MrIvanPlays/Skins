@@ -73,12 +73,8 @@
                 </relocation>
                 <!-- yes that's right we also need to relocate our own libraries -->
                 <relocation>
-                  <pattern>com.mrivanplays.annotationconfig</pattern>
-                  <shadedPattern>com.mrivanplays.skins.lib.annotationconfig</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>com.mrivanplays.pagedinventory</pattern>
-                  <shadedPattern>com.mrivanplays.skins.lib.pagedinventory</shadedPattern>
+                  <pattern>com.mrivanplays.commandworker</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.commandworker</shadedPattern>
                 </relocation>
               </relocations>
             </configuration>
@@ -135,6 +131,18 @@
         <exclusion>
           <groupId>com.google.code.gson</groupId>
           <artifactId>gson</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.mrivanplays</groupId>
+      <artifactId>commandworker-velocity</artifactId>
+      <version>${commandworker.version}</version>
+      <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.mojang</groupId>
+          <artifactId>brigadier</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

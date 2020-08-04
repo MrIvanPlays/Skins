@@ -1,5 +1,12 @@
 package com.mrivanplays.skins.core.command;
 
+import com.mojang.brigadier.LiteralMessage;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mrivanplays.commandworker.core.Command;
+import com.mrivanplays.commandworker.core.LiteralNode;
+import com.mrivanplays.commandworker.core.argument.RequiredArgument;
+import com.mrivanplays.commandworker.core.argument.parser.ArgumentHolder;
 import com.mrivanplays.skins.api.Skin;
 import com.mrivanplays.skins.api.SkinsApi;
 import com.mrivanplays.skins.api.SkinsApiProvider;
@@ -9,13 +16,13 @@ import com.mrivanplays.skins.core.SkinsPlugin;
 import com.mrivanplays.skins.core.UserCooldownRegistry;
 import com.mrivanplays.skins.core.storage.StoredSkin;
 import com.mrivanplays.skins.core.util.Utils;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.Set;
+import org.jetbrains.annotations.NotNull;
 
-public class CommandSkinSet implements Command {
+public class CommandSkinSet implements Command<CommandSource> {
 
   private final SkinsPlugin plugin;
 
@@ -24,19 +31,22 @@ public class CommandSkinSet implements Command {
   }
 
   @Override
-  public void execute(CommandSource source, String[] args) {
+  public boolean execute(
+      @NotNull CommandSource source, @NotNull String label, @NotNull ArgumentHolder args)
+      throws CommandSyntaxException {
     SkinsConfiguration.Messages messages = plugin.getConfiguration().getMessages();
     if (!source.isPlayer()) {
       source.sendMessage(messages.getNoConsole());
-      return;
+      return true;
     }
     AbstractSkinsUser user = (AbstractSkinsUser) plugin.obtainUser(source.getName());
-    if (args.length == 0) {
-      user.sendMessage(messages.getCommandUsage());
-      return;
+    String skin = args.getRequiredArgument("skinName", String.class);
+    if (skin == null) {
+      throw syntaxException("Usage: " + args.buildUsage(label));
     }
     SkinsApi api = SkinsApiProvider.get();
-    api.getSkin(args[0]).thenAccept(skinOpt -> dispatchSkinSet(user, skinOpt, args[0]));
+    api.getSkin(skin).thenAccept(skinOpt -> dispatchSkinSet(user, skinOpt, skin));
+    return true;
   }
 
   public void dispatchSkinSet(AbstractSkinsUser user, Optional<Skin> skinOpt, String name) {
@@ -68,17 +78,30 @@ public class CommandSkinSet implements Command {
   }
 
   @Override
-  public List<String> complete(CommandSource source, String[] args) {
-    if (args.length == 1) {
-      List<String> matches = new ArrayList<>();
-      List<StoredSkin> skins = plugin.getStorage().all().join();
-      matches.addAll(Utils.map(skins, StoredSkin::getOwnerName));
+  public @NotNull LiteralNode createCommandStructure() {
+    return LiteralNode.node()
+        .argument(
+            RequiredArgument.argument("skinName", StringArgumentType.word())
+                .suggests(
+                    builder -> {
+                      String remaining = builder.getRemaining();
+                      Set<String> matches = new HashSet<>();
+                      List<StoredSkin> skins = plugin.getStorage().all().join();
+                      matches.addAll(Utils.map(skins, StoredSkin::getOwnerName));
+                      matches.addAll(plugin.allPlayersForCompletions());
 
-      matches.addAll(plugin.allPlayersForCompletions());
-      return matches.stream()
-          .filter(match -> match.toLowerCase().startsWith(args[0].toLowerCase()))
-          .collect(Collectors.toList());
-    }
-    return Collections.emptyList();
+                      if (remaining.isEmpty()) {
+                        for (String match : matches) {
+                          builder.suggest(match, new LiteralMessage("The skin of Player " + match));
+                        }
+                        return;
+                      }
+
+                      for (String match : matches) {
+                        if (match.toLowerCase().startsWith(remaining.toLowerCase())) {
+                          builder.suggest(match, new LiteralMessage("The skin of Player " + match));
+                        }
+                      }
+                    }));
   }
 }

@@ -21,7 +21,7 @@
     </repository>
     <repository>
       <id>placeholderapi</id>
-      <url>https://repo.extendedclip.com/content/repositories/dev/</url>
+      <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
     </repository>
   </repositories>
 
@@ -47,7 +47,7 @@
     <dependency>
       <groupId>me.clip</groupId>
       <artifactId>placeholderapi</artifactId>
-      <version>2.10.9-DEV-97</version>
+      <version>2.10.9</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

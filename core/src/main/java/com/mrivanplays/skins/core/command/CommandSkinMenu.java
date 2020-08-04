@@ -1,13 +1,15 @@
 package com.mrivanplays.skins.core.command;
 
+import com.mrivanplays.commandworker.core.Command;
+import com.mrivanplays.commandworker.core.LiteralNode;
+import com.mrivanplays.commandworker.core.argument.parser.ArgumentHolder;
 import com.mrivanplays.skins.core.SkinsConfiguration;
 import com.mrivanplays.skins.core.SkinsPlugin;
 import com.mrivanplays.skins.core.SkinsUser;
 import com.mrivanplays.skins.core.UserCooldownRegistry;
-import java.util.Collections;
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
-public class CommandSkinMenu implements Command {
+public class CommandSkinMenu implements Command<CommandSource> {
 
   private final SkinsPlugin plugin;
 
@@ -16,31 +18,28 @@ public class CommandSkinMenu implements Command {
   }
 
   @Override
-  public void execute(CommandSource source, String[] args) {
+  public boolean execute(
+      @NotNull CommandSource source, @NotNull String label, @NotNull ArgumentHolder args) {
     SkinsConfiguration.Messages messages = plugin.getConfiguration().getMessages();
     if (!source.isPlayer()) {
       source.sendMessage(messages.getNoConsole());
-      return;
+      return true;
     }
     SkinsUser user = plugin.obtainUser(source.getName());
     long cooldownRemaining = UserCooldownRegistry.MENU.getTimeLeft(user.getUniqueId());
     if (cooldownRemaining > 0) {
       user.sendMessage(
           messages.getCooldown().replace("%timeLeft%", Long.toString(cooldownRemaining)));
-      return;
+      return true;
     }
     if (user.openSkinMenu()) {
       UserCooldownRegistry.MENU.cooldown(user.getUniqueId());
     }
+    return true;
   }
 
   @Override
-  public List<String> complete(CommandSource source, String[] args) {
-    return Collections.emptyList();
-  }
-
-  @Override
-  public boolean hasPermission(CommandSource source) {
-    return source.hasPermission("skins.menu");
+  public @NotNull LiteralNode createCommandStructure() {
+    return LiteralNode.node().markShouldExecuteCommand();
   }
 }

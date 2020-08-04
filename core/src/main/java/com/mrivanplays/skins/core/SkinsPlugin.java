@@ -1,8 +1,9 @@
 package com.mrivanplays.skins.core;
 
+import com.mrivanplays.commandworker.core.Command;
 import com.mrivanplays.skins.api.Skin;
 import com.mrivanplays.skins.api.SkinsInfo;
-import com.mrivanplays.skins.core.command.Command;
+import com.mrivanplays.skins.core.command.CommandSource;
 import com.mrivanplays.skins.core.dependency.DependencyManager;
 import com.mrivanplays.skins.core.dependency.classloader.PluginClassLoader;
 import com.mrivanplays.skins.core.storage.Storage;
@@ -11,6 +12,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 public interface SkinsPlugin {
 
@@ -20,7 +22,8 @@ public interface SkinsPlugin {
 
   SkinsInfo getInfo();
 
-  void registerCommand(String name, Command command);
+  void registerCommand(
+      String name, Predicate<CommandSource> permissionCheck, Command<CommandSource> command);
 
   Logger getLogger();
 

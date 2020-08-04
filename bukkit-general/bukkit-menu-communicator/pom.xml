@@ -40,6 +40,10 @@
                   <shadedPattern>com.mrivanplays.skins.lib.examination</shadedPattern>
                 </relocation>
                 <relocation>
+                  <pattern>com.mrivanplays.pagedinventory</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.pagedinventory</shadedPattern>
+                </relocation>
+                <relocation>
                   <pattern>org.checkerframework</pattern>
                   <shadedPattern>com.mrivanplays.skins.lib.checkerframework</shadedPattern>
                 </relocation>

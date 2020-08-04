@@ -32,10 +32,13 @@ public abstract class AbstractSkinsPlugin implements SkinsPlugin {
     registerApiOnServiceManager(apiImpl);
     skinSetCommand = new CommandSkinSet(this);
     UserCooldownRegistry.ensureInit();
-    registerCommand("skinset", skinSetCommand);
-    registerCommand("skinmenu", new CommandSkinMenu(this));
-    registerCommand("skininfo", new CommandSkinInfo(this));
-    registerCommand("skinreload", new CommandSkinReload());
+    registerCommand("skinset", (source) -> true, skinSetCommand);
+    registerCommand(
+        "skinmenu", (source) -> source.hasPermission("skins.menu"), new CommandSkinMenu(this));
+    registerCommand(
+        "skininfo", (source) -> source.hasPermission("skins.info"), new CommandSkinInfo(this));
+    registerCommand(
+        "skinreload", (source) -> source.hasPermission("skins.reload"), new CommandSkinReload());
   }
 
   public void disable() {

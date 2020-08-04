@@ -1,27 +1,26 @@
 package com.mrivanplays.skins.core.command;
 
-import java.util.Collections;
-import java.util.List;
+import com.mrivanplays.commandworker.core.Command;
+import com.mrivanplays.commandworker.core.LiteralNode;
+import com.mrivanplays.commandworker.core.argument.parser.ArgumentHolder;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.jetbrains.annotations.NotNull;
 
-public class CommandSkinReload implements Command {
+public class CommandSkinReload implements Command<CommandSource> {
 
   @Override
-  public void execute(CommandSource source, String[] args) {
+  public boolean execute(
+      @NotNull CommandSource source, @NotNull String label, @NotNull ArgumentHolder args) {
     source.sendMessage(
         TextComponent.of(
                 "This command has been removed in v2.0.0 . The reason is that dynamic reloads may cause various of types of issues.")
             .color(NamedTextColor.RED));
+    return true;
   }
 
   @Override
-  public List<String> complete(CommandSource source, String[] args) {
-    return Collections.emptyList();
-  }
-
-  @Override
-  public boolean hasPermission(CommandSource source) {
-    return source.hasPermission("skins.reload");
+  public @NotNull LiteralNode createCommandStructure() {
+    return LiteralNode.node().markShouldExecuteCommand();
   }
 }

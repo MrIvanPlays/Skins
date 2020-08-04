@@ -5,6 +5,7 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.mrivanplays.skins.api.Skin;
 import com.mrivanplays.skins.core.AbstractSkinsUser;
+import com.mrivanplays.skins.core.SkinsUser;
 import com.mrivanplays.skins.core.storage.StoredSkin;
 import com.velocitypowered.api.event.EventHandler;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
@@ -114,6 +115,16 @@ public class PluginMessageListener implements EventHandler<PluginMessageEvent> {
         }
         Skin skin = plugin.getApiImpl().getSkinAccessor().getSkin(skinOwner, true).join();
         plugin.dispatchSkinSet(user, Optional.ofNullable(skin), skinOwnerName);
+      }
+    }
+    if (subchannel.equalsIgnoreCase("SkinSetFailure")) {
+      Optional<Player> playerOpt = proxy.getPlayer(UUID.fromString(in.readUTF()));
+      if (playerOpt.isPresent()) {
+        SkinsUser user = plugin.obtainUser(playerOpt.get().getUniqueId());
+        if (user == null) {
+          return;
+        }
+        user.sendMessage(plugin.getConfiguration().getMessages().getNotPremium());
       }
     }
   }

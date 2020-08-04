@@ -102,7 +102,7 @@ public class DependencyManager {
           .async()
           .execute(
               () -> {
-                plugin.getLogger().info("Trying to load dependency" + dependency.name());
+                plugin.getLogger().info("Trying to load dependency " + dependency.name());
                 try {
                   loadDependency(dependency);
                 } catch (Throwable e) {

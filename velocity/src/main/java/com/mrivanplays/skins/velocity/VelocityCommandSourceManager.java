@@ -23,7 +23,7 @@ public class VelocityCommandSourceManager {
       if (sourceMap.containsKey(parent)) {
         return sourceMap.get(parent);
       }
-      VelocityCommandSource source = new VelocityCommandSource(parent, plugin);
+      VelocityCommandSource source = new VelocityCommandSource(parent);
       sourceMap.put(parent, source);
       return source;
     }

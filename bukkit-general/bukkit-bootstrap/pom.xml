@@ -77,12 +77,12 @@
                 </relocation>
                 <!-- yes that's right we also need to relocate our own libraries -->
                 <relocation>
-                  <pattern>com.mrivanplays.annotationconfig</pattern>
-                  <shadedPattern>com.mrivanplays.skins.lib.annotationconfig</shadedPattern>
-                </relocation>
-                <relocation>
                   <pattern>com.mrivanplays.pagedinventory</pattern>
                   <shadedPattern>com.mrivanplays.skins.lib.pagedinventory</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>com.mrivanplays.commandworker</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.commandworker</shadedPattern>
                 </relocation>
               </relocations>
             </configuration>
@@ -121,6 +121,12 @@
       <groupId>com.mrivanplays</groupId>
       <artifactId>skins-bukkit-paper</artifactId>
       <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.mrivanplays</groupId>
+      <artifactId>commandworker-bukkit-core</artifactId>
+      <version>${commandworker.version}</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>

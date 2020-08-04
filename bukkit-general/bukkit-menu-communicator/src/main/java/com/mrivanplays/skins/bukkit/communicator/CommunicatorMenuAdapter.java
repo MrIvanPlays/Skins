@@ -46,10 +46,15 @@ public class CommunicatorMenuAdapter implements SkinsMenuAdapter {
   @Override
   public void dispatchSkinSet(Player player, ItemSkin skin, String skinOwnerName) {
     ByteArrayDataOutput out = ByteStreams.newDataOutput();
-    out.writeUTF("SetSkin");
-    out.writeUTF(player.getUniqueId().toString());
-    out.writeUTF(skin.getOwner().toString());
-    out.writeUTF(skinOwnerName);
+    if (skin != null) {
+      out.writeUTF("SetSkin");
+      out.writeUTF(player.getUniqueId().toString());
+      out.writeUTF(skin.getOwner().toString());
+      out.writeUTF(skinOwnerName);
+    } else {
+      out.writeUTF("SkinSetFailure");
+      out.writeUTF(player.getUniqueId().toString());
+    }
     player.sendPluginMessage(plugin, "skins:plugin", out.toByteArray());
   }
 

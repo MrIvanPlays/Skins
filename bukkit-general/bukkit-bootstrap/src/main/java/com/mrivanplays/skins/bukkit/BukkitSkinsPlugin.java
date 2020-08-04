@@ -1,11 +1,11 @@
 package com.mrivanplays.skins.bukkit;
 
+import com.mrivanplays.commandworker.bukkit.BukkitCommandManager;
+import com.mrivanplays.commandworker.core.Command;
 import com.mrivanplays.skins.api.Environment;
 import com.mrivanplays.skins.api.SkinsInfo;
-import com.mrivanplays.skins.bukkit.core.CommandMapRetriever;
 import com.mrivanplays.skins.bukkit.core.GeneralSkinsPlugin;
 import com.mrivanplays.skins.bukkit.menuadapters.BukkitSMAdapter;
-import com.mrivanplays.skins.bukkit.paper.PaperCommandMapRetriever;
 import com.mrivanplays.skins.bukkit.paper.PaperUser;
 import com.mrivanplays.skins.bukkit.protocolsupport.ProtocolSupportUser;
 import com.mrivanplays.skins.bukkit_general.SkinsMenu;
@@ -13,16 +13,16 @@ import com.mrivanplays.skins.bukkit_general.SkinsMenuAdapter;
 import com.mrivanplays.skins.core.AbstractSkinsUser;
 import com.mrivanplays.skins.core.Logger;
 import com.mrivanplays.skins.core.SkinsUser;
-import com.mrivanplays.skins.core.command.Command;
+import com.mrivanplays.skins.core.command.CommandSource;
 import com.mrivanplays.skins.core.dependency.classloader.PluginClassLoader;
 import com.mrivanplays.skins.core.dependency.classloader.ReflectionClassLoader;
 import com.mrivanplays.skins.core.util.SkinsInfoParser;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Predicate;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandMap;
 import org.bukkit.entity.Player;
 
 public class BukkitSkinsPlugin extends GeneralSkinsPlugin {
@@ -33,7 +33,7 @@ public class BukkitSkinsPlugin extends GeneralSkinsPlugin {
   private Map<UUID, SkinsUser> userMap = new HashMap<>();
   private final CommandSourceManager sourceManager;
   private SkinsMenu skinsMenu;
-  private CommandMap commandMap;
+  private BukkitCommandManager commandManager;
   private PluginClassLoader classLoader;
   private final Logger logger;
 
@@ -51,13 +51,7 @@ public class BukkitSkinsPlugin extends GeneralSkinsPlugin {
     info =
         SkinsInfoParser.parseInfo(
             version, implementationVersion, getLogger(), EnvironmentInitializer.get());
-    CommandMapRetriever commandMapRetriever;
-    if (info.getEnvironment().paper()) {
-      commandMapRetriever = new PaperCommandMapRetriever();
-    } else {
-      commandMapRetriever = new CommandMapRetriever();
-    }
-    this.commandMap = commandMapRetriever.retrieveCommandMap();
+    commandManager = new BukkitCommandManager(parent);
     this.classLoader = new ReflectionClassLoader(parent, parent.getLogger());
     super.enable();
     SkinsMenuAdapter menuAdapter = new BukkitSMAdapter(this);
@@ -143,12 +137,12 @@ public class BukkitSkinsPlugin extends GeneralSkinsPlugin {
   }
 
   @Override
-  public void registerCommand(String name, Command command) {
-    commandMap.register(
-        name,
-        parent.getName(),
-        new CommandRegistration(
-            name, command, sourceManager, getConfiguration().getMessages().getNoPermission()));
+  public void registerCommand(
+      String name, Predicate<CommandSource> permissionCheck, Command<CommandSource> command) {
+    commandManager.register(
+        new BukkitCommandWrapper(command, sourceManager),
+        (sender) -> permissionCheck.test(sourceManager.obtain(sender)),
+        name);
   }
 
   @Override

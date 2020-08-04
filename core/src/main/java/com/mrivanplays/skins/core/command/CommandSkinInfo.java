@@ -1,12 +1,14 @@
 package com.mrivanplays.skins.core.command;
 
+import com.mrivanplays.commandworker.core.Command;
+import com.mrivanplays.commandworker.core.LiteralNode;
+import com.mrivanplays.commandworker.core.argument.parser.ArgumentHolder;
 import com.mrivanplays.skins.core.SkinsPlugin;
-import java.util.Collections;
-import java.util.List;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.jetbrains.annotations.NotNull;
 
-public class CommandSkinInfo implements Command {
+public class CommandSkinInfo implements Command<CommandSource> {
 
   private final SkinsPlugin plugin;
 
@@ -15,7 +17,8 @@ public class CommandSkinInfo implements Command {
   }
 
   @Override
-  public void execute(CommandSource source, String[] args) {
+  public boolean execute(
+      @NotNull CommandSource source, @NotNull String label, @NotNull ArgumentHolder args) {
     String version = plugin.getInfo().getVersion();
     // yes I'm recreating it cuz I don't want to have a method just for that
     String implementationVersion =
@@ -39,15 +42,11 @@ public class CommandSkinInfo implements Command {
           TextComponent.of("You are running a version which is considered stable.")
               .color(NamedTextColor.GREEN));
     }
+    return true;
   }
 
   @Override
-  public List<String> complete(CommandSource source, String[] args) {
-    return Collections.emptyList();
-  }
-
-  @Override
-  public boolean hasPermission(CommandSource source) {
-    return source.hasPermission("skins.info");
+  public @NotNull LiteralNode createCommandStructure() {
+    return LiteralNode.node().markShouldExecuteCommand();
   }
 }
