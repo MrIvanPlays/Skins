@@ -3,7 +3,7 @@ package com.mrivanplays.skins.core.command;
 import com.mrivanplays.skins.core.SkinsConfiguration;
 import com.mrivanplays.skins.core.SkinsPlugin;
 import com.mrivanplays.skins.core.SkinsUser;
-import com.mrivanplays.skins.core.UserCooldown;
+import com.mrivanplays.skins.core.UserCooldownRegistry;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,14 +23,15 @@ public class CommandSkinMenu implements Command {
       return;
     }
     SkinsUser user = plugin.obtainUser(source.getName());
-    long cooldownRemaining = UserCooldown.getGlobalInstance().getTimeLeft(user.getUniqueId());
+    long cooldownRemaining = UserCooldownRegistry.MENU.getTimeLeft(user.getUniqueId());
     if (cooldownRemaining > 0) {
       user.sendMessage(
           messages.getCooldown().replace("%timeLeft%", Long.toString(cooldownRemaining)));
       return;
     }
-    user.openSkinMenu();
-    UserCooldown.getGlobalInstance().cooldown(user.getUniqueId());
+    if (user.openSkinMenu()) {
+      UserCooldownRegistry.MENU.cooldown(user.getUniqueId());
+    }
   }
 
   @Override

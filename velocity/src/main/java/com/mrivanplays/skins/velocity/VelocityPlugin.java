@@ -6,10 +6,15 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
+import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import java.nio.file.Path;
 import org.slf4j.Logger;
 
 public class VelocityPlugin {
+
+  public static ChannelIdentifier SKINS_PLUGIN_CHANNEL =
+      MinecraftChannelIdentifier.create("skins", "plugin");
 
   private final Logger logger;
   private final ProxyServer proxy;
@@ -36,8 +41,11 @@ public class VelocityPlugin {
     }
     plugin.enable();
 
+    proxy.getChannelRegistrar().register(SKINS_PLUGIN_CHANNEL);
+
     GameProfileRequestListener.register(this, plugin);
     DisconnectListener.register(this, plugin);
+    PluginMessageListener.register(this, plugin);
 
     logger.info("Running on Velocity");
   }

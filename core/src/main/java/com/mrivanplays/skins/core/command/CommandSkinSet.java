@@ -6,7 +6,7 @@ import com.mrivanplays.skins.api.SkinsApiProvider;
 import com.mrivanplays.skins.core.AbstractSkinsUser;
 import com.mrivanplays.skins.core.SkinsConfiguration;
 import com.mrivanplays.skins.core.SkinsPlugin;
-import com.mrivanplays.skins.core.UserCooldown;
+import com.mrivanplays.skins.core.UserCooldownRegistry;
 import com.mrivanplays.skins.core.storage.StoredSkin;
 import com.mrivanplays.skins.core.util.Utils;
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ public class CommandSkinSet implements Command {
 
   public void dispatchSkinSet(AbstractSkinsUser user, Optional<Skin> skinOpt, String name) {
     SkinsConfiguration.Messages messages = plugin.getConfiguration().getMessages();
-    long cooldownedLeft = UserCooldown.getGlobalInstance().getTimeLeft(user.getUniqueId());
+    long cooldownedLeft = UserCooldownRegistry.SKIN_SET.getTimeLeft(user.getUniqueId());
     if (cooldownedLeft > 0) {
       user.sendMessage(messages.getCooldown().replace("%timeLeft%", Long.toString(cooldownedLeft)));
       return;
@@ -63,7 +63,7 @@ public class CommandSkinSet implements Command {
               }
               user.setSkin(skin, name, false);
               user.sendMessage(messages.getSkinSetSuccessfully());
-              UserCooldown.getGlobalInstance().cooldown(user.getUniqueId());
+              UserCooldownRegistry.SKIN_SET.cooldown(user.getUniqueId());
             });
   }
 

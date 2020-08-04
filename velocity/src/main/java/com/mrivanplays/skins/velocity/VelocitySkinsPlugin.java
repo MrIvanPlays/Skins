@@ -8,6 +8,7 @@ import com.mrivanplays.skins.core.SkinsConfiguration;
 import com.mrivanplays.skins.core.SkinsUser;
 import com.mrivanplays.skins.core.command.Command;
 import com.mrivanplays.skins.core.dependency.classloader.PluginClassLoader;
+import com.mrivanplays.skins.core.util.SkinsInfoParser;
 import com.velocitypowered.api.proxy.Player;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -53,17 +54,9 @@ public class VelocitySkinsPlugin extends AbstractSkinsPlugin {
             .getVersion()
             .get();
     String implementationVersion = plugin.getClass().getPackage().getImplementationVersion();
-    String[] implVersionSplit = implementationVersion.split(":");
-    String commit = implVersionSplit[3];
-    String buildNumberPart = implVersionSplit[4];
-    int buildNumber;
-    if (buildNumberPart.equalsIgnoreCase("unknown")) {
-      getLogger().warning("Could not detect proper build number, custom build?");
-      buildNumber = -1;
-    } else {
-      buildNumber = Integer.parseInt(buildNumberPart);
-    }
-    info = new SkinsInfo(version, commit, buildNumber, new VelocityEnvironment());
+    info =
+        SkinsInfoParser.parseInfo(
+            version, implementationVersion, getLogger(), new VelocityEnvironment());
     pluginClassLoader = new VelocityPluginClassLoader(plugin);
 
     super.enable();

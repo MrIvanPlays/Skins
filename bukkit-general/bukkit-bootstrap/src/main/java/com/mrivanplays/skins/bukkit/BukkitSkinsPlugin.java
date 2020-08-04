@@ -4,16 +4,19 @@ import com.mrivanplays.skins.api.Environment;
 import com.mrivanplays.skins.api.SkinsInfo;
 import com.mrivanplays.skins.bukkit.core.CommandMapRetriever;
 import com.mrivanplays.skins.bukkit.core.GeneralSkinsPlugin;
+import com.mrivanplays.skins.bukkit.menuadapters.BukkitSMAdapter;
 import com.mrivanplays.skins.bukkit.paper.PaperCommandMapRetriever;
 import com.mrivanplays.skins.bukkit.paper.PaperUser;
 import com.mrivanplays.skins.bukkit.protocolsupport.ProtocolSupportUser;
 import com.mrivanplays.skins.bukkit_general.SkinsMenu;
+import com.mrivanplays.skins.bukkit_general.SkinsMenuAdapter;
 import com.mrivanplays.skins.core.AbstractSkinsUser;
 import com.mrivanplays.skins.core.Logger;
 import com.mrivanplays.skins.core.SkinsUser;
 import com.mrivanplays.skins.core.command.Command;
 import com.mrivanplays.skins.core.dependency.classloader.PluginClassLoader;
 import com.mrivanplays.skins.core.dependency.classloader.ReflectionClassLoader;
+import com.mrivanplays.skins.core.util.SkinsInfoParser;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -45,17 +48,9 @@ public class BukkitSkinsPlugin extends GeneralSkinsPlugin {
   public void enable() {
     String version = parent.getDescription().getVersion();
     String implementationVersion = parent.getClass().getPackage().getImplementationVersion();
-    String[] implVersionSplit = implementationVersion.split(":");
-    String commit = implVersionSplit[3];
-    String buildNumberPart = implVersionSplit[4];
-    int buildNumber;
-    if (buildNumberPart.equalsIgnoreCase("unknown")) {
-      getLogger().warning("Could not detect proper build number, custom build?");
-      buildNumber = -1;
-    } else {
-      buildNumber = Integer.parseInt(buildNumberPart);
-    }
-    info = new SkinsInfo(version, commit, buildNumber, EnvironmentInitializer.get());
+    info =
+        SkinsInfoParser.parseInfo(
+            version, implementationVersion, getLogger(), EnvironmentInitializer.get());
     CommandMapRetriever commandMapRetriever;
     if (info.getEnvironment().paper()) {
       commandMapRetriever = new PaperCommandMapRetriever();
@@ -65,7 +60,8 @@ public class BukkitSkinsPlugin extends GeneralSkinsPlugin {
     this.commandMap = commandMapRetriever.retrieveCommandMap();
     this.classLoader = new ReflectionClassLoader(parent, parent.getLogger());
     super.enable();
-    this.skinsMenu = new SkinsMenu(this, parent);
+    SkinsMenuAdapter menuAdapter = new BukkitSMAdapter(this);
+    this.skinsMenu = new SkinsMenu(menuAdapter, parent);
   }
 
   @Override

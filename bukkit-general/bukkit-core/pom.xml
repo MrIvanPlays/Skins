@@ -19,6 +19,10 @@
       <id>sonatype-snapshots</id>
       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
     </repository>
+    <repository>
+      <id>placeholderapi</id>
+      <url>https://repo.extendedclip.com/content/repositories/dev/</url>
+    </repository>
   </repositories>
 
   <dependencies>
@@ -35,16 +39,16 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>net.kyori</groupId>
-      <artifactId>adventure-text-serializer-bungeecord</artifactId>
-      <version>4.0.0-SNAPSHOT</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>com.mrivanplays</groupId>
       <artifactId>skins-bukkit-menu</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>me.clip</groupId>
+      <artifactId>placeholderapi</artifactId>
+      <version>2.10.9-DEV-97</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 

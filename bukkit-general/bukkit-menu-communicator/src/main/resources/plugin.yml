@@ -1,0 +1,5 @@
+name: Skins-Communicator
+main: com.mrivanplays.skins.bukkit.communicator.SkinsBukkitCommunicator
+version: ${project.version}
+api-version: 1.13
+description: Backend plugin for communication when Skins is run behind proxy

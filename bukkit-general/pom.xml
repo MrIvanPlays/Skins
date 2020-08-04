@@ -21,6 +21,7 @@
     <module>protocolsupport</module>
     <module>bukkit-skull-skinner</module>
     <module>bukkit-menu</module>
+    <module>bukkit-menu-communicator</module>
   </modules>
 
   <repositories>

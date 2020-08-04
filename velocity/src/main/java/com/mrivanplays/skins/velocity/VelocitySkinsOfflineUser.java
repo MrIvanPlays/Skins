@@ -22,7 +22,9 @@ public class VelocitySkinsOfflineUser extends AbstractSkinsUser {
   public void setNPCSkin(@NotNull Skin skin) {}
 
   @Override
-  public void openSkinMenu() {}
+  public boolean openSkinMenu() {
+    return false;
+  }
 
   @Override
   public @NotNull String getName() {
@@ -30,9 +32,7 @@ public class VelocitySkinsOfflineUser extends AbstractSkinsUser {
   }
 
   @Override
-  public void sendMessage(Component message) {
-    System.out.println("I'm a fucking offline user");
-  }
+  public void sendMessage(Component message) {}
 
   @Override
   public boolean hasPermission(String permission) {

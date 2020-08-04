@@ -6,6 +6,7 @@ import com.mrivanplays.skins.core.SkinsPlugin;
 import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeCordComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -22,9 +23,20 @@ public abstract class GeneralBukkitUser extends AbstractSkinsUser {
   }
 
   @Override
-  public void openSkinMenu() {
+  public boolean openSkinMenu() {
     if (isOnline()) {
       menuInstance.openMenu(getOnlineVariant());
+      return true;
+    }
+    return false;
+  }
+
+  @Override
+  public String applyPlaceholders(String message) {
+    if (isOnline() && Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+      return PlaceholderApplier.applyPlaceholders(getOnlineVariant(), message);
+    } else {
+      return message;
     }
   }
 

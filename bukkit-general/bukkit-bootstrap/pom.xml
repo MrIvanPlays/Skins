@@ -71,6 +71,10 @@
                   <pattern>net.kyori.examination</pattern>
                   <shadedPattern>com.mrivanplays.skins.lib.examination</shadedPattern>
                 </relocation>
+                <relocation>
+                  <pattern>org.checkerframework</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.checkerframework</shadedPattern>
+                </relocation>
                 <!-- yes that's right we also need to relocate our own libraries -->
                 <relocation>
                   <pattern>com.mrivanplays.annotationconfig</pattern>

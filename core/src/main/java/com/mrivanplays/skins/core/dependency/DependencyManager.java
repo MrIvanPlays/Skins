@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
-import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 /**
@@ -95,11 +94,6 @@ public class DependencyManager {
   }
 
   public void loadDependencies(Set<Dependency> dependencies) {
-    plugin
-        .getLogger()
-        .info(
-            "Loading dependencies: "
-                + dependencies.stream().map(Dependency::name).collect(Collectors.joining(", ")));
     CountDownLatch latch = new CountDownLatch(dependencies.size());
 
     for (Dependency dependency : dependencies) {
@@ -108,6 +102,7 @@ public class DependencyManager {
           .async()
           .execute(
               () -> {
+                plugin.getLogger().info("Trying to load dependency" + dependency.name());
                 try {
                   loadDependency(dependency);
                 } catch (Throwable e) {
@@ -140,6 +135,7 @@ public class DependencyManager {
     if (this.registry.shouldAutoLoad(dependency)) {
       this.plugin.getPluginClassLoader().addJarToClassPath(file);
     }
+    plugin.getLogger().info("Dependency " + dependency.name() + " loaded successfully");
   }
 
   private Path downloadDependency(Dependency dependency) throws DependencyDownloadException {

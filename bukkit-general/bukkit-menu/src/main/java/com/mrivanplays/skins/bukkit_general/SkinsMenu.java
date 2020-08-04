@@ -4,21 +4,19 @@ import com.mrivanplays.pagedinventory.api.NavigationItem;
 import com.mrivanplays.pagedinventory.api.PageClick;
 import com.mrivanplays.pagedinventory.api.PagedInventory;
 import com.mrivanplays.pagedinventory.api.PagedInventoryBuilder;
+import com.mrivanplays.skins.bukkit_general.skull_skinner.ItemSkin;
 import com.mrivanplays.skins.bukkit_general.skull_skinner.SkullOwner;
 import com.mrivanplays.skins.bukkit_general.skull_skinner.SkullSkinner;
 import com.mrivanplays.skins.bukkit_general.skull_skinner.SkullSkinnerHandler;
-import com.mrivanplays.skins.core.AbstractSkinsPlugin;
-import com.mrivanplays.skins.core.AbstractSkinsUser;
-import com.mrivanplays.skins.core.storage.StoredSkin;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.bungeecord.BungeeCordComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -30,7 +28,7 @@ import org.bukkit.plugin.Plugin;
 
 public class SkinsMenu {
 
-  private final AbstractSkinsPlugin plugin;
+  private final SkinsMenuAdapter menuAdapter;
   private final Plugin base;
 
   private final Consumer<PageClick> clickListener;
@@ -38,9 +36,9 @@ public class SkinsMenu {
   private final ItemStack nextItem;
   private final ItemStack closeItem;
 
-  public SkinsMenu(AbstractSkinsPlugin plugin, Plugin base) {
+  public SkinsMenu(SkinsMenuAdapter menuAdapter, Plugin base) {
     this(
-        plugin,
+        menuAdapter,
         base,
         click -> {
           Player player = click.getClicker();
@@ -49,64 +47,41 @@ public class SkinsMenu {
             return;
           }
           SkullOwner owner = SkullSkinnerHandler.getSkullSkinner().getSkullOwner(item);
-          AbstractSkinsUser user = (AbstractSkinsUser) plugin.obtainUser(player.getName());
-          if (owner == null) {
-            user.sendMessage(plugin.getConfiguration().getMessages().getSkinMenuCannotFetchData());
-            return;
-          }
-          plugin
-              .getApiImpl()
-              .getSkinAccessor()
-              .getSkin(owner.getOwnerUUID(), true)
-              .thenAccept(
-                  skin ->
-                      plugin.dispatchSkinSet(
-                          user, Optional.ofNullable(skin), owner.getOwnerName()));
+          ItemSkin skin = menuAdapter.getSkin(owner.getOwnerUUID());
+          menuAdapter.dispatchSkinSet(player, skin, owner.getOwnerName());
           player.closeInventory();
         });
   }
 
-  public SkinsMenu(AbstractSkinsPlugin plugin, Plugin base, Consumer<PageClick> clickListener) {
-    this.plugin = plugin;
+  public SkinsMenu(SkinsMenuAdapter menuAdapter, Plugin base, Consumer<PageClick> clickListener) {
+    this.menuAdapter = menuAdapter;
     this.base = base;
 
     previousItem =
-        createItem(
-            color(plugin.getConfiguration().getMessages().getSkinMenuPreviousPageLabel()),
-            Material.PAPER);
+        createItem(color(menuAdapter.getConfig().getSkinMenuPreviousPageLabel()), Material.PAPER);
 
-    nextItem =
-        createItem(
-            color(plugin.getConfiguration().getMessages().getSkinMenuNextPageLabel()),
-            Material.BOOK);
+    nextItem = createItem(color(menuAdapter.getConfig().getSkinMenuNextPageLabel()), Material.BOOK);
 
     closeItem =
-        createItem(
-            color(plugin.getConfiguration().getMessages().getSkinMenuClosePageLabel()),
-            Material.BARRIER);
+        createItem(color(menuAdapter.getConfig().getSkinMenuClosePageLabel()), Material.BARRIER);
 
     this.clickListener = clickListener;
   }
 
   public void openMenu(Player player) {
     Map<Integer, ItemStack> itemCache = new HashMap<>();
-    plugin
-        .getStorage()
-        .all()
-        .thenAccept(
-            skins -> {
-              SkullSkinner itemSetter = SkullSkinnerHandler.getSkullSkinner();
-              for (int i = 0; i < skins.size(); i++) {
-                StoredSkin storedSkin = skins.get(i);
-                ItemStack item =
-                    itemSetter.buildItem(
-                        storedSkin.getSkin(),
-                        storedSkin.getOwnerName(),
-                        color(plugin.getConfiguration().getMessages().getSkinMenuHeadName()),
-                        colorList(plugin.getConfiguration().getMessages().getSkinMenuLore()));
-                itemCache.put(i, item);
-              }
-            });
+    SkullSkinner itemSetter = SkullSkinnerHandler.getSkullSkinner();
+    List<ItemSkin> skins = menuAdapter.getStoredSkins();
+    for (int i = 0, len = skins.size(); i < len; i++) {
+      ItemSkin skin = skins.get(i);
+      ItemStack item =
+          itemSetter.buildItem(
+              skin,
+              menuAdapter.getOwnerName(skin),
+              color(menuAdapter.getConfig().getSkinMenuHeadName()),
+              colorList(menuAdapter.getConfig().getSkinMenuLore()));
+      itemCache.put(i, item);
+    }
 
     List<Inventory> pages = getPages(getPagesRaw(itemCache));
     PagedInventoryBuilder pagedInventoryBuilder = PagedInventoryBuilder.createBuilder(base);
@@ -147,9 +122,8 @@ public class SkinsMenu {
     for (Map<Integer, ItemStack> page : pagesRaw) {
       String title =
           color(
-              plugin
-                  .getConfiguration()
-                  .getMessages()
+              menuAdapter
+                  .getConfig()
                   .getSkinMenuInventory()
                   .replace("%pageNum%", Integer.toString(pageNum)));
       Inventory inventory = Bukkit.createInventory(null, 54, title);
@@ -173,7 +147,7 @@ public class SkinsMenu {
   }
 
   private List<String> colorList(List<String> list) {
-    return list.stream().map(this::color).collect(Collectors.toList());
+    return list.stream().map(SkinsMenu::color).collect(Collectors.toList());
   }
 
   private ItemStack createItem(String name, Material type) {
@@ -184,10 +158,10 @@ public class SkinsMenu {
     return item;
   }
 
-  private String color(String message) {
-    TextComponent comp = LegacyComponentSerializer.legacy('&').deserialize(message);
+  private static String color(String message) {
+    TextComponent comp = LegacyComponentSerializer.legacyAmpersand().deserialize(message);
     MiniMessage miniMessage = MiniMessage.markdown();
     return miniMessage.serialize(
-        miniMessage.deserialize(LegacyComponentSerializer.legacy('&').serialize(comp)));
+        miniMessage.deserialize(LegacyComponentSerializer.legacySection().serialize(comp)));
   }
 }

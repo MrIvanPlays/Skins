@@ -1,5 +1,6 @@
 package com.mrivanplays.skins.bukkit.core;
 
+import com.mrivanplays.skins.api.SkinsApi;
 import com.mrivanplays.skins.core.AbstractSkinsPlugin;
 import com.mrivanplays.skins.core.Scheduler;
 import com.mrivanplays.skins.core.SkinsConfiguration;
@@ -19,6 +20,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.ServicePriority;
 
 public abstract class GeneralSkinsPlugin extends AbstractSkinsPlugin {
 
@@ -47,6 +49,14 @@ public abstract class GeneralSkinsPlugin extends AbstractSkinsPlugin {
     FileConfiguration konfig = YamlConfiguration.loadConfiguration(file);
     config = new SkinsConfiguration(new BukkitConfigurationAdapter(konfig));
     super.enable();
+  }
+
+  @Override
+  public void registerApiOnServiceManager(SkinsApi api) {
+    bukkitPlugin
+        .getServer()
+        .getServicesManager()
+        .register(SkinsApi.class, api, bukkitPlugin, ServicePriority.High);
   }
 
   @Override

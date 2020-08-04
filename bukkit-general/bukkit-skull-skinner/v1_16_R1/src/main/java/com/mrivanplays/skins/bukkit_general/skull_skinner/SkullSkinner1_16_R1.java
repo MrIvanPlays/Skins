@@ -2,7 +2,6 @@ package com.mrivanplays.skins.bukkit_general.skull_skinner;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import com.mrivanplays.skins.api.Skin;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.UUID;
@@ -15,7 +14,7 @@ public class SkullSkinner1_16_R1 implements SkullSkinner {
 
   @Override
   public ItemStack buildItem(
-      Skin skin, String ownerName, String headNameFormat, List<String> lore) {
+      ItemSkin skin, String ownerName, String headNameFormat, List<String> lore) {
     ItemStack item = new ItemStack(Material.PLAYER_HEAD);
     SkullMeta meta = (SkullMeta) item.getItemMeta();
     if (skin != null) {

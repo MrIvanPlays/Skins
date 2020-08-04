@@ -1,6 +1,7 @@
 package com.mrivanplays.skins.core;
 
 import com.mrivanplays.skins.api.Skin;
+import com.mrivanplays.skins.api.SkinsApi;
 import com.mrivanplays.skins.api.SkinsApiProvider;
 import com.mrivanplays.skins.core.command.CommandSkinInfo;
 import com.mrivanplays.skins.core.command.CommandSkinMenu;
@@ -28,7 +29,9 @@ public abstract class AbstractSkinsPlugin implements SkinsPlugin {
     storage.connect();
     apiImpl = new SkinsApiImpl(this);
     SkinsApiProvider.set(apiImpl);
+    registerApiOnServiceManager(apiImpl);
     skinSetCommand = new CommandSkinSet(this);
+    UserCooldownRegistry.ensureInit();
     registerCommand("skinset", skinSetCommand);
     registerCommand("skinmenu", new CommandSkinMenu(this));
     registerCommand("skininfo", new CommandSkinInfo(this));
@@ -42,6 +45,8 @@ public abstract class AbstractSkinsPlugin implements SkinsPlugin {
   public StorageMigration storageMigration() {
     return null;
   }
+
+  public void registerApiOnServiceManager(SkinsApi api) {}
 
   public SkinsApiImpl getApiImpl() {
     return apiImpl;

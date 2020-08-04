@@ -5,5 +5,5 @@ import com.mrivanplays.skins.core.command.CommandSource;
 
 public interface SkinsUser extends User, CommandSource {
 
-  void openSkinMenu();
+  boolean openSkinMenu();
 }

@@ -7,15 +7,6 @@ import java.util.concurrent.TimeUnit;
 
 public final class UserCooldown {
 
-  private static UserCooldown global;
-
-  public static UserCooldown getGlobalInstance() {
-    if (global == null) {
-      global = new UserCooldown(90);
-    }
-    return global;
-  }
-
   private Cache<UUID, Long> cache;
   private final long durationMillis;
 

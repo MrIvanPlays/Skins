@@ -67,6 +67,10 @@
                   <pattern>com.github.benmanes.caffeine</pattern>
                   <shadedPattern>com.mrivanplays.skins.lib.caffeine</shadedPattern>
                 </relocation>
+                <relocation>
+                  <pattern>org.checkerframework</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.checkerframework</shadedPattern>
+                </relocation>
                 <!-- yes that's right we also need to relocate our own libraries -->
                 <relocation>
                   <pattern>com.mrivanplays.annotationconfig</pattern>
