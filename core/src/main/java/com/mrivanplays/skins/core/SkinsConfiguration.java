@@ -20,9 +20,7 @@ public final class SkinsConfiguration {
 
   public static final class Messages {
 
-    private String noPermission = "&cYou don't have permission to perform this command.";
     private String noConsole = "&cNo console.";
-    private String commandUsage = "&cUsage: /skinset <premium player name>";
     private String cooldown =
         "&cYou have to wait %timeLeft% more second(s) before using that command";
     private String notPremium = "&cThis player isn't premium.";
@@ -42,9 +40,7 @@ public final class SkinsConfiguration {
             "(Keep in mind this skin is being cached and may not be up to date)");
 
     public Messages(ConfigurationAdapter adapter) {
-      this.noPermission = adapter.getString("messages.no-permission", noPermission);
       this.noConsole = adapter.getString("messages.no-console", noConsole);
-      this.commandUsage = adapter.getString("messages.command-usage", commandUsage);
       this.cooldown = adapter.getString("messages.cooldown", cooldown);
       this.notPremium = adapter.getString("messages.not-premium", notPremium);
       this.skinSetSuccessfully =
@@ -63,16 +59,8 @@ public final class SkinsConfiguration {
       this.skinMenuLore = adapter.getStringList("messages.skin-menu-lore", skinMenuLore);
     }
 
-    public String getNoPermission() {
-      return noPermission;
-    }
-
     public String getNoConsole() {
       return noConsole;
-    }
-
-    public String getCommandUsage() {
-      return commandUsage;
     }
 
     public String getCooldown() {

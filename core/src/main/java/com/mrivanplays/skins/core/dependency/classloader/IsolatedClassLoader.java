@@ -9,7 +9,8 @@ import java.net.URLClassLoader;
  * <p>Used to load specific dependencies without causing conflicts with other plugins, or libraries
  * provided by the server implementation.
  *
- * Credits: lucko/luckPerms
+ * <p>Credits: lucko/luckPerms
+ *
  * @author lucko
  */
 public class IsolatedClassLoader extends URLClassLoader {

@@ -4,6 +4,7 @@ import java.nio.file.Path;
 
 /**
  * Credits: lucko/LuckPerms
+ *
  * @author lucko
  */
 public interface PluginClassLoader {

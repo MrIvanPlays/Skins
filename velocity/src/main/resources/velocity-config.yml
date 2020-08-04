@@ -16,9 +16,7 @@ storage-credentials:
 
 # All configurable messages
 messages:
-  no-permission: "&cYou don't have permission to perform this command."
   no-console: "&cNo console."
-  command-usage: "&cUsage: /skinset <premium player name>"
   cooldown: "&cYou have to wait %timeLeft% more second(s) before using that command"
   not-premium: "&cThis player isn't premium."
   skin-set-successfully: "&aSkin set successfully! If it didn't applied, try reconnecting to the server!"

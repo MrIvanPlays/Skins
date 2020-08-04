@@ -10,6 +10,7 @@ import java.util.List;
 
 /**
  * Credits: lucko/LuckPerms
+ *
  * @author lucko
  */
 public final class SchemaReader {

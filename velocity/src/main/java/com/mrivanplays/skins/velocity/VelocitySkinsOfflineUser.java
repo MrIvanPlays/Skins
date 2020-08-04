@@ -9,8 +9,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class VelocitySkinsOfflineUser extends AbstractSkinsUser {
 
-  private String name;
-  private UUID uuid;
+  private final String name;
+  private final UUID uuid;
 
   public VelocitySkinsOfflineUser(String name, UUID uuid, SkinsPlugin plugin) {
     super(plugin);

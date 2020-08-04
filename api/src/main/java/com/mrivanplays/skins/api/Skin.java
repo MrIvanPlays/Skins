@@ -73,10 +73,15 @@ public final class Skin {
 
   @Override
   public String toString() {
-    return "Skin{" +
-        "owner=" + owner +
-        ", texture='" + texture + '\'' +
-        ", signature='" + signature + '\'' +
-        '}';
+    return "Skin{"
+        + "owner="
+        + owner
+        + ", texture='"
+        + texture
+        + '\''
+        + ", signature='"
+        + signature
+        + '\''
+        + '}';
   }
 }

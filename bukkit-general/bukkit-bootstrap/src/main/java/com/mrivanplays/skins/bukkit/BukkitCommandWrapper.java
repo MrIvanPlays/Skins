@@ -12,9 +12,9 @@ import org.jetbrains.annotations.NotNull;
 public class BukkitCommandWrapper implements BukkitCommand {
 
   private final Command<CommandSource> wrapped;
-  private final CommandSourceManager sourceManager;
+  private final BukkitCommandSourceManager sourceManager;
 
-  public BukkitCommandWrapper(Command<CommandSource> wrapped, CommandSourceManager sourceManager) {
+  public BukkitCommandWrapper(Command<CommandSource> wrapped, BukkitCommandSourceManager sourceManager) {
     this.wrapped = wrapped;
     this.sourceManager = sourceManager;
   }

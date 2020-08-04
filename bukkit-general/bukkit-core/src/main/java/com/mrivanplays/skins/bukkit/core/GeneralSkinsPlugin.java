@@ -25,7 +25,7 @@ import org.bukkit.plugin.ServicePriority;
 public abstract class GeneralSkinsPlugin extends AbstractSkinsPlugin {
 
   private Scheduler scheduler;
-  private Plugin bukkitPlugin;
+  private final Plugin bukkitPlugin;
 
   private SkinsConfiguration config;
 

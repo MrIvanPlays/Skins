@@ -4,6 +4,7 @@ import java.util.Objects;
 
 /**
  * Credits: lucko/LuckPerms
+ *
  * @author lucko
  */
 public final class Relocation {
@@ -34,8 +35,8 @@ public final class Relocation {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     Relocation that = (Relocation) o;
-    return Objects.equals(this.pattern, that.pattern) &&
-        Objects.equals(this.relocatedPattern, that.relocatedPattern);
+    return Objects.equals(this.pattern, that.pattern)
+        && Objects.equals(this.relocatedPattern, that.relocatedPattern);
   }
 
   @Override

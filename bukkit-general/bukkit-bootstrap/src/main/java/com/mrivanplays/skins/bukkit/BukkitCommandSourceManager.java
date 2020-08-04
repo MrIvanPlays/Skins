@@ -8,12 +8,12 @@ import java.util.Map;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class CommandSourceManager {
+public class BukkitCommandSourceManager {
 
   private final SkinsPlugin plugin;
   private Map<CommandSender, CommandSource> sourceMap = new HashMap<>();
 
-  public CommandSourceManager(SkinsPlugin plugin) {
+  public BukkitCommandSourceManager(SkinsPlugin plugin) {
     this.plugin = plugin;
   }
 

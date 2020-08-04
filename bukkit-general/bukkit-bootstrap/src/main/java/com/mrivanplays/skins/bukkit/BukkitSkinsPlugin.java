@@ -31,7 +31,7 @@ public class BukkitSkinsPlugin extends GeneralSkinsPlugin {
   private SkinsInfo info;
 
   private Map<UUID, SkinsUser> userMap = new HashMap<>();
-  private final CommandSourceManager sourceManager;
+  private final BukkitCommandSourceManager sourceManager;
   private SkinsMenu skinsMenu;
   private BukkitCommandManager commandManager;
   private PluginClassLoader classLoader;
@@ -40,7 +40,7 @@ public class BukkitSkinsPlugin extends GeneralSkinsPlugin {
   public BukkitSkinsPlugin(SkinsBukkitPlugin parent) {
     super(parent);
     this.parent = parent;
-    this.sourceManager = new CommandSourceManager(this);
+    this.sourceManager = new BukkitCommandSourceManager(this);
     this.logger = new BukkitLogger(parent.getLogger());
   }
 

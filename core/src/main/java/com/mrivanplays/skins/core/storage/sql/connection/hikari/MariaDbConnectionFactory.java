@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 /**
  * Credits: lucko/LuckPerms
+ *
  * @author lucko
  */
 public class MariaDbConnectionFactory extends HikariConnectionFactory {

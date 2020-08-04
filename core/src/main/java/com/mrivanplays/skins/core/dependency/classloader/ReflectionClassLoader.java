@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 
 /**
  * Credits: lucko/LuckPerms
+ *
  * @author lucko
  */
 public class ReflectionClassLoader implements PluginClassLoader {

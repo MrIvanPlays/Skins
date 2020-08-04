@@ -17,6 +17,7 @@ import java.util.function.Function;
 
 /**
  * Credits: lucko/LuckPerms
+ *
  * @author lucko
  */
 public class H2ConnectionFactory extends FlatfileConnectionFactory {
@@ -37,9 +38,7 @@ public class H2ConnectionFactory extends FlatfileConnectionFactory {
     }
 
     IsolatedClassLoader classLoader =
-        plugin
-            .getDependencyManager()
-            .obtainClassLoaderWith(EnumSet.of(Dependency.H2_DRIVER));
+        plugin.getDependencyManager().obtainClassLoaderWith(EnumSet.of(Dependency.H2_DRIVER));
     try {
       Class<?> driverClass = classLoader.loadClass("org.h2.Driver");
       Method loadMethod = driverClass.getMethod("load");

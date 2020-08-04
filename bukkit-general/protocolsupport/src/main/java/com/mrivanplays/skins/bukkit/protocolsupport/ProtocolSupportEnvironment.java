@@ -4,8 +4,8 @@ import com.mrivanplays.skins.api.Environment;
 
 public class ProtocolSupportEnvironment extends Environment {
 
-  private String parentName;
-  private boolean paper;
+  private final String parentName;
+  private final boolean paper;
 
   public ProtocolSupportEnvironment(String parentName, boolean paper) {
     this.parentName = parentName;

@@ -29,7 +29,7 @@ public enum SupportedVersions {
     }
   }
 
-  private int protocolVersion;
+  private final int protocolVersion;
 
   SupportedVersions(int protocolVersion) {
     this.protocolVersion = protocolVersion;
