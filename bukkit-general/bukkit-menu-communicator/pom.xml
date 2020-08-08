@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>skins-bukkit-general</artifactId>
+    <groupId>com.mrivanplays</groupId>
+    <version>2.0.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>skins-bukkit-menu-communicator</artifactId>
+
+  <name>Skins-Bukkit-Menu-Communicator</name>
+  <description>Communicator plugin for bukkit</description>
+
+  <build>
+    <defaultGoal>clean package</defaultGoal>
+    <finalName>Skins-Bukkit-Communicator-${buildNumber}</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <createDependencyReducedPom>true</createDependencyReducedPom>
+              <relocations>
+                <relocation>
+                  <pattern>net.kyori.adventure</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.adventure</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>net.kyori.examination</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.examination</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>com.mrivanplays.pagedinventory</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.pagedinventory</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.checkerframework</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.checkerframework</shadedPattern>
+                </relocation>
+              </relocations>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.spigotmc</groupId>
+      <artifactId>spigot-api</artifactId>
+      <version>${spigot.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.mrivanplays</groupId>
+      <artifactId>skins-bukkit-menu</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+
+
+</project>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>skins-bukkit-general</artifactId>
+    <groupId>com.mrivanplays</groupId>
+    <version>2.0.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>skins-bukkit-bootstrap</artifactId>
+
+  <name>Skins-Bukkit-Bootstrap</name>
+  <description>Boot for the bukkit implementation of skins plugin</description>
+
+  <build>
+    <defaultGoal>clean package</defaultGoal>
+    <finalName>Skins-Bukkit-${buildNumber}</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <createDependencyReducedPom>true</createDependencyReducedPom>
+              <relocations>
+                <relocation>
+                  <pattern>com.zaxxer.hikari</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.hikari</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.mariadb.jdbc</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.mariadb</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>com.mysql</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.mysql</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.postgresql</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.postgresql</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>com.mongodb</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.mongodb</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.bson</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.bson</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>net.bytebuddy</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.bytebuddy</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>com.github.benmanes.caffeine</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.caffeine</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>net.kyori.adventure</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.adventure</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>net.kyori.examination</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.examination</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.checkerframework</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.checkerframework</shadedPattern>
+                </relocation>
+                <!-- yes that's right we also need to relocate our own libraries -->
+                <relocation>
+                  <pattern>com.mrivanplays.pagedinventory</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.pagedinventory</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>com.mrivanplays.commandworker</pattern>
+                  <shadedPattern>com.mrivanplays.skins.lib.commandworker</shadedPattern>
+                </relocation>
+              </relocations>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.spigotmc</groupId>
+      <artifactId>spigot-api</artifactId>
+      <version>${spigot.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.mrivanplays</groupId>
+      <artifactId>skins-bukkit-core</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.mrivanplays</groupId>
+      <artifactId>skins-bukkit-protocolsupport</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.mrivanplays</groupId>
+      <artifactId>skins-bukkit-paper</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.mrivanplays</groupId>
+      <artifactId>commandworker-bukkit-core</artifactId>
+      <version>${commandworker.version}</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+
+
+</project>

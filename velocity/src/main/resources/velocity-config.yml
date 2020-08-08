@@ -1,0 +1,26 @@
+###################
+#      Skins      #
+# by: MrIvanPlays #
+###################
+
+# Storage credentials
+# Supported storage types: H2, MYSQL, MARIADB, POSTGRESQL, SQLITE, MONGODB
+storage-credentials:
+  storage-type: "H2"
+  # The settings bellow are unnecessary if you're using H2 or SQLITE as storage type
+  address: "localhost"
+  port: 3306
+  database: "minecraft"
+  username: "root"
+  password: "1234"
+
+# All configurable messages
+messages:
+  no-console: "&cNo console."
+  cooldown: "&cYou have to wait %timeLeft% more second(s) before using that command"
+  not-premium: "&cThis player isn't premium."
+  skin-set-successfully: "&aSkin set successfully! If it didn't applied, try reconnecting to the server!"
+
+# Check for updates
+# Recommended leaving true
+update-check: true

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>skins-parent</artifactId>
+    <groupId>com.mrivanplays</groupId>
+    <version>2.0.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>skins-bukkit-general</artifactId>
+  <packaging>pom</packaging>
+
+  <name>Skins-Bukkit-General</name>
+  <description>General bukkit</description>
+  <modules>
+    <module>bukkit-core</module>
+    <module>bukkit-bootstrap</module>
+    <module>paper</module>
+    <module>protocolsupport</module>
+    <module>bukkit-skull-skinner</module>
+    <module>bukkit-menu</module>
+    <module>bukkit-menu-communicator</module>
+  </modules>
+
+  <repositories>
+    <repository>
+      <id>spigot-repo</id>
+      <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+    </repository>
+  </repositories>
+
+</project>
