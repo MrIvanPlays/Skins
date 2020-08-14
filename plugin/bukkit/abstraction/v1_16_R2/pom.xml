@@ -3,17 +3,18 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <artifactId>skins-plugin-bukkit-abstraction</artifactId>
+    <artifactId>skins-plugin-bukkit</artifactId>
     <groupId>com.mrivanplays</groupId>
     <version>dev</version>
+    <relativePath>../../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>skins-plugin-bukkit-abstraction-v1_16_R1</artifactId>
+  <artifactId>skins-plugin-bukkit-abstraction-v1_16_R2</artifactId>
   <version>${plugin.version}</version>
 
-  <name>Skins-Plugin-Bukkit-Abstraction-v1_16_R1</name>
-  <description>v1_16_R1 implementation</description>
+  <name>Skins-Plugin-Bukkit-Abstraction-v1_16_R2</name>
+  <description>v1_16_R2 implementation</description>
 
   <dependencies>
     <dependency>
@@ -25,7 +26,7 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot</artifactId>
-      <version>1.16.1-R0.1-SNAPSHOT</version>
+      <version>1.16.2-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
