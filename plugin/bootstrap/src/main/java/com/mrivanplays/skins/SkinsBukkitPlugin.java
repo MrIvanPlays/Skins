@@ -57,11 +57,6 @@ public class SkinsBukkitPlugin extends JavaPlugin {
           return;
         }
       } else {
-        if (!SupportedVersions.isCurrentSupported()) {
-          getLogger().severe("You are running unsupported minecraft version, disabling...");
-          disabled = true;
-          return;
-        }
         apiInitializer = new SkinsPaper();
       }
     }
