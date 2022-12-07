@@ -5,12 +5,11 @@
   <parent>
     <artifactId>skins-plugin-bukkit</artifactId>
     <groupId>com.mrivanplays</groupId>
-    <version>dev</version>
+    <version>1.2.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>skins-plugin-bukkit-abstraction</artifactId>
-  <version>dev</version>
   <modules>
     <module>ab</module>
     <module>v1_13_R2</module>
@@ -19,6 +18,7 @@
     <module>v1_15_R1</module>
     <module>v1_12_R1</module>
     <module>v1_16_R1</module>
+    <module>v1_16_R2</module>
   </modules>
   <packaging>pom</packaging>
 

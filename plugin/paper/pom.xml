@@ -5,13 +5,12 @@
   <parent>
     <artifactId>skins-plugin-parent</artifactId>
     <groupId>com.mrivanplays</groupId>
-    <version>dev</version>
+    <version>1.2.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>skins-plugin-paper</artifactId>
-  <version>${plugin.version}</version>
   <packaging>jar</packaging>
 
   <name>Skins-Plugin-Paper</name>
@@ -26,7 +25,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.destroystokyo.paper</groupId>
+      <groupId>io.papermc.paper</groupId>
       <artifactId>paper-api</artifactId>
       <version>${spigot.version}</version>
       <scope>provided</scope>

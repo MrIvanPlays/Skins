@@ -5,17 +5,21 @@
   <parent>
     <artifactId>skins-plugin-parent</artifactId>
     <groupId>com.mrivanplays</groupId>
-    <version>dev</version>
+    <version>1.2.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>skins-plugin-bootstrap</artifactId>
-  <version>${plugin.version}</version>
   <packaging>jar</packaging>
 
   <name>Skins</name>
   <description>Main plugin implementation</description>
+
+  <properties>
+    <maven.deploy.skip>true</maven.deploy.skip>
+    <maven.javadoc.skip>true</maven.javadoc.skip>
+  </properties>
 
   <build>
     <defaultGoal>clean package</defaultGoal>
@@ -40,7 +44,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>3.4.1</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -65,7 +69,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>3.2.0</version>
+        <version>3.3.0</version>
         <configuration>
           <archive>
             <manifestEntries>
@@ -82,36 +86,6 @@
       </resource>
     </resources>
   </build>
-
-  <scm>
-    <connection>scm:git:git@github.com:MrIvanPlays/Skins.git</connection>
-    <developerConnection>scm:git:git@github.com:MrIvanPlays/Skins.git</developerConnection>
-    <url>git@github.com:MrIvanPlays/Skins.git</url>
-  </scm>
-
-  <issueManagement>
-    <system>GitHub</system>
-    <url>https://github.com/MrIvanPlays/Skins/issues</url>
-  </issueManagement>
-
-  <ciManagement>
-    <system>jenkins</system>
-    <url>http://ci.mrivanplays.com/job/Skins</url>
-  </ciManagement>
-
-  <developers>
-    <developer>
-      <id>MrIvanPlays</id>
-    </developer>
-  </developers>
-
-  <licenses>
-    <license>
-      <name>MIT License</name>
-      <url>http://www.opensource.org/licenses/mit-license.php</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
 
   <repositories>
     <repository>

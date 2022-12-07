@@ -5,12 +5,11 @@
   <parent>
     <artifactId>skins-plugin-bukkit-abstraction</artifactId>
     <groupId>com.mrivanplays</groupId>
-    <version>dev</version>
+    <version>1.2.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>skins-plugin-bukkit-abstraction-handle</artifactId>
-  <version>${plugin.version}</version>
   <packaging>jar</packaging>
 
   <name>Skins-Plugin-Bukkit-Abstraction-Handle</name>

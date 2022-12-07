@@ -2,8 +2,6 @@ package com.mrivanplays.skins;
 
 import com.google.common.base.Preconditions;
 
-import org.apache.commons.lang.math.NumberUtils;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -31,8 +29,8 @@ public final class UpdateChecker {
         }
 
         for (int i = 0; i < Math.min(firstSplit.length, secondSplit.length); i++) {
-          int currentValue = NumberUtils.toInt(firstSplit[i]),
-              newestValue = NumberUtils.toInt(secondSplit[i]);
+          int currentValue = Utils.toInt(firstSplit[i]),
+              newestValue = Utils.toInt(secondSplit[i]);
 
           if (newestValue > currentValue) {
             return second;
